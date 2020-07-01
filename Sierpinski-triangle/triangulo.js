@@ -8,36 +8,23 @@ function main(){
 }
 
 function sierpinski(con, i,ax,ay,bx,by,cx,cy){
-    //con.clearRect(0, 0, 400, 400);
     if(i>0){
-        i--;
-        tax = (bx+cx)/2
-        tay = (by+cy)/2
-        tbx = (ax+cx)/2
-        tby = (ay+cy)/2
-        tcx = (ax+bx)/2
-        tcy = (ay+by)/2
-
-        //tbx = (ax-bx)/2
-        //tby = (by-ay)/2
-        //tbc = (cx-ax)/2
-        //tbc = (by-ay)/2
-        sierpinski(con, i,tbx,tby,tax,tay,cx,cy)
-        sierpinski(con, i,tax,tay,bx,by,tcx,tcy)
-        sierpinski(con, i,ax,ay,tbx,tby,tcx,tcy)
+        sierpinski(con,i-1,(ax+bx)/2,(ay+cy)/2,bx,by,(bx+cx)/2,by)
+        sierpinski(con,i-1,ax,ay,(ax+bx)/2,(ay+cy)/2,(cx+ax)/2,(ay+by)/2)
+        sierpinski(con,i-1,(cx+ax)/2,(ay+by)/2,(bx+cx)/2,by,cx,cy)
     }else{
         draw_triangle(con,ax,ay,bx,by,cx,cy)
     }
 }
 
 function draw_triangle(con,ax,ay,bx,by,cx,cy){
+    
     // Triangle
     con.beginPath();
     con.moveTo(ax, ay);
     con.lineTo(bx, by);
     con.lineTo(cx, cy);
     con.closePath();
-        
     // Color
     con.fillStyle = "#FFCC00";
     con.fill();
