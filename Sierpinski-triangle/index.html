@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="triangulo.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Triángulo de Sierpinski</title>
+</head>
+<body onload="main()">
+    <div>
+        <h1>Triángulo de Sierpinski</h1>
+        <div>
+            <label>Iteraciones: <span id="sliderValue">0</span></label>
+            <input id="slider" type="range" min="0" max="8" value="0" step="1">
+
+        </div>
+    </div>
+
+    <canvas id="trianC" width="400" height="400"></canvas>
+</body>
+</html>
