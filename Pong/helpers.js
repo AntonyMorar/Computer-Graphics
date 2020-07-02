@@ -33,7 +33,7 @@ function deflectY(b, obj) {
         if (slp < 0 && b.dx > 0) {
             cx = obj.x - b.x;
             cy = obj.y + obj.h - b.y;
-            console.log(cy / cx)
+            //console.log(cy / cx +" --- " + slp)
             if (cx < 0) return true;
             else if (cy / cx > slp) return false;
             else return true;
@@ -41,7 +41,7 @@ function deflectY(b, obj) {
         else if (slp > 0 && b.dx > 0) {
             cx = obj.x - b.x
             cy = obj.y - b.y
-            console.log(cy / cx)
+            //console.log(cy / cx +" --- " + slp)
             if (cx < 0) return true;
             else if (cy / cx > slp) return true;
             else return false;
@@ -49,7 +49,7 @@ function deflectY(b, obj) {
         else if (slp < 0 && b.dx < 0) {
             cx = obj.x + obj.w - b.x;
             cy = obj.y - b.y;
-
+            //console.log(cy / cx +" --- " + slp)
             if (cx > 0) return true;
             else if (cy / cx < slp) return true;
             else return false;
@@ -57,7 +57,7 @@ function deflectY(b, obj) {
         else if (slp > 0 && b.dx < 0) {
             cx = obj.x + obj.w - b.x;
             cy = obj.y + obj.h - b.y;
-
+            //console.log(cy / cx +" --- " + slp)
             if (cx > 0) return true;
             else if (cy / cx > slp) return true;
             else return false;

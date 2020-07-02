@@ -33,6 +33,7 @@ function _update() {
     requestAnimationFrame(() => _update());
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    game.update();
     // Game States
     if (game.state == "menu") {
         menu.update();
@@ -72,6 +73,8 @@ class Game {
         this.p1Score = 0;
         this.p2Score = 0;
         this.inGamePlayers = 0; //How much payers in the game (0 means 2 bots)
+        this.autoStartTime = 3; //If only bots in the game
+        this.autoStartTimeActual = new Date(); //If only bots in the game
         this.mousePos = {
             x: 0,
             y: 0,
@@ -80,6 +83,15 @@ class Game {
         } // w & h to make it compatible with overlap function(helpers.js) 
         this.audioManager = document.createElement("audio");
         return this;
+    }
+
+    update(){
+        if(this.state=="game" && !this.inMatch && this.inGamePlayers <= 0){
+            // Auto start match counter (only if all players are bots)
+            if ((new Date() - this.autoStartTimeActual) / 1000 > this.autoStartTime) {
+                this.startMatch()
+            }
+        }
     }
 
     setMatch() {
@@ -91,6 +103,7 @@ class Game {
         player2.y = (canvas.height / 2) - (player.h / 2)
         player2.dy = 0
         this.inMatch = false;
+        this.autoStartTimeActual = new Date()
     }
 
     startGame(gameType) {
@@ -102,9 +115,10 @@ class Game {
             case 1:
                 movePlayer(player);
                 movePlayer(player2);
-                this.inGamePlayers = 0;
+                this.inGamePlayers = 2;
                 break;
             case 2:
+                this.autoStartTimeActual = new Date();
                 break;
             default: //Error default case 1 player
                 movePlayer(player);
@@ -117,8 +131,12 @@ class Game {
     startMatch() {
         ball.stiky = false;
         this.inMatch = true;
-        ball.dx = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
-        ball.dy = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
+        ball.dx = randomRange(0, 1) == 0 ? ball.speed : -ball.speed;
+        ball.dy = randomRange(0, 1) == 0 ? ball.speed : -ball.speed;
+        //Audio sound
+        game.audioManager.src = "audio/startMatch.wav";
+        game.audioManager.volume = 1;
+        game.audioManager.play();
     }
 
     gameOver() {
@@ -274,7 +292,7 @@ class Hud {
 
         //player can  see instructions 
         if (this.instructions) {
-            //Time in secons
+            // Blink counter
             if ((new Date() - this.blinkCounter) / 1000 > 0.5) {
                 if (this.instructionsColor == "#898989") {
                     this.instructionsColor = "white"
@@ -293,9 +311,28 @@ class Hud {
 
         //player can  see instructions 
         if (this.instructions) {
-            ctx.fillStyle = this.instructionsColor;
-            ctx.font = "16px Helvetica";
-            ctx.fillText("Space key to start", canvas.width / 2, 300);
+            if(game.inGamePlayers <= 0){
+                let lt = 3-(Math.round((new Date() - game.autoStartTimeActual) / 1000))
+                ctx.fillStyle = this.instructionsColor;
+                ctx.font = "16px Helvetica";
+                ctx.fillText("Match start in " + lt, canvas.width / 2, 300);
+            }
+
+            // One player in game
+            if(game.inGamePlayers > 0){
+                ctx.fillStyle = this.instructionsColor;
+                ctx.font = "16px Helvetica";
+                ctx.fillText("Space key to start", canvas.width / 2, 300);
+                ctx.fillText("W - Up", 50, 300);
+                ctx.fillText("S - Down", 50, 325);
+            }
+            // Two player in game
+            if(game.inGamePlayers > 1){
+                ctx.fillStyle = this.instructionsColor;
+                ctx.font = "16px Helvetica";
+                ctx.fillText("↑ - Up", canvas.width-50, 300);
+                ctx.fillText("↓ - Down", canvas.width-50, 325);
+            }
         }
     }
 }
@@ -356,7 +393,11 @@ class Menu {
             document.documentElement.style.cursor = "default";
             this.activeButton = null;
         }
-        //console.log(this.activeButton)
+
+        this.buttons.forEach(btn => {
+            if(btn.id==this.activeButton) btn.color= "white"
+            else  btn.color= "#e0e0e0"
+        });
     }
 
     draw() {

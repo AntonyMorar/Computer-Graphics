@@ -64,10 +64,7 @@ function movePlayer(player) {
 function ballState(ball) {
     // Start Game
     document.addEventListener("keydown", event => {
-        if ((event.key == "Spacebar" || event.key === ' ') && ball.stiky && game.state=="game") {
-            game.audioManager.src = "audio/startMatch.wav";
-            game.audioManager.volume = 1;
-            game.audioManager.play();
+        if ((event.key == "Spacebar" || event.key === ' ') && ball.stiky && game.state=="game" && game.inGamePlayers>0) {
             game.startMatch()
         }
     });
