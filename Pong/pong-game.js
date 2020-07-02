@@ -61,16 +61,14 @@ function _draw() {
 }
 
 // Objects ********************************************
+// Game manager singleton
 class Game {
-    // Singleton patern
     constructor() {
-        if (!!Game.instance) {
-            return Game.instance;
-        }
+        if (!!Game.instance) return Game.instance;
         Game.instance = this;
 
         this.state = "menu";
-        this.inMatch=false;
+        this.inMatch = false;
         this.p1Score = 0;
         this.p2Score = 0;
         this.inGamePlayers = 0; //How much payers in the game (0 means 2 bots)
@@ -92,25 +90,25 @@ class Game {
         player.dy = 0
         player2.y = (canvas.height / 2) - (player.h / 2)
         player2.dy = 0
-        this.inMatch=false;
+        this.inMatch = false;
     }
 
-    startGame(gameType){
+    startGame(gameType) {
         switch (gameType) {
             case 0:
                 movePlayer(player);
-                this.inGamePlayers=1;
+                this.inGamePlayers = 1;
                 break;
             case 1:
                 movePlayer(player);
                 movePlayer(player2);
-                this.inGamePlayers=0;
+                this.inGamePlayers = 0;
                 break;
             case 2:
                 break;
             default: //Error default case 1 player
                 movePlayer(player);
-                this.inGamePlayers=1;
+                this.inGamePlayers = 1;
                 break;
         }
         this.state = "game";
@@ -123,7 +121,7 @@ class Game {
         ball.dy = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
     }
 
-    gameOver(){
+    gameOver() {
         this.state = "gameOver";
     }
 }
@@ -150,7 +148,7 @@ class Sphere {
 
     update(xLimit, yLimit) {
         //Canvas bounce
-        /*if ( this.x < this.radius || this.x + this.radius > xLimit) this.dx = -this.dx;*/ 
+        /*if ( this.x < this.radius || this.x + this.radius > xLimit) this.dx = -this.dx;*/
         if (this.y + this.radius > yLimit || this.y < this.radius) {
             this.dy = -this.dy;
             game.audioManager.src = "audio/hit.wav";
@@ -158,12 +156,29 @@ class Sphere {
             game.audioManager.play();
         }
         // Paddle colission
-        if (onCollideBall(this, player)) this.dx = -this.dx;
-        if (onCollideBall(this, player2)) this.dx = -this.dx;
-        if (onCollideBall(this, player) || onCollideBall(this, player2)){
+        if (onCollideBall(this, player) || onCollideBall(this, player2)) {
             game.audioManager.src = "audio/hitpaddle.wav";
             game.audioManager.volume = 0.2;
             game.audioManager.play();
+
+            if (onCollideBall(this, player)) {
+                //Colide with X paddle position
+                if (!deflectY(this, player)) {
+                    this.dx = -this.dx;
+                } //Colide with X paddle position
+                else {
+                    this.dy = -this.dy
+                }
+            } else {
+                //Colide with X paddle1 position
+                if (!deflectY(this, player2)) {
+                    this.dx = -this.dx;
+                } //Colide with X paddle position
+                else {
+                    this.dy = -this.dy
+                }
+            }
+
         }
 
         //Game points
@@ -224,18 +239,19 @@ class Paddle {
         ctx.closePath();
     }
 
+    // NPC Logic
     botMovement() {
         // If the ball is in his half then can move
-        if(Math.abs((this.x+(this.w/2)) - ball.x) < canvas.height - 35){
+        if (Math.abs((this.x + (this.w / 2)) - ball.x) < canvas.height - 35) {
             //Detect the y psosition of the ball
-            if(ball.y < this.y+(this.h/2)){
+            if (ball.y < this.y + (this.h / 2)) {
                 this.dy = -this.speed * (this.botMultiplierSpeed);
-            }else if (ball.y > this.y+(this.h/2)){
+            } else if (ball.y > this.y + (this.h / 2)) {
                 this.dy = this.speed * (this.botMultiplierSpeed);
-            }else{
+            } else {
                 this.dy = 0
             }
-        }else{
+        } else {
             this.dy = 0
         }
     }
@@ -257,12 +273,12 @@ class Hud {
         this.instructions = game.inMatch ? false : true;
 
         //player can  see instructions 
-        if(this.instructions){
+        if (this.instructions) {
             //Time in secons
-            if((new Date()-this.blinkCounter)/1000 > 0.5){
-                if(this.instructionsColor=="#898989"){
+            if ((new Date() - this.blinkCounter) / 1000 > 0.5) {
+                if (this.instructionsColor == "#898989") {
                     this.instructionsColor = "white"
-                }else{
+                } else {
                     this.instructionsColor = "#898989"
                 }
                 this.blinkCounter = new Date()
@@ -276,10 +292,10 @@ class Hud {
         ctx.fillText(this.p2, (canvas.width / 2) + 80, 30);
 
         //player can  see instructions 
-        if(this.instructions){
+        if (this.instructions) {
             ctx.fillStyle = this.instructionsColor;
             ctx.font = "16px Helvetica";
-            ctx.fillText("Tecla espacio para comenzar", canvas.width / 2, 300);
+            ctx.fillText("Space key to start", canvas.width / 2, 300);
         }
     }
 }
@@ -297,50 +313,50 @@ class Menu {
             y: 60
         }
         this.buttons = [{
-                id:0,
+                id: 0,
                 text: "Player vs NPC",
                 x: this.buttonsPos.x,
                 y: this.buttonsPos.y,
                 w: ctx.measureText("Player vs NPC").width,
-                h: 25,
+                h: 30,
                 color: "#e0e0e0"
             },
             {
-                id:1,
+                id: 1,
                 text: "Player vs Player",
                 x: this.buttonsPos.x + (this.margin.x * 1),
                 y: this.buttonsPos.y + (this.margin.y * 1),
                 w: ctx.measureText("Player vs Player").width,
-                h: 25,
+                h: 30,
                 color: "#e0e0e0"
             },
             {
-                id:2,
+                id: 2,
                 text: "NPC vs NPC",
                 x: this.buttonsPos.x + (this.margin.x * 2),
                 y: this.buttonsPos.y + (this.margin.y * 2),
                 w: ctx.measureText("Player vs Player").width,
-                h: 25,
+                h: 30,
                 color: "#e0e0e0"
             }
         ]
     }
 
     update() {
-       let a = overlap(game.mousePos, this.buttons[0])
-       let b = overlap(game.mousePos, this.buttons[1])
-       let c = overlap(game.mousePos, this.buttons[2])
+        let a = overlap(game.mousePos, this.buttons[0])
+        let b = overlap(game.mousePos, this.buttons[1])
+        let c = overlap(game.mousePos, this.buttons[2])
 
-       if(a || b || c){
-           if(a)this.activeButton=0;
-           else if(b)this.activeButton=1;
-           else if(c)this.activeButton=2;
-           document.documentElement.style.cursor = "pointer";
-       } else{
+        if (a || b || c) {
+            if (a) this.activeButton = 0;
+            else if (b) this.activeButton = 1;
+            else if (c) this.activeButton = 2;
+            document.documentElement.style.cursor = "pointer";
+        } else {
             document.documentElement.style.cursor = "default";
-            this.activeButton=null;
-       } 
-       //console.log(this.activeButton)
+            this.activeButton = null;
+        }
+        //console.log(this.activeButton)
     }
 
     draw() {
