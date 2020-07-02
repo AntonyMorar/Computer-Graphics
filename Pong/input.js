@@ -70,14 +70,14 @@ function ballState(ball) {
     });
 }
 
-function menuEvents(){
-
-}
-
-function mouseEvents()
-{
+function menuEvents(menu){
     document.addEventListener("mousemove", event =>{
         game.mousePos.x=event.clientX;
         game.mousePos.y=event.clientY;
+    });
+
+    document.addEventListener("click", event =>{
+        if(game.state!="menu" || menu.activeButton==null)return; //Only click in menu
+        game.startGame(menu.activeButton);
     })
 }

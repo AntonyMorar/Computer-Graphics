@@ -22,9 +22,7 @@ function main() {
     player = new Paddle(20, canvas.height / 2, 15, 80);
     player2 = new Paddle(canvas.width - 35, canvas.height / 2, 15, 80);
     //Events
-    mouseEvents();
-    menuEvents();
-    movePlayer(player);
+    menuEvents(menu);
     ballState(ball)
     // Update and Draw
     _update();
@@ -84,10 +82,32 @@ class Game {
         ball.stiky = true;
     }
 
+    startGame(gameType){
+        switch (gameType) {
+            case 0:
+                movePlayer(player);
+                break;
+            case 1:
+                movePlayer(player);
+                movePlayer(player2);
+                break;
+            case 2:
+                break;
+            default: //Error default case 1 player
+                movePlayer(player);
+                break;
+        }
+        this.state = "game";
+    }
+
     startMatch() {
         ball.stiky = false;
         ball.dx = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
         ball.dy = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
+    }
+
+    gameOver(){
+        this.state = "gameOver";
     }
 }
 
@@ -185,6 +205,7 @@ class Hud {
     }
 
     draw() {
+        ctx.font = "25px Helvetica";
         ctx.fillText(this.p1, (canvas.width / 2) - 80, 30);
         ctx.fillText(this.p2, (canvas.width / 2) + 80, 30);
     }
@@ -233,46 +254,16 @@ class Menu {
     }
 
     update() {
-        //First Try
-        /*
-        this.buttons.forEach(btn => {
-            //this.activeButton=null
-            if(overlap(game.mousePos, btn)){
-                this.activeButton = btn
-                btn.color='red';
-            }else{
-                //btn.color='e0e0e0';
-            }
-        });
-        */
-
-        //Second try
-        /*
-        if(overlap(game.mousePos, this.buttons[0])){
-            this.activeButton=0
-            this.buttons[0].color='red'
-        }else if(!overlap(game.mousePos, this.buttons[0])){
-            //this.buttons[0].color='e0e0e0'
-            this.activeButton=null
-        }
-        if (overlap(game.mousePos, this.buttons[1])){
-            this.activeButton=1
-        }else if(!overlap(game.mousePos, this.buttons[1])){
-            this.activeButton=null
-        }
-        */
        let a = overlap(game.mousePos, this.buttons[0])
        let b = overlap(game.mousePos, this.buttons[1])
        let c = overlap(game.mousePos, this.buttons[2])
 
        if(a || b || c){
-           if(a)this.activeButton=0
-           else if(b)this.activeButton=1
-           else if(c)this.activeButton=2
-       } else this.activeButton=null
-
-        console.log(a,b,c)
-        console.log(this.activeButton)
+           if(a)this.activeButton=0;
+           else if(b)this.activeButton=1;
+           else if(c)this.activeButton=2;
+       } else this.activeButton=null;
+       //console.log(this.activeButton)
     }
 
     draw() {
@@ -287,7 +278,7 @@ class Menu {
         this.buttons.forEach(btn => {
             ctx.fillStyle = btn.color;
             ctx.fillText(btn.text, btn.x, btn.y);
-            ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
+            //ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
         });
         ctx.textBaseline = 'alphabetic';
 
