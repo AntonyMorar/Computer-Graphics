@@ -80,6 +80,7 @@ class Game {
             w: 0,
             h: 0
         } // w & h to make it compatible with overlap function(helpers.js) 
+        this.audioManager = document.createElement("audio");
         return this;
     }
 
@@ -150,18 +151,30 @@ class Sphere {
     update(xLimit, yLimit) {
         //Canvas bounce
         /*if ( this.x < this.radius || this.x + this.radius > xLimit) this.dx = -this.dx;*/ 
-        if (this.y + this.radius > yLimit || this.y < this.radius) this.dy = -this.dy;
+        if (this.y + this.radius > yLimit || this.y < this.radius) {
+            this.dy = -this.dy;
+            game.audioManager.src = "audio/hit.wav";
+            game.audioManager.play();
+        }
         // Paddle colission
         if (onCollideBall(this, player)) this.dx = -this.dx;
         if (onCollideBall(this, player2)) this.dx = -this.dx;
+        if (onCollideBall(this, player) || onCollideBall(this, player2)){
+            game.audioManager.src = "audio/hitpaddle.wav";
+            game.audioManager.play();
+        }
 
         //Game points
         if (this.x + this.radius < 0) {
             game.p2Score++;
+            game.audioManager.src = "audio/point.wav";
+            game.audioManager.play();
             game.setMatch();
         }
         if (this.x - this.radius > xLimit) {
             game.p1Score++;
+            game.audioManager.src = "audio/point.wav";
+            game.audioManager.play();
             game.setMatch();
         }
 
