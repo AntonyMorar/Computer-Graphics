@@ -7,6 +7,7 @@ let menu = null;
 let ball = null;
 let player = null;
 let player2 = null;
+//let particles = []
 
 // Mai Functions ********************************************
 function main() {
