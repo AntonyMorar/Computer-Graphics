@@ -40,7 +40,8 @@ function _update() {
         ball.update(canvas.width, canvas.height);
         player.update(canvas.width, canvas.height);
         player2.update(canvas.width, canvas.height);
-        if (game.changeHud) hud.update()
+        hud.update()
+        //if (game.changeHud) hud.update()
     }
 }
 
@@ -63,10 +64,10 @@ function _draw() {
 class Game {
     constructor() {
         this.state = "menu";
+        this.inMatch=false;
         this.p1Score = 0;
         this.p2Score = 0;
         this.inGamePlayers = 0; //How much payers in the game (0 means 2 bots)
-        this.changeHud = false;
         this.mousePos = {
             x: 0,
             y: 0,
@@ -75,8 +76,7 @@ class Game {
         } //w & h to make it compatible with overlap function(helpers.js) 
     }
 
-    setBall() {
-        this.changeHud = true
+    setMatch() {
         ball.x = canvas.width / 2;
         ball.y = canvas.height / 2;
         ball.stiky = true;
@@ -84,6 +84,7 @@ class Game {
         player.dy = 0
         player2.y = (canvas.height / 2) - (player.h / 2)
         player2.dy = 0
+        this.inMatch=false;
     }
 
     startGame(gameType){
@@ -109,6 +110,7 @@ class Game {
 
     startMatch() {
         ball.stiky = false;
+        this.inMatch = true;
         ball.dx = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
         ball.dy = randomRange(0, 1) == 0 ? ball.speed : -ball.speed
     }
@@ -149,11 +151,11 @@ class Sphere {
         //Game points
         if (this.x + this.radius < 0) {
             game.p2Score++;
-            game.setBall();
+            game.setMatch();
         }
         if (this.x - this.radius > xLimit) {
             game.p1Score++;
-            game.setBall();
+            game.setMatch();
         }
 
         //stick the ball
@@ -179,7 +181,7 @@ class Paddle {
         this.speed = 3;
         this.color = "white";
         this.bot = true
-        this.botMultiplierSpeed = 0.7 // Diferent than player speed 
+        this.botMultiplierSpeed = 0.9 // Diferent than player speed 
     }
 
     update(xLimit, yLimit) {
@@ -219,18 +221,42 @@ class Hud {
     constructor() {
         this.p1 = game.p1Score;
         this.p2 = game.p2Score;
+        this.instructions = true;
+        this.instructionsColor = "#898989";
+        this.blinkCounter = new Date(); //Time in seconds
     }
 
     update() {
         this.p1 = game.p1Score;
         this.p2 = game.p2Score;
-        game.changeHud = false
+
+        this.instructions = game.inMatch ? false : true;
+
+        //player can  see instructions 
+        if(this.instructions){
+            //Time in secons
+            if((new Date()-this.blinkCounter)/1000 > 0.5){
+                if(this.instructionsColor=="#898989"){
+                    this.instructionsColor = "white"
+                }else{
+                    this.instructionsColor = "#898989"
+                }
+                this.blinkCounter = new Date()
+            }
+        }
     }
 
     draw() {
         ctx.font = "25px Helvetica";
         ctx.fillText(this.p1, (canvas.width / 2) - 80, 30);
         ctx.fillText(this.p2, (canvas.width / 2) + 80, 30);
+
+        //player can  see instructions 
+        if(this.instructions){
+            ctx.fillStyle = this.instructionsColor;
+            ctx.font = "16px Helvetica";
+            ctx.fillText("Tecla espacio para comenzar", canvas.width / 2, 300);
+        }
     }
 }
 
