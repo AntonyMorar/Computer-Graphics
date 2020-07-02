@@ -18,9 +18,9 @@ function main() {
     game = new Game();
     hud = new Hud();
     menu = new Menu();
-    ball = new Sphere('salmon', canvas.width / 2, canvas.height / 2);
-    player = new Paddle(20, canvas.height / 2, 15, 80);
-    player2 = new Paddle(canvas.width - 35, canvas.height / 2, 15, 80);
+    ball = new Sphere(canvas.width / 2, canvas.height / 2); //x,y
+    player = new Paddle(20, canvas.height / 2, 15, 80); //x,y,w,h
+    player2 = new Paddle(canvas.width - 35, canvas.height / 2, 15, 80); //x,y,w,h
     //Events
     menuEvents(menu);
     ballState(ball)
@@ -62,7 +62,13 @@ function _draw() {
 
 // Objects ********************************************
 class Game {
+    // Singleton patern
     constructor() {
+        if (!!Game.instance) {
+            return Game.instance;
+        }
+        Game.instance = this;
+
         this.state = "menu";
         this.inMatch=false;
         this.p1Score = 0;
@@ -73,7 +79,8 @@ class Game {
             y: 0,
             w: 0,
             h: 0
-        } //w & h to make it compatible with overlap function(helpers.js) 
+        } // w & h to make it compatible with overlap function(helpers.js) 
+        return this;
     }
 
     setMatch() {
@@ -121,8 +128,8 @@ class Game {
 }
 
 class Sphere {
-    constructor(color, x, y) {
-        this.color = color;
+    constructor(x, y) {
+        this.color = 'salmon';
         this.x = x;
         this.y = y;
         this.dx = -3;
@@ -158,12 +165,12 @@ class Sphere {
             game.setMatch();
         }
 
-        //stick the ball
+        // Stick the ball
         if (this.stiky) {
             this.dx = 0;
             this.dy = 0;
         }
-        //Update ball position
+        // Update ball position
         this.x += this.dx;
         this.y += this.dy;
     }
