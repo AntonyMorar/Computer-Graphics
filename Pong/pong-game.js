@@ -2,6 +2,7 @@ let ctx = null;
 let canvas = null;
 
 let game = null;
+let hud = null;
 let ball = null;
 let player = null;
 let player2 = null;
@@ -11,8 +12,10 @@ function main(){
     //Canvas
     canvas = document.querySelector("#ballCanvas");
     ctx = canvas.getContext("2d");  
+    ctx.font = "25px Helvetica";
     // Make the objects
     game = new Game()
+    hud = new Hud()
     ball = new Sphere('salmon',canvas.width/2,canvas.height/2);
     player = new Paddle(20,canvas.height/2,15,80);
     player2 = new Paddle(canvas.width-35,canvas.height/2,15,80);
@@ -31,6 +34,7 @@ function _update(){
     ball.update(canvas.width,canvas.height);
     player.update(canvas.width,canvas.height);
     player2.update(canvas.width,canvas.height);
+    if(game.changeHud) hud.update()
 }
 
 function _draw(){
@@ -40,6 +44,7 @@ function _draw(){
     ball.draw();
     player.draw();
     player2.draw();
+    hud.draw();
 }
 
 // Objects ********************************************
@@ -48,9 +53,11 @@ class Game{
         this.state="menu";
         this.p1Score=0;
         this.p2Score=0;
+        this.changeHud=false;
     }
 
     setBall(){
+        this.changeHud=true
         ball.x=canvas.width/2;
         ball.y=canvas.height/2;
         ball.stiky=true;
@@ -94,7 +101,7 @@ class Sphere{
 
         //Game points
         if(this.x+this.radius < 0){
-            console.log("salio")
+            game.p2Score++;
             game.setBall();
         }
 
@@ -134,5 +141,24 @@ class Paddle{
         this.x +=this.dx;
         this.y +=this.dy;
         this.y = clamp(this.y,0,yLimit-this.h)
+    }
+}
+
+class Hud{
+    constructor(){
+        this.p1 = game.p1Score;
+        this.p2 =  game.p2Score;
+    }
+
+    update(){
+        console.log(game.p2Score)
+        this.p1=game.p1Score;
+        this.p2=game.p2Score;
+        game.changeHud=false
+    }
+
+    draw(){
+        ctx.fillText(this.p1, (canvas.width/2)-80, 30);
+        ctx.fillText(this.p2, (canvas.width/2)+80, 30);
     }
 }
