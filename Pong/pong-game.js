@@ -154,6 +154,7 @@ class Sphere {
         if (this.y + this.radius > yLimit || this.y < this.radius) {
             this.dy = -this.dy;
             game.audioManager.src = "audio/hit.wav";
+            game.audioManager.volume = 0.2;
             game.audioManager.play();
         }
         // Paddle colission
@@ -161,6 +162,7 @@ class Sphere {
         if (onCollideBall(this, player2)) this.dx = -this.dx;
         if (onCollideBall(this, player) || onCollideBall(this, player2)){
             game.audioManager.src = "audio/hitpaddle.wav";
+            game.audioManager.volume = 0.2;
             game.audioManager.play();
         }
 
@@ -168,12 +170,14 @@ class Sphere {
         if (this.x + this.radius < 0) {
             game.p2Score++;
             game.audioManager.src = "audio/point.wav";
+            game.audioManager.volume = 0.3;
             game.audioManager.play();
             game.setMatch();
         }
         if (this.x - this.radius > xLimit) {
             game.p1Score++;
             game.audioManager.src = "audio/point.wav";
+            game.audioManager.volume = 0.3;
             game.audioManager.play();
             game.setMatch();
         }
@@ -331,7 +335,11 @@ class Menu {
            if(a)this.activeButton=0;
            else if(b)this.activeButton=1;
            else if(c)this.activeButton=2;
-       } else this.activeButton=null;
+           document.documentElement.style.cursor = "pointer";
+       } else{
+            document.documentElement.style.cursor = "default";
+            this.activeButton=null;
+       } 
        //console.log(this.activeButton)
     }
 

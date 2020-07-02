@@ -78,6 +78,10 @@ function menuEvents(menu){
 
     document.addEventListener("click", event =>{
         if(game.state!="menu" || menu.activeButton==null)return; //Only click in menu
+        game.audioManager.src = "audio/select.wav";
+        game.audioManager.volume = 1;
+        game.audioManager.play();
+        document.documentElement.style.cursor = "default";
         game.startGame(menu.activeButton);
     })
 }
