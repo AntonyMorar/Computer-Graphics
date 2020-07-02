@@ -1,0 +1,32 @@
+function movePlayer(player)
+{
+    // Up
+    document.addEventListener("keydown", event=>
+    {
+        if(event.key == "w"){
+            player.dy = -player.speed;
+        }
+    });
+
+    document.addEventListener("keyup", event=>
+    {
+        if(event.key == "w"){
+            player.dy = 0;
+        }
+    });
+
+    // Down
+    document.addEventListener("keydown", event=>
+    {
+        if(event.key == "s"){
+            player.dy = player.speed;
+        }
+    });
+
+    document.addEventListener("keyup", event=>
+    {
+        if(event.key == "s"){
+            player.dy = 0;
+        }
+    });
+}
