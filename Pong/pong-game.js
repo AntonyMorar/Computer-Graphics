@@ -120,13 +120,14 @@ class Sphere{
 class Paddle{
     constructor(x,y,w,h){
         this.x=x;
-        this.y=y;
+        this.y=y-(h/2);
         this.w=w;
         this.h=h;
         this.dx=0;
         this.dy=0;
         this.speed=3;
         this.color = "white";
+        this.bot=true
     }
 
     draw(){
@@ -141,6 +142,12 @@ class Paddle{
         this.x +=this.dx;
         this.y +=this.dy;
         this.y = clamp(this.y,0,yLimit-this.h)
+
+        if(this.bot) this.botMovement();
+    }
+
+    botMovement(){
+        this.dy = ball.dy;
     }
 }
 

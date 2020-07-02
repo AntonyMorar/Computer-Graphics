@@ -1,5 +1,6 @@
 function movePlayer(player)
 {
+    player.bot=false
     // Up
     document.addEventListener("keydown", event=>
     {
