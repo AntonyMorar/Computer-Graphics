@@ -316,23 +316,23 @@ class Hud {
                 let lt = 3-(Math.round((new Date() - game.autoStartTimeActual) / 1000))
                 ctx.fillStyle = this.instructionsColor;
                 ctx.font = "16px Helvetica";
-                ctx.fillText("Match start in " + lt, canvas.width / 2, 300);
+                ctx.fillText("Match start in " + lt, canvas.width / 2, canvas.height-90);
             }
 
             // One player in game
             if(game.inGamePlayers > 0){
                 ctx.fillStyle = this.instructionsColor;
                 ctx.font = "16px Helvetica";
-                ctx.fillText("Space key to start", canvas.width / 2, 300);
-                ctx.fillText("W - Up", 50, 300);
-                ctx.fillText("S - Down", 50, 325);
+                ctx.fillText("Space key to start", canvas.width / 2, canvas.height-90);
+                ctx.fillText("W - Up", 50, canvas.height-90);
+                ctx.fillText("S - Down", 50, canvas.height-65);
             }
             // Two player in game
             if(game.inGamePlayers > 1){
                 ctx.fillStyle = this.instructionsColor;
                 ctx.font = "16px Helvetica";
-                ctx.fillText("↑ - Up", canvas.width-50, 300);
-                ctx.fillText("↓ - Down", canvas.width-50, 325);
+                ctx.fillText("↑ - Up", canvas.width-50, canvas.height-90);
+                ctx.fillText("↓ - Down", canvas.width-50, canvas.height-65);
             }
         }
     }
@@ -344,7 +344,7 @@ class Menu {
         this.activeButton = null;
         this.buttonsPos = {
             x: (canvas.width / 2) - 85,
-            y: 165
+            y: (canvas.height/2) -50
         }
         this.margin = {
             x: 0,
