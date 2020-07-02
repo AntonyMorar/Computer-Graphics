@@ -4,7 +4,7 @@ let canvas = null;
 let game = null;
 let ball = null;
 let player = null;
-let enemy = null;
+let player2 = null;
 
 // Mai Functions ********************************************
 function main(){
@@ -13,11 +13,12 @@ function main(){
     ctx = canvas.getContext("2d");  
     // Make the objects
     game = new Game()
-    ball = new Sphere('salmon',canvas.width/2,canvas.height/2,10);
+    ball = new Sphere('salmon',canvas.width/2,canvas.height/2);
     player = new Paddle(20,canvas.height/2,15,80);
-    enemy = new Paddle(canvas.width-35,canvas.height/2,15,80);
+    player2 = new Paddle(canvas.width-35,canvas.height/2,15,80);
     //Events
     movePlayer(player);
+    ballState(ball)
     // Update and Draw
     _update();
     _draw();
@@ -29,7 +30,7 @@ function _update(){
 
     ball.update(canvas.width,canvas.height);
     player.update(canvas.width,canvas.height);
-    enemy.update(canvas.width,canvas.height);
+    player2.update(canvas.width,canvas.height);
 }
 
 function _draw(){
@@ -38,25 +39,39 @@ function _draw(){
 
     ball.draw();
     player.draw();
-    enemy.draw();
+    player2.draw();
 }
 
 // Objects ********************************************
 class Game{
     constructor(){
         this.state="menu";
+        this.p1Score=0;
+        this.p2Score=0;
+    }
+
+    setBall(){
+        ball.x=canvas.width/2;
+        ball.y=canvas.height/2;
+        ball.stiky=true;
+    }
+
+    startMatch(){
+        ball.stiky = false;
+        ball.dx = randomRange(0,1)==0 ? ball.speed : -ball.speed
+        ball.dy = randomRange(0,1)==0 ? ball.speed : -ball.speed
     }
 }
 
 class Sphere{
-    constructor(color,x,y,radius){
+    constructor(color,x,y){
         this.color = color;
         this.x=x;
         this.y=y;
         this.dx=-3;
         this.dy=3;
-        this.radius=radius;
-        this.stiky=false; //ball can't move
+        this.radius=10;
+        this.stiky=true; //ball can't move
         this.speed=3;
     }
 
@@ -70,21 +85,24 @@ class Sphere{
 
     update(xLimit, yLimit)
     {
-        // Check if the ball can moves
-        if(this.stiky){
-            this.dx=0;
-            this.dy=0;
-        }else{
-            //Canvas bounce
-            if(this.x < this.radius || this.x + this.radius > xLimit) this.dx = -this.dx;
-            if(this.y + this.radius > yLimit || this.y < this.radius) this.dy = -this.dy;
-            // Paddle colission
-            if(onCollideBall(this, player)) this.dx = -this.dx;
-            if(onCollideBall(this, enemy)) this.dx = -this.dx;
+        //Canvas bounce
+        if(/*this.x < this.radius || */this.x + this.radius > xLimit) this.dx = -this.dx;
+        if(this.y + this.radius > yLimit || this.y < this.radius) this.dy = -this.dy;
+        // Paddle colission
+        if(onCollideBall(this, player)) this.dx = -this.dx;
+        if(onCollideBall(this, player2)) this.dx = -this.dx;
 
-            //Game points
+        //Game points
+        if(this.x+this.radius < 0){
+            console.log("salio")
+            game.setBall();
         }
 
+        //stick the ball
+        if (this.stiky){
+            this.dx = 0;
+            this.dy = 0;
+        }
         //Update ball position
         this.x +=this.dx;
         this.y +=this.dy;

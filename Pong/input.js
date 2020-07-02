@@ -30,3 +30,13 @@ function movePlayer(player)
         }
     });
 }
+
+function ballState(ball){
+    // Start Game
+    document.addEventListener("keydown", event=>
+    {
+        if((event.key == "Spacebar" || event.key === ' ') && ball.stiky){
+            game.startMatch()
+        }
+    });
+}

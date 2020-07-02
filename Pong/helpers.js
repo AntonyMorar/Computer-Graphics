@@ -7,6 +7,11 @@ function clamp(num, min, max) {
     else return num;
 };
 
+// Random with range of numbers
+function randomRange(a,b){
+    return Math.floor(Math.random() * (b+1)) + (a);
+}
+
 // Return true if ball collides with object
 function onCollideBall(b,obj){
     if(b.y-b.radius > obj.y+obj.h) return false;
