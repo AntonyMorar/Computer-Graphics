@@ -80,21 +80,28 @@ class Game {
         ball.x = canvas.width / 2;
         ball.y = canvas.height / 2;
         ball.stiky = true;
+        player.y = (canvas.height / 2) - (player.h / 2)
+        player.dy = 0
+        player2.y = (canvas.height / 2) - (player.h / 2)
+        player2.dy = 0
     }
 
     startGame(gameType){
         switch (gameType) {
             case 0:
                 movePlayer(player);
+                this.inGamePlayers=1;
                 break;
             case 1:
                 movePlayer(player);
                 movePlayer(player2);
+                this.inGamePlayers=0;
                 break;
             case 2:
                 break;
             default: //Error default case 1 player
                 movePlayer(player);
+                this.inGamePlayers=1;
                 break;
         }
         this.state = "game";
@@ -120,7 +127,7 @@ class Sphere {
         this.dy = 3;
         this.radius = 10;
         this.stiky = true; //ball can't move
-        this.speed = 3;
+        this.speed = 3.5;
     }
 
     draw() {
@@ -133,7 +140,7 @@ class Sphere {
 
     update(xLimit, yLimit) {
         //Canvas bounce
-        if ( /*this.x < this.radius || */ this.x + this.radius > xLimit) this.dx = -this.dx;
+        /*if ( this.x < this.radius || this.x + this.radius > xLimit) this.dx = -this.dx;*/ 
         if (this.y + this.radius > yLimit || this.y < this.radius) this.dy = -this.dy;
         // Paddle colission
         if (onCollideBall(this, player)) this.dx = -this.dx;
@@ -142,6 +149,10 @@ class Sphere {
         //Game points
         if (this.x + this.radius < 0) {
             game.p2Score++;
+            game.setBall();
+        }
+        if (this.x - this.radius > xLimit) {
+            game.p1Score++;
             game.setBall();
         }
 
@@ -168,13 +179,7 @@ class Paddle {
         this.speed = 3;
         this.color = "white";
         this.bot = true
-    }
-
-    draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-        ctx.closePath();
+        this.botMultiplierSpeed = 0.7 // Diferent than player speed 
     }
 
     update(xLimit, yLimit) {
@@ -186,8 +191,27 @@ class Paddle {
         if (this.bot) this.botMovement();
     }
 
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.closePath();
+    }
+
     botMovement() {
-        this.dy = ball.dy;
+        // If the ball is in his half then can move
+        if(Math.abs((this.x+(this.w/2)) - ball.x) < canvas.height - 35){
+            //Detect the y psosition of the ball
+            if(ball.y < this.y+(this.h/2)){
+                this.dy = -this.speed * (this.botMultiplierSpeed);
+            }else if (ball.y > this.y+(this.h/2)){
+                this.dy = this.speed * (this.botMultiplierSpeed);
+            }else{
+                this.dy = 0
+            }
+        }else{
+            this.dy = 0
+        }
     }
 }
 
@@ -198,7 +222,6 @@ class Hud {
     }
 
     update() {
-        console.log(game.p2Score)
         this.p1 = game.p1Score;
         this.p2 = game.p2Score;
         game.changeHud = false
