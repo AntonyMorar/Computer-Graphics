@@ -193,43 +193,86 @@ class Hud {
 class Menu {
     constructor() {
         this.mainText = "PONG"
+        this.activeButton = null;
         this.buttonsPos = {
-            x: canvas.width / 2,
-            y: 185
+            x: (canvas.width / 2) - 85,
+            y: 165
         }
         this.margin = {
             x: 0,
             y: 60
         }
         this.buttons = [{
+                id:0,
                 text: "Player vs NPC",
                 x: this.buttonsPos.x,
                 y: this.buttonsPos.y,
-                w: this.buttonsPos.x + ctx.measureText("Player vs NPC").width,
-                h: this.buttonsPos.y + 25,
+                w: ctx.measureText("Player vs NPC").width,
+                h: 25,
                 color: "#e0e0e0"
             },
             {
+                id:1,
                 text: "Player vs Player",
                 x: this.buttonsPos.x + (this.margin.x * 1),
                 y: this.buttonsPos.y + (this.margin.y * 1),
-                w: this.buttonsPos.x + (this.margin.x * 1)+ ctx.measureText("Player vs Player").width,
-                h: this.buttonsPos.y + (this.margin.y * 1) + 25,
+                w: ctx.measureText("Player vs Player").width,
+                h: 25,
                 color: "#e0e0e0"
             },
             {
+                id:2,
                 text: "NPC vs NPC",
                 x: this.buttonsPos.x + (this.margin.x * 2),
                 y: this.buttonsPos.y + (this.margin.y * 2),
-                w: this.buttonsPos.x + (this.margin.x * 2)+ ctx.measureText("Player vs Player").width,
-                h: this.buttonsPos.y + (this.margin.y * 1) + 25,
+                w: ctx.measureText("Player vs Player").width,
+                h: 25,
                 color: "#e0e0e0"
             }
         ]
     }
 
     update() {
-        overlap(game.mousePos, this.buttons[0])
+        //First Try
+        /*
+        this.buttons.forEach(btn => {
+            //this.activeButton=null
+            if(overlap(game.mousePos, btn)){
+                this.activeButton = btn
+                btn.color='red';
+            }else{
+                //btn.color='e0e0e0';
+            }
+        });
+        */
+
+        //Second try
+        /*
+        if(overlap(game.mousePos, this.buttons[0])){
+            this.activeButton=0
+            this.buttons[0].color='red'
+        }else if(!overlap(game.mousePos, this.buttons[0])){
+            //this.buttons[0].color='e0e0e0'
+            this.activeButton=null
+        }
+        if (overlap(game.mousePos, this.buttons[1])){
+            this.activeButton=1
+        }else if(!overlap(game.mousePos, this.buttons[1])){
+            this.activeButton=null
+        }
+        */
+       let a = overlap(game.mousePos, this.buttons[0])
+       let b = overlap(game.mousePos, this.buttons[1])
+       let c = overlap(game.mousePos, this.buttons[2])
+
+       if(a || b || c){
+           if(a)this.activeButton=0
+           else if(b)this.activeButton=1
+           else if(c)this.activeButton=2
+       } else this.activeButton=null
+
+        console.log(a,b,c)
+        console.log(this.activeButton)
     }
 
     draw() {
@@ -238,12 +281,17 @@ class Menu {
         ctx.font = "70px Helvetica";
         ctx.fillText(this.mainText, canvas.width / 2, 100);
 
+        ctx.textAlign = "left";
+        ctx.textBaseline = 'top';
         ctx.font = "100 25px Helvetica";
         this.buttons.forEach(btn => {
             ctx.fillStyle = btn.color;
             ctx.fillText(btn.text, btn.x, btn.y);
+            ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
         });
+        ctx.textBaseline = 'alphabetic';
 
+        ctx.textAlign = "center";
         ctx.font = "10px Helvetica";
         ctx.fillStyle = "#e0e0e0";
         ctx.fillText("antony999k", canvas.width / 2, canvas.height - 18);
