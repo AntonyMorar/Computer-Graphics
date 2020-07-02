@@ -20,3 +20,8 @@ function onCollideBall(b,obj){
     if(b.x+b.radius < obj.x) return false;
     return true;
 } 
+
+function overlap(a,b){
+    console.log(a.x>b.x+b.w || a.y>b.y+b.h || a.x+a.w<b.x || a.y+a.h<b.y)
+    return !(a.x>b.x+b.w || a.y>b.y+b.h || a.x+a.w<b.x || a.y+a.h<b.y)
+} 
