@@ -9,7 +9,7 @@ let player = null;
 let player2 = null;
 //let particles = []
 
-// Mai Functions ********************************************
+// Main Functions ********************************************
 function main() {
     //Canvas
     canvas = document.querySelector("#ballCanvas");
@@ -32,7 +32,7 @@ function main() {
 
 function _update() {
     requestAnimationFrame(() => _update());
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     game.update();
     // Game States
@@ -239,7 +239,7 @@ class Paddle {
         this.speed = 3;
         this.color = "white";
         this.bot = true
-        this.botMultiplierSpeed = 0.9 // Diferent than player speed 
+        this.botMultiplierSpeed = 0.91 // 1 equal player speed / 1.5 is 150% player speed
     }
 
     update(xLimit, yLimit) {

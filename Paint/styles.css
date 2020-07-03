@@ -1,0 +1,19 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#paint{
+    display: flex;
+    flex-wrap:wrap;
+}
+
+#tools{
+    width: 300px;
+    border: 1px solid #bababa;
+    margin-right: 10px;
+}
+
+#paintCanvas{
+    background-color:white;
+    border:1px solid #bababa;
+}
