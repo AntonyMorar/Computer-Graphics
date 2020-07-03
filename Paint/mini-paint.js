@@ -1,6 +1,7 @@
 let ctx = null;
 let canvas = null;
 let cBounds = null;
+let tools =["brush", "pen", "eraser", "square"]
 
 // Main Functions ********************************************
 function _start() {
@@ -10,30 +11,31 @@ function _start() {
     cBounds = canvas.getBoundingClientRect();
     // Make the objects
     let program = new Program();
-    let brush = new Brush()
+    let tool = new Tool()
     //Events
-    drawEvents(brush);
-    toolsEvent(brush)
+    drawEvents(tool);
+    toolsEvent(tool)
     programEvents(program)
     // Update and Draw
-    _update(program,brush);
-    _draw(program,brush);
+    _update(program,tool);
+    _draw(program,tool);
 }
 
-function _update(program,brush) {
-    requestAnimationFrame(() => _update(program,brush));
-
-    program.update(brush);
-    brush.update()
+function _update(program,tool) {
+    requestAnimationFrame(() => _update(program,tool));
+    cBounds = canvas.getBoundingClientRect();
+    
+    program.update(tool);
+    tool.update()
 }
 
-function _draw(program,brush) {
-    requestAnimationFrame(() => _draw(program,brush));
+function _draw(program,tool) {
+    requestAnimationFrame(() => _draw(program,tool));
     if(program.clearCanvas){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         program.clearCanvas=false;
     }
-    brush.draw();
+    tool.draw();
 }
 
 // Objects ********************************************
@@ -42,35 +44,34 @@ class Program {
         this.toolChanged = false;
         this.clearCanvas = false;
         this.selectedTool = "brush"
-        this.tools =["brush", "pen", "eraser"]
     }
 
-    update(_brush){
+    update(tool){
         if(this.toolChanged){
             switch (this.selectedTool) {
                 case "brush":
-                    _brush.eraser=false;
-                    _brush.roundCap = true;
+                    tool.eraser=false;
+                    tool.roundCap = true;
                     break;
                 case "pen":
-                    _brush.eraser=false;
-                    _brush.roundCap = false;
+                    tool.eraser=false;
+                    tool.roundCap = false;
                     break;
                 case "eraser":
-                    _brush.eraser=true;
-                    _brush.roundCap = true;
+                    tool.eraser=true;
+                    tool.roundCap = true;
                     break;
                 default:
                     break;
             }
 
-            //console.log(_brush)
+            //console.log(tool)
             this.toolChanged = false;
         }
     }
 
     selectTool(newTool){
-        this.tools.forEach(tool => {
+        tools.forEach(tool => {
             if(newTool == tool){
                 this.selectedTool=newTool;
                 this.toolChanged = true;
@@ -79,13 +80,16 @@ class Program {
         });
     }
 
-    downloadCanvas(link, filename) {
-        link.href = document.getElementById('paintCanvas').toDataURL();
-        link.download = filename;
+    downloadCanvas(imageName) {
+        let img = canvas.toDataURL('image/jpg');
+        let a = document.createElement('a');
+        a.href = img;
+        a.download = imageName || 'draw';
+        a.click();
     }
 }
 
-class Brush{
+class Tool{
     constructor(){
         this.x = -99; //Out of canvas
         this.y = -99; //Out of canvas
@@ -103,17 +107,21 @@ class Brush{
 
     draw(){
         if(this.isDrawing){
-            if(this.startDraw){
-                ctx.lineWidth = this.stroke;
-                ctx.strokeStyle = !this.eraser ? this.color : 'rgba(255, 255, 255, 1)'; // Green path
-                ctx.lineCap = this.roundCap ? "round" : "square"
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y);
-    
-                this.startDraw = false;
-            }
-            ctx.lineTo(this.x, this.y);
-            ctx.stroke(); // Draw it
+            this.brush();
         }
+    }
+
+    brush(){
+        if(this.startDraw){
+            ctx.lineWidth = this.stroke;
+            ctx.strokeStyle = !this.eraser ? this.color : 'rgba(255, 255, 255, 1)'; // Green path
+            ctx.lineCap = this.roundCap ? "round" : "square"
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+
+            this.startDraw = false;
+        }
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke(); // Draw it
     }
 }

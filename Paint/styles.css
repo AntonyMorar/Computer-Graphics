@@ -74,7 +74,7 @@ input[type=color]{
 
 .btnSvg img{
     width: 100%;
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(0.93);
     margin-top: 2px;
 }
 
@@ -116,9 +116,19 @@ input[type=color]{
     color: white;
 }
 
-#tools {
+#options {
     width: 300px;
     margin-right: 10px;
+}
+
+#square div{
+    border: 1px solid #f4f4f4;
+    width: 28px;
+    height: 28px;
+}
+
+.selected #square div{
+    border-color: rgb(53,153,42255) !important;
 }
 
 #paintCanvas {
@@ -129,10 +139,6 @@ input[type=color]{
     font-family: Flaticon;
     font-style: normal;
     color: white;
-}
-
-[class="selected"]:before, [class=" selected"]:before, [class="selected"]:after, [class=" selected"]:after {
-    color: red;
 }
 
 .ranges{

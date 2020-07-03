@@ -1,12 +1,12 @@
-function drawEvents(brush) {
+function drawEvents(tool) {
     document.addEventListener("mousemove", event => {
-        brush.x = event.clientX - cBounds.x;
-        brush.y = event.clientY - cBounds.y;
+        tool.x = event.clientX - cBounds.x;
+        tool.y = event.clientY - cBounds.y;
     });
 
     document.addEventListener("mousedown", event => {
-        brush.startDraw = true;
-        brush.isDrawing = true;
+        tool.startDraw = true;
+        tool.isDrawing = true;
     });
 
     document.addEventListener("mousemove", event => {
@@ -14,19 +14,19 @@ function drawEvents(brush) {
     });
 
     document.addEventListener("mouseup", event => {
-        brush.isDrawing = false;
+        tool.isDrawing = false;
     });
 }
 
 // Tools handler
-function toolsEvent(brush) {
+function toolsEvent(tool) {
     document.getElementById("brushSize").oninput = function (event) {
-        brush.stroke = event.target.value;
+        tool.stroke = event.target.value;
         document.getElementById("brushSizeValue").innerHTML = event.target.value;
     };
 
     document.getElementById("brushColor").oninput = function (event) {
-        brush.color = event.target.value
+        tool.color = event.target.value
     };
 }
 
@@ -35,19 +35,30 @@ function programEvents(program){
         program.clearCanvas = true;
     });
 
+    document.getElementById("save").addEventListener("click", function () {
+        console.log("save")
+        program.downloadCanvas();
+    });
+
     document.getElementById("brush").addEventListener("click", function () {
-        program.selectTool("brush")
+        program.selectTool("brush");
+        selectToolUI("brush");
     });
 
     document.getElementById("pen").addEventListener("click", function () {
-        program.selectTool("pen")
+        program.selectTool("pen");
+        selectToolUI("pen");
     });
 
     document.getElementById("eraser").addEventListener("click", function () {
-        program.selectTool("eraser")
+        program.selectTool("eraser");
+        selectToolUI("eraser");
     });
 }
 
-function selectIconUI(){
-
+function selectToolUI(newTool){
+    tools.forEach(tool => {
+        document.getElementById(tool).classList.remove("selected");
+    });
+    document.getElementById(newTool).classList.add("selected");
 }
