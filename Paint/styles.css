@@ -56,7 +56,7 @@ input[type=color]{
     flex-wrap: wrap;
 }
 
-.menu .section .icons .icon{
+.icons button{
     margin-right: 15px;
 }
 
@@ -127,8 +127,20 @@ input[type=color]{
     height: 28px;
 }
 
-.selected #square div{
-    border-color: rgb(53,153,42255) !important;
+#square.selected div{
+    border:2px solid rgb(53,153,42255) !important;
+}
+
+#squareFill div{
+    border: 1px solid #f4f4f4;
+    background-color: #f4f4f4;
+    width: 28px;
+    height: 28px;
+}
+
+#squareFill.selected div{
+    border:2px solid rgb(53,153,42255) !important;
+    background-color: rgb(53,153,42255) !important;
 }
 
 #paintCanvas {

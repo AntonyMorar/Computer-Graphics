@@ -1,7 +1,7 @@
 let ctx = null;
 let canvas = null;
 let cBounds = null;
-let tools =["brush", "pen", "eraser", "square"]
+let tools =["brush", "pen", "eraser", "square","squareFill"]
 
 // Main Functions ********************************************
 function _start() {
@@ -26,7 +26,6 @@ function _update(program,tool) {
     cBounds = canvas.getBoundingClientRect();
     
     program.update(tool);
-    tool.update()
 }
 
 function _draw(program,tool) {
@@ -35,7 +34,7 @@ function _draw(program,tool) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         program.clearCanvas=false;
     }
-    tool.draw();
+    tool.draw(program);
 }
 
 // Objects ********************************************
@@ -61,13 +60,18 @@ class Program {
                     tool.eraser=true;
                     tool.roundCap = true;
                     break;
+                case "square":
+                    tool.fill = false;
+                    break;
+                case "squareFill":
+                    tool.fill = true;
+                    break;
                 default:
                     break;
             }
-
-            //console.log(tool)
             this.toolChanged = false;
         }
+        //console.log(this.selectedTool)
     }
 
     selectTool(newTool){
@@ -95,19 +99,22 @@ class Tool{
         this.y = -99; //Out of canvas
         this.startDraw=false;
         this.isDrawing = false;
+        this.endDrawing = false;
         this.color = "rgba(0,0,0,1)";
         this.stroke = 5;
+        //Brushes
         this.roundCap = true;
         this.eraser = false;
+        //Tools
+        this.fill=false;
+        this.startX = null;
+        this.startY = null;
     }
 
-    update(){
-       
-    }
-
-    draw(){
+    draw(program){
         if(this.isDrawing){
-            this.brush();
+            if(program.selectedTool == "brush" || program.selectedTool == "pen" || program.selectedTool == "eraser")this.brush();
+            if(program.selectedTool == "square" || program.selectedTool == "squareFill") this.square();
         }
     }
 
@@ -123,5 +130,25 @@ class Tool{
         }
         ctx.lineTo(this.x, this.y);
         ctx.stroke(); // Draw it
+
+        if(this.endDrawing) this.isDrawing = false;
+    }
+
+    square(){
+        if(this.startDraw){
+            this.startX =this.x;
+            this.startY= this.y;
+            this.startDraw = false;
+        }
+
+        if(this.endDrawing){
+            ctx.beginPath();
+            ctx.strokeStyle = this.color;
+            ctx.fillStyle = this.color;
+            ctx.rect(this.startX, this.startY, this.x-this.startX, this.y-this.startY);
+            ctx.stroke();
+            if(this.fill) ctx.fill()
+            this.isDrawing = false;
+        }
     }
 }

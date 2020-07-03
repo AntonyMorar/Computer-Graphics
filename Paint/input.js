@@ -1,20 +1,17 @@
 function drawEvents(tool) {
+    document.addEventListener("mousedown", event => {
+        tool.startDraw = true;
+        tool.isDrawing = true;
+        tool.endDrawing=false;
+    });
+
     document.addEventListener("mousemove", event => {
         tool.x = event.clientX - cBounds.x;
         tool.y = event.clientY - cBounds.y;
     });
 
-    document.addEventListener("mousedown", event => {
-        tool.startDraw = true;
-        tool.isDrawing = true;
-    });
-
-    document.addEventListener("mousemove", event => {
-
-    });
-
     document.addEventListener("mouseup", event => {
-        tool.isDrawing = false;
+        tool.endDrawing = true;
     });
 }
 
@@ -35,8 +32,7 @@ function programEvents(program){
         program.clearCanvas = true;
     });
 
-    document.getElementById("save").addEventListener("click", function () {
-        console.log("save")
+    document.getElementById("download").addEventListener("click", function () {
         program.downloadCanvas();
     });
 
@@ -53,6 +49,16 @@ function programEvents(program){
     document.getElementById("eraser").addEventListener("click", function () {
         program.selectTool("eraser");
         selectToolUI("eraser");
+    });
+
+    document.getElementById("square").addEventListener("click", function () {
+        program.selectTool("square");
+        selectToolUI("square");
+    });
+
+    document.getElementById("squareFill").addEventListener("click", function () {
+        program.selectTool("squareFill");
+        selectToolUI("squareFill");
     });
 }
 
