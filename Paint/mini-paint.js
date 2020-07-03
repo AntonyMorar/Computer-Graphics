@@ -9,42 +9,41 @@ function _start() {
     ctx = canvas.getContext("2d");
     cBounds = canvas.getBoundingClientRect();
     // Make the objects
-    program = new Program();
-    brush = new Brush()
+    let program = new Program();
+    let brush = new Brush()
     //Events
     drawEvents(brush);
     toolsEvent(brush)
+    programEvents(program)
     // Update and Draw
-    _update();
-    _draw();
+    _update(program,brush);
+    _draw(program,brush);
 }
 
-function _update() {
-    requestAnimationFrame(() => _update());
+function _update(program,brush) {
+    requestAnimationFrame(() => _update(program,brush));
 
     program.update();
     brush.update()
 }
 
-function _draw() {
-    requestAnimationFrame(() => _draw());
-    //ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+function _draw(program,brush) {
+    requestAnimationFrame(() => _draw(program,brush));
+    if(program.clearCanvas){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        program.clearCanvas=false;
+    }
     brush.draw();
 }
 
 // Objects ********************************************
 class Program {
     constructor(){
-
+        this.clearCanvas = false;
     }
 
     update(){
 
-    }
-
-    clearCanvas(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     downloadCanvas(link, filename) {
@@ -59,7 +58,7 @@ class Brush{
         this.y = -99; //Out of canvas
         this.startDraw=false;
         this.isDrawing = false;
-        this.color = "#000000";
+        this.color = "rgba(0,0,0,1)";
         this.stroke = 5;
         this.brushType = "circle";
         this.erraser = false;
@@ -76,7 +75,7 @@ class Brush{
     freeDraw(){
         if(this.startDraw){
             ctx.lineWidth = this.stroke;
-            ctx.strokeStyle = !this.erraser ? this.color : ctx.fillStyle; // Green path
+            ctx.strokeStyle = !this.erraser ? this.color : 'rgba(255, 255, 255, 1)'; // Green path
             if(this.brushType=="circle") ctx.lineCap = "round";
             ctx.beginPath();
             ctx.moveTo(this.x, this.y);
