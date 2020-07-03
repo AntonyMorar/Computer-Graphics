@@ -6,9 +6,24 @@
     box-sizing: border-box;
 }
 
+button:hover{
+    cursor: pointer;
+}
+
 body {
     font-family: Lato, Helvetica, "sans-serif";
     background-color: #2B2B2B;
+}
+
+input::-webkit-color-swatch {
+    border: none;
+}
+
+input[type=color]{
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-color: transparent;
 }
 
 #paint {
@@ -36,10 +51,41 @@ body {
     margin-bottom: 25px;
 }
 
+.menu .section .icons{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.menu .section .icons .icon{
+    margin-right: 15px;
+}
+
+.icon{
+    font-size: 30px;
+}
+
+.btnSvg{
+    width: 32px;
+}
+
+.btnSvg img{
+    width: 100%;
+    filter: brightness(0) invert(1);
+    margin-top: 2px;
+}
+
+.btnSvg:hover{
+    cursor: pointer;
+}
+
 .menu-h .section {
     display: flex;
     height: 100%;
     align-items: center;
+}
+
+.menu-h .section > *{
+    margin-right: 20px;
 }
 
 .menu .section .title {
@@ -73,4 +119,10 @@ body {
 
 #paintCanvas {
     background-color: white;
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+    font-family: Flaticon;
+    font-style: normal;
+    color: white;
 }
