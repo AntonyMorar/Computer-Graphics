@@ -1,0 +1,384 @@
+/*=============================================================
+SuperResete.css v1.2.0
+Author: @Antony999k
+MIT License
+https://github.com/antony999k/SuperResete.css
+=============================================================*/
+
+/* Documet
+---------------------------------------------------------------*/
+html {
+  line-height: 1.15;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Basic HTML
+---------------------------------------------------------------*/
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "pnum";
+  font-variant-numeric: proportional-nums;
+}
+
+a {
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+  text-decoration: none;
+}
+
+hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+}
+
+article,
+aside,
+footer,
+header,
+nav,
+section,
+figcaption,
+figure,
+main {
+  display: block;
+}
+
+li,
+ul,
+ol{
+  list-style: none;
+  padding: 0;
+}
+
+
+/* Form - Input
+---------------------------------------------------------------*/
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: sans-serif; /* 1 */
+  font-size: 100%; /* 1 */
+  line-height: 1.15; /* 1 */
+  margin: 0; /* 2 */
+}
+
+input,
+textarea{
+  border: none;
+}
+
+textarea{
+  resize: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    outline:none;
+}
+
+button{
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+button:focus{
+  outline: 0;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+button,
+input {
+  overflow: visible;
+}
+
+button,
+select {
+  text-transform: none;
+}
+
+button,
+html [type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+textarea {
+  overflow: auto;
+}
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type="search"] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+}
+
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+button:hover,
+label:hover,
+input:hover{
+  cursor: pointer;
+}
+
+/* Formating
+---------------------------------------------------------------*/
+mark {
+  background-color: #ff0;
+  color: #000;
+}
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+progress {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+/* Audio - Video
+---------------------------------------------------------------*/
+audio,
+video {
+  display: inline-block;
+}
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/* Images
+---------------------------------------------------------------*/
+img {
+  border-style: none;
+}
+
+canvas {
+  display: inline-block;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+  font-family: "Montserrat", sans-serif;
+  font-weight: 900;
+}
+
+h1{
+  font-size: 36px;
+}
+
+h2{
+  font-size: 30px;
+}
+
+h3{
+  font-size: 24px;
+}
+
+h4{
+  font-size: 18px;
+}
+
+h5{
+  font-size: 14px;
+}
+
+h6{
+  font-size: 12px;
+}
+
+p{
+  font-size: 14px;
+}
+
+a{
+  font-size: 14px;
+  cursor: pointer;
+}
+
+ul,
+ol,
+ol li,
+ul li{
+  font-size: 14px;
+}
+
+input,
+textarea{
+  font-size: 14px;
+  color: #262626;
+  border: 1px solid #ccc;
+}
+
+button{
+  font-size: 14px;
+  cursor: pointer;
+}
+
+::-webkit-input-placeholder{
+  font-size: 14px;
+}
+:-ms-input-placeholder{
+  font-size: 14px;
+}
+::-moz-placeholder{
+  font-size: 14px;
+}
+input:-moz-placeholder {
+   font-size: 14px;
+}
+
+a{
+  font-size: 15px;
+}
+
+a, button, button i{
+  color: #262626;
+  font-weight: 500;
+}
+
+a:hover{
+  transition-duration: 0.3s;
+  color: #666666;
+  /* text-decoration: underline; */
+}
+
+.lead{
+  font-weight: 200;
+  font-size: 24px;
+}
+
+
+/* Containers
+---------------------------------------------------------------*/
+.fy-container-xl,
+.fy-container-l,
+.fy-container-m,
+.fy-container-s{
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
+}
+
+.fy-container-xl{
+  max-width: 1300px;
+}
+
+.fy-container-l{
+  max-width: 1160px;
+}
+
+.fy-container-m{
+  max-width: 1040px;
+}
+
+.fy-container-s{
+  max-width: 645px;
+}
+
+
+/* Rows & Columns
+---------------------------------------------------------------*/
+.fy-row,
+.fy-rowVertical{
+  display: -webkit-flex; /* Safari */
+  display: flex;
+  justify-content:flex-start;
+
+}
+
+.fy-row{
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+.fy-rowVertical{
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.fy-row-chid{
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+/* Acomodar elementos */
+.fy-row-centerVertical{
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+.fy-row-centerHorizontal{
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.fy-row-centerMid{
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}

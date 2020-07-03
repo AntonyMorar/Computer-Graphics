@@ -1,19 +1,76 @@
-body{
-    font-family: Arial, Helvetica, sans-serif;
+*,
+:after,
+:before {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-#paint{
+body {
+    font-family: Lato, Helvetica, "sans-serif";
+    background-color: #2B2B2B;
+}
+
+#paint {
     display: flex;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
+    padding: 35px;
 }
 
-#tools{
+.menu,
+.menu-h {
+    background-color: rgb(63, 65, 71);
+    border: 2px solid rgb(38, 39, 41);
+    border-radius: 4px;
+    color: white;
+}
+
+.menu-h{
+    height: 50px;
+}
+
+.menu .section {
+    position: relative;
+    padding: 15px;
+    padding-top: 45px;
+    margin-bottom: 25px;
+}
+
+.menu-h .section {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.menu .section .title {
+    background: rgb(85, 131, 203);
+    background: linear-gradient(180deg, rgba(85, 131, 203, 1) 0%, rgba(102, 153, 212, 1) 100%);
+    padding: 10px;
+    position: absolute;
+    top: -10px;
+    left: -5px;
+}
+
+.menu-h .section .title {
+    display: flex;
+    align-items: center;
+    background: rgb(85, 131, 203);
+    background: linear-gradient(180deg, rgba(85, 131, 203, 1) 0%, rgba(102, 153, 212, 1) 100%);
+    padding: 10px;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+}
+
+.title .text {
+    color: white;
+}
+
+#tools {
     width: 300px;
-    border: 1px solid #bababa;
     margin-right: 10px;
 }
 
-#paintCanvas{
-    background-color:white;
-    border:1px solid #bababa;
+#paintCanvas {
+    background-color: white;
 }
