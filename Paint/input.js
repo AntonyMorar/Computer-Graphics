@@ -1,8 +1,11 @@
 function drawEvents(tool) {
     document.addEventListener("mousedown", event => {
-        tool.startDraw = true;
-        tool.isDrawing = true;
-        tool.endDrawing=false;
+        if(event.clientX < cBounds.x || event.clientX > cBounds.x + canvas.width || event.clientY < cBounds.y || event.clientY > cBounds.y + canvas.height) return;
+        if(event.button == 0){
+            tool.startDraw = true;
+            tool.isDrawing = true;
+            tool.endDrawing=false;
+        }
     });
 
     document.addEventListener("mousemove", event => {
@@ -13,6 +16,10 @@ function drawEvents(tool) {
     document.addEventListener("mouseup", event => {
         tool.endDrawing = true;
     });
+
+    canvas.oncontextmenu = function (e) {
+        e.preventDefault();
+    };
 }
 
 // Tools handler

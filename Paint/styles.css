@@ -145,6 +145,7 @@ input[type=color]{
 
 #paintCanvas {
     background-color: white;
+    position: relative;
 }
 
 [class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
