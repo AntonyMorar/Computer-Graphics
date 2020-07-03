@@ -14,8 +14,8 @@
     <div class="menu-h">
         <div class="section">
             <div class="title"><span class="text">File</span></div>
-            <button id="clear"><i class="flaticon-016-pad icon"></i></button>
-            <button id="save" class="btnSvg"><img src="src/save.png" alt="Save"></button>
+            <button id="clear" class=""><i class="flaticon-016-pad icon"></i></button>
+            <button id="save" class="btnSvg" class="selected"><img src="src/save.png" alt="Save"></button>
         </div>
     </div>
 
@@ -29,13 +29,16 @@
                 <div class="title"><span class="text">Paint Brush</span></div>
                 <div class="icons">
                     <button id="brush"><i class="flaticon-019-pen icon"></i></button>
+                    <button id="pen"><i class="flaticon-011-highlighter icon"></i></button>
                     <button id="eraser"><i class="flaticon-020-eraser icon"></i></button>
                 </div>
-
-                <span class="subtitle">Brush Size</span>
-                <input type="range" id="brushSize" min="1" max="100" value="5" step="1">
-                <span id="brushSizeValue">5</span>
-                <input id="erraser" type="checkbox">
+                <div class="ranges">
+                    <div>
+                        <span class="subtitle">Size</span>
+                        <span id="brushSizeValue" class="value">5</span>
+                    </div>
+                    <input type="range" id="brushSize" min="1" max="100" value="5" step="1">
+                </div>
             </div>
 
             <div class="section">

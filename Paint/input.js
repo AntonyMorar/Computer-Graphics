@@ -28,14 +28,26 @@ function toolsEvent(brush) {
     document.getElementById("brushColor").oninput = function (event) {
         brush.color = event.target.value
     };
-
-    document.getElementById("erraser").oninput = function (event) {
-        brush.erraser = event.target.checked
-    };
 }
 
 function programEvents(program){
     document.getElementById("clear").addEventListener("click", function () {
         program.clearCanvas = true;
     });
+
+    document.getElementById("brush").addEventListener("click", function () {
+        program.selectTool("brush")
+    });
+
+    document.getElementById("pen").addEventListener("click", function () {
+        program.selectTool("pen")
+    });
+
+    document.getElementById("eraser").addEventListener("click", function () {
+        program.selectTool("eraser")
+    });
+}
+
+function selectIconUI(){
+
 }

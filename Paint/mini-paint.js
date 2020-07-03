@@ -23,7 +23,7 @@ function _start() {
 function _update(program,brush) {
     requestAnimationFrame(() => _update(program,brush));
 
-    program.update();
+    program.update(brush);
     brush.update()
 }
 
@@ -39,11 +39,44 @@ function _draw(program,brush) {
 // Objects ********************************************
 class Program {
     constructor(){
+        this.toolChanged = false;
         this.clearCanvas = false;
+        this.selectedTool = "brush"
+        this.tools =["brush", "pen", "eraser"]
     }
 
-    update(){
+    update(_brush){
+        if(this.toolChanged){
+            switch (this.selectedTool) {
+                case "brush":
+                    _brush.eraser=false;
+                    _brush.roundCap = true;
+                    break;
+                case "pen":
+                    _brush.eraser=false;
+                    _brush.roundCap = false;
+                    break;
+                case "eraser":
+                    _brush.eraser=true;
+                    _brush.roundCap = true;
+                    break;
+                default:
+                    break;
+            }
 
+            //console.log(_brush)
+            this.toolChanged = false;
+        }
+    }
+
+    selectTool(newTool){
+        this.tools.forEach(tool => {
+            if(newTool == tool){
+                this.selectedTool=newTool;
+                this.toolChanged = true;
+                return;
+            }
+        });
     }
 
     downloadCanvas(link, filename) {
@@ -60,8 +93,8 @@ class Brush{
         this.isDrawing = false;
         this.color = "rgba(0,0,0,1)";
         this.stroke = 5;
-        this.brushType = "circle";
-        this.erraser = false;
+        this.roundCap = true;
+        this.eraser = false;
     }
 
     update(){
@@ -69,20 +102,18 @@ class Brush{
     }
 
     draw(){
-        if(this.isDrawing) this.freeDraw()
-    }
-
-    freeDraw(){
-        if(this.startDraw){
-            ctx.lineWidth = this.stroke;
-            ctx.strokeStyle = !this.erraser ? this.color : 'rgba(255, 255, 255, 1)'; // Green path
-            if(this.brushType=="circle") ctx.lineCap = "round";
-            ctx.beginPath();
-            ctx.moveTo(this.x, this.y);
-
-            this.startDraw = false;
+        if(this.isDrawing){
+            if(this.startDraw){
+                ctx.lineWidth = this.stroke;
+                ctx.strokeStyle = !this.eraser ? this.color : 'rgba(255, 255, 255, 1)'; // Green path
+                ctx.lineCap = this.roundCap ? "round" : "square"
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+    
+                this.startDraw = false;
+            }
+            ctx.lineTo(this.x, this.y);
+            ctx.stroke(); // Draw it
         }
-        ctx.lineTo(this.x, this.y);
-        ctx.stroke(); // Draw it
     }
 }

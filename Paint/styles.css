@@ -64,6 +64,10 @@ input[type=color]{
     font-size: 30px;
 }
 
+.selected .icon::before{
+    color: rgb(53,153,42255) !important;
+}
+
 .btnSvg{
     width: 32px;
 }
@@ -125,4 +129,26 @@ input[type=color]{
     font-family: Flaticon;
     font-style: normal;
     color: white;
+}
+
+[class="selected"]:before, [class=" selected"]:before, [class="selected"]:after, [class=" selected"]:after {
+    color: red;
+}
+
+.ranges{
+    padding: 20px 0;
+}
+
+.ranges .subtitle{
+    font-size: 16px;
+}
+
+.ranges .value{
+    font-size: 12px;
+    margin-left: 5px;
+    color: rgba(255,255,255,0.5);
+}
+
+.ranges input{
+    width: 100%;
 }
