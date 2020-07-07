@@ -6,30 +6,34 @@
     box-sizing: border-box;
 }
 
-button:hover{
+button:hover {
     cursor: pointer;
 }
 
 body {
     font-family: Lato, Helvetica, "sans-serif";
     background-color: #2B2B2B;
+    color: white;
+}
+
+section {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 35px;
+    padding-left: 35px;
+    padding-right: 30px;
+    padding-bottom: 0px;
 }
 
 input::-webkit-color-swatch {
     border: none;
 }
 
-input[type=color]{
+input[type=color] {
     width: 100%;
     padding: 0;
     border: none;
     border-color: transparent;
-}
-
-#paint {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 35px;
 }
 
 .menu,
@@ -40,7 +44,7 @@ input[type=color]{
     color: white;
 }
 
-.menu-h{
+.menu-h {
     height: 50px;
 }
 
@@ -51,34 +55,34 @@ input[type=color]{
     margin-bottom: 25px;
 }
 
-.menu .section .icons{
+.menu .section .icons {
     display: flex;
     flex-wrap: wrap;
 }
 
-.icons button{
+.icons button {
     margin-right: 15px;
 }
 
-.icon{
+.icon {
     font-size: 30px;
 }
 
-.selected .icon::before{
-    color: rgb(53,153,42255) !important;
+.selected .icon::before {
+    color: rgb(53, 153, 42255) !important;
 }
 
-.btnSvg{
+.btnSvg {
     width: 32px;
 }
 
-.btnSvg img{
+.btnSvg img {
     width: 100%;
     filter: brightness(0) invert(0.93);
     margin-top: 2px;
 }
 
-.btnSvg:hover{
+.btnSvg:hover {
     cursor: pointer;
 }
 
@@ -88,7 +92,7 @@ input[type=color]{
     align-items: center;
 }
 
-.menu-h .section > *{
+.menu-h .section>* {
     margin-right: 20px;
 }
 
@@ -118,56 +122,85 @@ input[type=color]{
 
 #options {
     width: 300px;
-    margin-right: 10px;
+    margin-right: 15px;
 }
 
-#square div{
+#square div {
     border: 1px solid #f4f4f4;
     width: 28px;
     height: 28px;
 }
 
-#square.selected div{
-    border:2px solid rgb(53,153,42255) !important;
+#square.selected div {
+    border: 2px solid rgb(53, 153, 42255) !important;
 }
 
-#squareFill div{
+#squareFill div {
     border: 1px solid #f4f4f4;
     background-color: #f4f4f4;
     width: 28px;
     height: 28px;
 }
 
-#squareFill.selected div{
-    border:2px solid rgb(53,153,42255) !important;
-    background-color: rgb(53,153,42255) !important;
+#squareFill.selected div {
+    border: 2px solid rgb(53, 153, 42255) !important;
+    background-color: rgb(53, 153, 42255) !important;
 }
 
-#paintCanvas {
-    background-color: white;
+/* Canvas *******************************************/
+.canvasContainer {
     position: relative;
+    margin-right: 15px;
+    width: 600px;
+    height: 600px;
 }
 
-[class^="flaticon-"]:before, [class*=" flaticon-"]:before, [class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+.canvasContainer #paintCanvas {
+    background-color: white;
+    z-index: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.canvasContainer #previewCanvas {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+[class^="flaticon-"]:before,
+[class*=" flaticon-"]:before,
+[class^="flaticon-"]:after,
+[class*=" flaticon-"]:after {
     font-family: Flaticon;
     font-style: normal;
     color: white;
 }
 
-.ranges{
-    padding: 20px 0;
+.ranges {
+    padding-top: 20px;
 }
 
-.ranges .subtitle{
+.ranges .subtitle {
     font-size: 16px;
 }
 
-.ranges .value{
+.ranges .value {
     font-size: 12px;
     margin-left: 5px;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255, 255, 255, 0.5);
 }
 
-.ranges input{
+.ranges input {
     width: 100%;
+}
+
+#artwork {
+    flex-grow: 1;
 }

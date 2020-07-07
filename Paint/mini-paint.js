@@ -1,6 +1,9 @@
-let ctx = null;
 let canvas = null;
+let ctx = null;
 let cBounds = null;
+let canvasPreview = null;
+let ctxPreview = null;
+let cBoundsPreview = null;
 let tools =["brush", "pen", "eraser", "square","squareFill"]
 
 // Main Functions ********************************************
@@ -9,6 +12,9 @@ function _start() {
     canvas = document.querySelector("#paintCanvas");
     ctx = canvas.getContext("2d");
     cBounds = canvas.getBoundingClientRect();
+    canvasPreview = document.querySelector("#previewCanvas");
+    ctxPreview = canvasPreview.getContext("2d");
+    cBoundsPreview = canvasPreview.getBoundingClientRect();
     // Make the objects
     let program = new Program();
     let tool = new Tool()
@@ -143,6 +149,7 @@ class Tool{
 
         if(this.endDrawing){
             ctx.beginPath();
+            ctx.lineWidth = this.stroke;
             ctx.strokeStyle = this.color;
             ctx.fillStyle = this.color;
             ctx.rect(this.startX, this.startY, this.x-this.startX, this.y-this.startY);

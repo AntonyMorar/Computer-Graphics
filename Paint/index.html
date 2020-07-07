@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="styles.css">
     <title>Tiny Paint</title>
 </head>
+
 <body onload="_start()">
     <div class="menu-h">
         <div class="section">
@@ -19,13 +21,17 @@
         </div>
     </div>
 
-    <div id="paint">
+    <section id="paint">
         <div id="options" class="menu">
             <div id="tools" class="section">
                 <div class="title"><span class="text">Tool</span></div>
                 <div class="icons">
-                    <button id="square"><div></div></button>
-                    <button id="squareFill"><div></div></button>
+                    <button id="square">
+                        <div></div>
+                    </button>
+                    <button id="squareFill">
+                        <div></div>
+                    </button>
                 </div>
             </div>
 
@@ -49,11 +55,26 @@
                 <div class="title"><span class="text">Color</span></div>
                 <input id="brushColor" type="color" value="#fff">
             </div>
-              
+
         </div>
-        <canvas id="paintCanvas" width="600" height="600">
-            Your browser does not support the canvas element
-        </canvas>
-    </div>
+        <div class="canvasContainer">
+            <canvas id="paintCanvas" width="600" height="600">
+                Your browser does not support the canvas element
+            </canvas>
+            <canvas id="previewCanvas" width="600" height="600">
+                Your browser does not support the canvas element
+            </canvas>
+        </div>
+
+        <div id="artwork" class="menu">
+            <div id="tools" class="section">
+                <div class="title"><span class="text">Artwork</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <p>antony999k</p>
+    </section>
 </body>
 </html>
