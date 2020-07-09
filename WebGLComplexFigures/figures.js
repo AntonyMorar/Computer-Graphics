@@ -73,30 +73,30 @@ function createPiramid(gl, translation, rotationAxis) {
 
     let verts = [
         // Bottom face (Clockwise, start on top)
-        0.0, -1.0, -1.0, //0
-        1.0, -1.0, 0.0, //1
-        0.5, -1.0, 1.0, //2
-        -0.5, -1.0, 1.0, //3
-        -1.0, -1.0, 0.0, //4
+        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)),    //0
+        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)),  //1
+        (Math.sin(144 * Math.PI / 180)), -1.0, (Math.cos(144 * Math.PI / 180)), //2
+        (Math.sin(216 * Math.PI / 180)), -1.0, (Math.cos(216 * Math.PI / 180)), //3
+        (Math.sin(288 * Math.PI / 180)), -1.0, (Math.cos(288 * Math.PI / 180)), //4
         //Faces, start with face 0 to 1, then clockwise
-        0.0, -1.0, -1.0, //5 (Mirror 0)
-        1.0, -1.0, 0.0, //6 (Mirror 1)
+        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)), //5 (Mirror 0)
+        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)), //6 (Mirror 1)
         0.0, 1.0, 0.0, //7
 
-        1.0, -1.0, 0.0, //8 (Mirror 1)
-        0.5, -1.0, 1.0, //9 (Mirror 2)
+        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)), //8 (Mirror 1)
+        (Math.sin(144 * Math.PI / 180)), -1.0, (Math.cos(144 * Math.PI / 180)), //9 (Mirror 2)
         0.0, 1.0, 0.0, //10
 
-        0.5, -1.0, 1.0, //11 (Mirror 2)
-        -0.5, -1.0, 1.0, //12 (Mirror 3)
+        (Math.sin(144 * Math.PI / 180)), -1.0, (Math.cos(144 * Math.PI / 180)), //11 (Mirror 2)
+        (Math.sin(216 * Math.PI / 180)), -1.0, (Math.cos(216 * Math.PI / 180)), //12 (Mirror 3)
         0.0, 1.0, 0.0, //13
 
-        -0.5, -1.0, 1.0, //14 (Mirror 3)
-        -1.0, -1.0, 0.0, //15 (Mirror 4)
+        (Math.sin(216 * Math.PI / 180)), -1.0, (Math.cos(216 * Math.PI / 180)), //14 (Mirror 3)
+        (Math.sin(288 * Math.PI / 180)), -1.0, (Math.cos(288 * Math.PI / 180)), //15 (Mirror 4)
         0.0, 1.0, 0.0, //16
 
-        -1.0, -1.0, 0.0, //17 (Mirror 4)
-        0.0, -1.0, -1.0, //18 (Mirror 0)
+        (Math.sin(288 * Math.PI / 180)), -1.0, (Math.cos(288 * Math.PI / 180)), //17 (Mirror 4)
+        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)), //18 (Mirror 0)
         0.0, 1.0, 0.0, //19
     ];
 
