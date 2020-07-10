@@ -16,9 +16,10 @@
 		        initViewport(gl, canvas);
 		        initGL(canvas);
                 let piramid = createPiramid(gl, [-3 , 0, -2], [0.1, 1.0, 0.2]);
-                let dodecahedron = createDodecahedron(gl, [3 , 0, -2], [0.1, 0.0, 0.0]);
+				let dodecahedron = createDodecahedron(gl, [0 , 0, -2], [0.0, 0.0, 0.0]);
+				let octahedron = createOctahedron(gl, [3 , 0, -2], [0.5, 0.2, 0.0]);
 		        initShader(gl);
-				run(gl, [piramid, dodecahedron]);
+				run(gl, [piramid, dodecahedron, octahedron]);
 			}
 	);
 
