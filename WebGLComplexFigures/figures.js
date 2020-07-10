@@ -5,6 +5,9 @@ let projectionMatrix;
 let shaderProgram, shaderVertexPositionAttribute, shaderVertexColorAttribute, shaderProjectionMatrixUniform, shaderModelViewMatrixUniform;
 
 let duration = 5000; // ms
+let availableColors = [
+
+]
 
 // Attributes: Input variables used in the vertex shader. Since the vertex shader is called on each vertex, these will be different every time the vertex shader is invoked.
 // Uniforms: Input variables for both the vertex and fragment shaders. These do not change values from vertex to vertex.
@@ -73,8 +76,8 @@ function createPiramid(gl, translation, rotationAxis) {
 
     let verts = [
         // Bottom face
-        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)),    //0
-        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)),  //1
+        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)), //0
+        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)), //1
         (Math.sin(144 * Math.PI / 180)), -1.0, (Math.cos(144 * Math.PI / 180)), //2
         (Math.sin(216 * Math.PI / 180)), -1.0, (Math.cos(216 * Math.PI / 180)), //3
         (Math.sin(288 * Math.PI / 180)), -1.0, (Math.cos(288 * Math.PI / 180)), //4
@@ -181,24 +184,113 @@ function createPiramid(gl, translation, rotationAxis) {
 function createDodecahedron(gl, translation, rotationAxis) {
     // Vertex Data
     let vertexBuffer;
+    let goldR = (1 + Math.sqrt(5)) / 2; //Golden Ratio
+    let radius=0.6;
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
-    let verts = [
-        // Bottom face (A)
-        (Math.sin(0 * Math.PI / 180)), -1.0, (Math.cos(0 * Math.PI / 180)),     //0
-        (Math.sin(72 * Math.PI / 180)), -1.0, (Math.cos(72 * Math.PI / 180)),   //1
-        (Math.sin(144 * Math.PI / 180)), -1.0, (Math.cos(144 * Math.PI / 180)), //2
-        (Math.sin(216 * Math.PI / 180)), -1.0, (Math.cos(216 * Math.PI / 180)), //3
-        (Math.sin(288 * Math.PI / 180)), -1.0, (Math.cos(288 * Math.PI / 180)), //4
+    let points = {
+        //(±1, ±1, ±1)
+        'A': [1, 1, 1],
+        'B': [1, 1, -1],
+        'C': [1, -1, 1],
+        'D': [1, -1, -1],
+        'E': [-1, 1, 1],
+        'F': [-1, 1, -1],
+        'G': [-1, -1, 1],
+        'H': [-1, -1, -1],
+        //(0, ±ϕ, ± 1 / ϕ )
+        'I': [0, goldR, 1 / goldR],
+        'K': [0, goldR, -1 / goldR],
+        'J': [0, -goldR, 1 / goldR],
+        'L': [0, -goldR, -1 / goldR],
+        //(± 1 / ϕ , 0, ±ϕ)
+        'M': [1 / goldR, 0, goldR],
+        'N': [1 / goldR, 0, -goldR],
+        'P': [-1 / goldR, 0, goldR],
+        'O': [-1 / goldR, 0, -goldR],
+        //(±ϕ, ± 1 / ϕ , 0)
+        'Q': [goldR, 1 / goldR, 0],
+        'R': [-goldR, -1 / goldR, 0],
+        'S': [goldR, -1 / goldR, 0],
+        'T': [-goldR, 1 / goldR, 0]
+    }
 
-        // Top Face (B)
-        (Math.sin(180 * Math.PI / 180)), 1.0, (Math.cos(180 * Math.PI / 180)),  // 5 
-        (Math.sin(252 * Math.PI / 180)), 1.0, (Math.cos(252 * Math.PI / 180)),  // 6
-        (Math.sin(324 * Math.PI / 180)), 1.0, (Math.cos(324 * Math.PI / 180)),  // 7 
-        (Math.sin(36 * Math.PI / 180)), 1.0, (Math.cos(36 * Math.PI / 180)),    // 8 
-        (Math.sin(108 * Math.PI / 180)), 1.0, (Math.cos(108 * Math.PI / 180)),  // 9 
-    ];
+    let verts = []
+    //(O,H,L,D,N) clockwise
+    verts.push(...points.O) //0
+    verts.push(...points.H) //1
+    verts.push(...points.L) //2
+    verts.push(...points.D) //3
+    verts.push(...points.N) //4
+    //(O,N,B,K,F) clockwise
+    verts.push(...points.O) //5
+    verts.push(...points.N) //6
+    verts.push(...points.B) //7
+    verts.push(...points.K) //8
+    verts.push(...points.F) //9
+    //(D,S,Q,B,N) clockwise
+    verts.push(...points.D) //10
+    verts.push(...points.S) //11
+    verts.push(...points.Q) //12
+    verts.push(...points.B) //13
+    verts.push(...points.N) //14
+    //(F,T,R,H,O) clockwise
+    verts.push(...points.F) //15
+    verts.push(...points.T) //16
+    verts.push(...points.R) //17
+    verts.push(...points.H) //18
+    verts.push(...points.O) //19
+    //(K,I,E,T,F) clockwise
+    verts.push(...points.K) //20
+    verts.push(...points.I) //21
+    verts.push(...points.E) //22
+    verts.push(...points.T) //23
+    verts.push(...points.F) //24
+    //(B,Q,A,I,K) clockwise
+    verts.push(...points.B) //25
+    verts.push(...points.Q) //26
+    verts.push(...points.A) //27
+    verts.push(...points.I) //28
+    verts.push(...points.K) //29
+    //(L,J,C,S,D) clockwise
+    verts.push(...points.L) //30
+    verts.push(...points.J) //31
+    verts.push(...points.C) //32
+    verts.push(...points.S) //33
+    verts.push(...points.D) //34
+    //(H,R,G,J,L) clockwise
+    verts.push(...points.H) //35
+    verts.push(...points.R) //36
+    verts.push(...points.G) //37
+    verts.push(...points.J) //38
+    verts.push(...points.L) //39
+    //(T,E,P,G,R) clockwise
+    verts.push(...points.T) //40
+    verts.push(...points.E) //41
+    verts.push(...points.P) //42
+    verts.push(...points.G) //43
+    verts.push(...points.R) //44
+    //(S,C,M,A,Q) clockwise
+    verts.push(...points.S) //45
+    verts.push(...points.C) //46
+    verts.push(...points.M) //47
+    verts.push(...points.A) //48
+    verts.push(...points.Q) //49
+    //(G,P,M,C,J) clockwise
+    verts.push(...points.G) //50
+    verts.push(...points.P) //51
+    verts.push(...points.M) //52
+    verts.push(...points.C) //53
+    verts.push(...points.J) //54
+    //(A,M,P,E,I) clockwise
+    verts.push(...points.A) //55
+    verts.push(...points.M) //56
+    verts.push(...points.P) //57
+    verts.push(...points.E) //58
+    verts.push(...points.I) //59
+    // Scale
+    verts=verts.map(function(vert) { return vert * radius; });
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 
@@ -206,8 +298,18 @@ function createDodecahedron(gl, translation, rotationAxis) {
     let colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     let faceColors = [
-        [0.85, 0.0, 0.2, 1.0], // Bottom face
-        [0.1, 0.3, 0.9, 1.0], // Top Parent Face
+        [0.2, 0.0, 0.9, 1.0],
+        [1.0, 0.0, 0.2, 1.0], 
+        [0.2, 0.9, 0.0, 1.0], 
+        [0.9, 0.0, 1.0, 1.0], 
+        [1.0, 0.9, 0.0, 1.0], 
+        [0.0, 0.8, 1.0, 1.0], 
+        [0.98, 0.3, 0.3, 1.0], 
+        [0.5, 0.5, 1.0, 1.0], 
+        [0.6, 1.0, 0.4, 1.0], 
+        [1.0, 0.5, 0.5, 1.0], 
+        [0.3, 0.8, 0.65, 1.0], 
+        [0.4, 0.1, 1.0, 1.0], 
     ];
 
     let vertexColors = [];
@@ -222,8 +324,18 @@ function createDodecahedron(gl, translation, rotationAxis) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pyramidIndexBuffer);
 
     let pyramidIndices = [
-        0, 1, 2, 0, 2, 3, 0, 3, 4, // Bottom face
-        5, 6, 7, 5, 7, 8, 5, 8, 9,
+        0, 1, 2, 0, 2, 4, 2, 3, 4,
+        5, 6, 7, 5, 7, 9, 7, 8, 9,
+        10, 11, 12, 10, 12, 14, 12, 13, 14,
+        15, 16, 17, 15, 17, 19, 17, 18, 19,
+        20, 21, 22, 20, 22, 24, 22, 23, 24,
+        25, 26, 27, 25, 27, 29, 27, 28, 29,
+        30, 31, 32, 30, 32, 34, 32, 33, 34,
+        35, 36, 37, 35, 37, 39, 37, 38, 39,
+        40, 41, 42, 40, 42, 44, 42, 43, 44,
+        45, 46, 47, 45, 47, 49, 47, 48, 49,
+        50, 51, 52, 50, 52, 54, 52, 53, 54,
+        55, 56, 57, 55, 57, 59, 57, 58, 59,
     ];
 
     // gl.ELEMENT_ARRAY_BUFFER: Buffer used for element indices.
@@ -267,48 +379,48 @@ function createDodecahedron(gl, translation, rotationAxis) {
 function createOctahedron(gl, translation, rotationAxis) {
     // Vertex Data
     let vertexBuffer;
-    let width = 0.75;
+    let width = 0.5;
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
     let verts = [
         // Top Front Face
-        -width, 0.0, width,  //0
-        width, 0.0, width,   //1
-        0.0, 1.0, 0.0,   //2
+        -width, 0.0, width, //0
+        width, 0.0, width, //1
+        0.0, 1.0, 0.0, //2
 
         // Top Bottom Face
-        -width, 0.0, width,  //3 (Repeat 0)
-        width, 0.0, width,   //4 (Repeat 1)
-        0.0, -1.0, 0.0,  //5
+        -width, 0.0, width, //3 (Repeat 0)
+        width, 0.0, width, //4 (Repeat 1)
+        0.0, -1.0, 0.0, //5
 
         // Left Top Face
-        -width, 0.0, -width,  //6 
-        -width, 0.0, width,  //7 (Repeat 0)
-        0.0, 1.0, 0.0,   //8 (Repeat 2)
+        -width, 0.0, -width, //6 
+        -width, 0.0, width, //7 (Repeat 0)
+        0.0, 1.0, 0.0, //8 (Repeat 2)
 
         // Left Bottom Face
-        -width, 0.0, -width,  //9  (Repeat 6)
-        -width, 0.0, width,   //10 (Repeat 7)
-        0.0, -1.0, 0.0,   //11 (Repeat 5)
+        -width, 0.0, -width, //9  (Repeat 6)
+        -width, 0.0, width, //10 (Repeat 7)
+        0.0, -1.0, 0.0, //11 (Repeat 5)
 
         // Back Top Face
-        -width, 0.0, -width,  //12  (Repeat 7,0)
-        width, 0.0, -width,  //13
-        0.0, 1.0, 0.0,  //14 (Repeat 2)
+        -width, 0.0, -width, //12  (Repeat 7,0)
+        width, 0.0, -width, //13
+        0.0, 1.0, 0.0, //14 (Repeat 2)
 
         // Back Bottom Face
-        -width, 0.0, -width,  //15 (Repeat 12)
-        width, 0.0, -width,  //16 (Repeat 13)
-        0.0, -1.0, 0.0,  //17 (Repeat 5,1)
+        -width, 0.0, -width, //15 (Repeat 12)
+        width, 0.0, -width, //16 (Repeat 13)
+        0.0, -1.0, 0.0, //17 (Repeat 5,1)
 
         // Rigth Top Face
-        width, 0.0,width,  //18  (Repeat 4,1)
+        width, 0.0, width, //18  (Repeat 4,1)
         width, 0.0, -width, //19 
-        0.0, 1.0, 0.0,  //20 
+        0.0, 1.0, 0.0, //20 
 
         // Rigth Bottom Face
-        width, 0.0, width,  //21
+        width, 0.0, width, //21
         width, 0.0, -width, //22 
         0.0, -1.0, 0.0, //23 
     ];
@@ -320,12 +432,12 @@ function createOctahedron(gl, translation, rotationAxis) {
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     let faceColors = [
         [0.9, 0.4, 0.0, 1.0], // Top Front Face
-        [0.4, 0.9, 0.0, 1.0], 
-        [0.5, 0.1, 0.88, 1.0], 
-        [0.1, 0.3, 1.0, 1.0], 
-        [0.9, 0.0, 0.5, 1.0], 
-        [0.7, 1.0, 1.0, 1.0], 
-        [0.2, 0.0, 1.0, 1.0], 
+        [0.4, 0.9, 0.0, 1.0],
+        [0.5, 0.1, 0.88, 1.0],
+        [0.1, 0.3, 1.0, 1.0],
+        [0.9, 0.0, 0.5, 1.0],
+        [0.7, 1.0, 1.0, 1.0],
+        [0.2, 0.0, 1.0, 1.0],
         [0.0, 0.7, 0.5, 1.0],
     ];
 
