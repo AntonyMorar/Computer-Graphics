@@ -379,7 +379,8 @@ function createDodecahedron(gl, translation, rotationAxis) {
 function createOctahedron(gl, translation, rotationAxis) {
     // Vertex Data
     let vertexBuffer;
-    let width = 0.5;
+    let width = 0.6;
+    let dy = 0.1;
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
