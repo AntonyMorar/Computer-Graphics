@@ -138,7 +138,7 @@ function draw(gl, objs) {
     }
 }
 
-let finalVerts=[]
+let tempVerts=[]
 function sierpinski(i,ax,ay,az,bx,by,bz,cx,cy,cz){
     if(i>0){
        sierpinski(i-1,ax,ay,az,(ax+bx)/2,(ay+cy)/2,(bz+az)/2,(ax+cx)/2,(ay+by)/2,(cz+az)/2); //A
@@ -146,7 +146,7 @@ function sierpinski(i,ax,ay,az,bx,by,bz,cx,cy,cz){
        sierpinski(i-1,(cx+ax)/2,(ay+by)/2,(cz+az)/2,(bx+cx)/2,by,bz,cx,cy,cz); //C
     }else{
         //console.log(ax,ay,bx,by,cx,cy);
-        finalVerts.push(ax,ay,az,bx,by,bz,cx,cy,cz);
+        tempVerts.push(ax,ay,az,bx,by,bz,cx,cy,cz);
     }
 }
 
@@ -154,14 +154,16 @@ function getRandomRGBA(){
     return [(Math.random() * 1)+0.2,(Math.random() * 1)+0.2,(Math.random() * 1)+0.2,1]
 }
 
-function createPyramid(gl, translation, rotationAxis) {
-    sierpinski(3,0,-1,-1,-1,-1,1,1,-1,1);
-    sierpinski(3,0,1,0,-1,-1,1,1,-1,1)
-    
-
+function createPyramid(gl, translation, rotationAxis, type) {
     let verts = [];
-    verts.push(...finalVerts);
-    console.log(verts)
+    if(type==0) {
+        sierpinski(3,0,-1,-1,-1,-1,1,1,-1,1);
+    }
+    else {
+        sierpinski(3,0,1,0,-1.75,-1,1,1.75,-1,1);
+    }
+
+    verts.push(...tempVerts);
 
     let vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -208,7 +210,12 @@ function createPyramid(gl, translation, rotationAxis) {
     };
 
     mat4.translate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, translation);
-    mat4.rotate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, Math.PI / 8, [1, 0, 0]);
+    let rot;
+    //Front
+    if(type==1) rot=Math.PI;
+    else if(type==2) rot=Math.PI/3;
+    else if(type==3)rot=(5*Math.PI)/3;
+    mat4.rotate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, rot, [0, 0.1, 0]);
 
     pyramid.update = function () {
         let now = Date.now();
@@ -237,9 +244,12 @@ function main() {
     initViewport(glCtx, canvas);
     initGL(glCtx, canvas);
 
-    let pyramid = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0]);
+    //let pyramidBot = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],0);
+    let pyramid = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],1);
+    let pyramid2 = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],2);
+    let pyramid3 = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],3);
 
     initShader(glCtx, vertexShaderSource, fragmentShaderSource);
 
-    update(glCtx, [pyramid]);
+    update(glCtx, [pyramid,pyramid2,pyramid3]);
 }
