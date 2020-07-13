@@ -380,7 +380,8 @@ function createOctahedron(gl, translation, rotationAxis) {
     // Vertex Data
     let vertexBuffer;
     let width = 0.6;
-    let dy = 0.1;
+    let y = 0;
+    let dy =0.1;
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 
@@ -491,12 +492,14 @@ function createOctahedron(gl, translation, rotationAxis) {
         let fract = deltat / duration;
         let angle = Math.PI * 2 * fract;
 
-        // Rotates a mat4 by the given angle
-        // mat4 out the receiving matrix
-        // mat4 a the matrix to rotate
-        // Number rad the angle to rotate the matrix by
-        // vec3 axis the axis to rotate around
         mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
+        
+        mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, [0, dy, 0]);
+        if(y>20){
+            dy=-dy;
+            y=-20;
+        }
+        y+=1;
     };
 
     return octahedron;
