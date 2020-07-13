@@ -13,7 +13,7 @@ function sierpinski(con, i,ax,ay,bx,by,cx,cy){
         sierpinski(con,i-1,ax,ay,(ax+bx)/2,(ay+cy)/2,(cx+ax)/2,(ay+by)/2)
         sierpinski(con,i-1,(cx+ax)/2,(ay+by)/2,(bx+cx)/2,by,cx,cy)
     }else{
-        draw_triangle(con,ax,ay,bx,by,cx,cy)
+        draw_triangle(con,ax,ay,bx,by,cx,cy);
     }
 }
 
