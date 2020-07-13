@@ -151,12 +151,13 @@ function sierpinski(i,ax,ay,az,bx,by,bz,cx,cy,cz){
 }
 
 function getRandomRGBA(){
-    return [Math.random() * 1,Math.random() * 1,Math.random() * 1,1]
+    return [(Math.random() * 1)+0.2,(Math.random() * 1)+0.2,(Math.random() * 1)+0.2,1]
 }
 
 function createPyramid(gl, translation, rotationAxis) {
-    
+    sierpinski(3,0,-1,-1,-1,-1,1,1,-1,1);
     sierpinski(3,0,1,0,-1,-1,1,1,-1,1)
+    
 
     let verts = [];
     verts.push(...finalVerts);
@@ -236,7 +237,7 @@ function main() {
     initViewport(glCtx, canvas);
     initGL(glCtx, canvas);
 
-    let pyramid = createPyramid(glCtx, [0, 0, -5], [0, 0.0, 0]);
+    let pyramid = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0]);
 
     initShader(glCtx, vertexShaderSource, fragmentShaderSource);
 
