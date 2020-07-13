@@ -15,11 +15,11 @@
 			    let gl = initWebGL(canvas);
 		        initViewport(gl, canvas);
 		        initGL(canvas);
-                let piramid = createPiramid(gl, [-3 , 0, -2], [0.1, 1.0, 0.2]);
+                let pyramid = createPiramid(gl, [-3 , 0, -2], [0.1, 1.0, 0.2]);
 				let dodecahedron = createDodecahedron(gl, [0 , 0, -2], [-0.4, 1.0, 0.1]);
 				let octahedron = createOctahedron(gl, [3 , 0, -2], [0.0, 1.0, 0.0]);
 		        initShader(gl);
-				run(gl, [piramid, dodecahedron, octahedron]);
+				run(gl, [pyramid, dodecahedron, octahedron]);
 			}
 	);
 
