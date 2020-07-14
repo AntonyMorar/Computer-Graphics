@@ -156,12 +156,8 @@ function getRandomRGBA(){
 
 function createPyramid(gl, translation, rotationAxis, type) {
     let verts = [];
-    if(type==0) {
-        sierpinski(3,0,-1,-1,-1,-1,1,1,-1,1);
-    }
-    else {
-        sierpinski(3,0,1,0,-1.75,-1,1,1.75,-1,1);
-    }
+    sierpinski(3,0,1,0,-1.735,-1,1,1.735,-1,1);
+    //sierpinski(3,0,-1,-1,-1.735,-1,1,1.735,-1,1);
 
     verts.push(...tempVerts);
 
@@ -210,12 +206,12 @@ function createPyramid(gl, translation, rotationAxis, type) {
     };
 
     mat4.translate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, translation);
-    let rot;
+    let rot, rx, ry;
     //Front
-    if(type==1) rot=Math.PI;
-    else if(type==2) rot=Math.PI/3;
-    else if(type==3)rot=(5*Math.PI)/3;
-    mat4.rotate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, rot, [0, 0.1, 0]);
+    if(type==1) {rot=Math.PI; rx=0; ry=0.1}
+    else if(type==2) {rot=Math.PI/3; rx=0; ry=0.1}
+    else if(type==3) {rot=(5*Math.PI)/3; rx=0; ry=0.1}
+    mat4.rotate(pyramid.modelViewMatrix, pyramid.modelViewMatrix, rot, [rx, ry, 0]);
 
     pyramid.update = function () {
         let now = Date.now();
@@ -244,12 +240,12 @@ function main() {
     initViewport(glCtx, canvas);
     initGL(glCtx, canvas);
 
-    //let pyramidBot = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],0);
+    let pyramidBot = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],0);
     let pyramid = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],1);
     let pyramid2 = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],2);
     let pyramid3 = createPyramid(glCtx, [0, 0, -5], [0, 0.1, 0],3);
 
     initShader(glCtx, vertexShaderSource, fragmentShaderSource);
 
-    update(glCtx, [pyramid,pyramid2,pyramid3]);
+    update(glCtx, [pyramidBot,pyramid,pyramid2,pyramid3]);
 }
