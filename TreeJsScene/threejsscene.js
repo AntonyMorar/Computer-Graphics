@@ -107,7 +107,7 @@ function addFigure() {
             newObj = new THREE.OctahedronGeometry(objsSize, 0);
             break;
         case (3):
-            newObj = new THREE.SphereGeometry(objsSize, 12, 8);
+            newObj = new THREE.SphereGeometry(objsSize, 10, 8);
             break;
         default:
             newObj = new THREE.BoxGeometry(objsSize, 1, 1);
@@ -143,7 +143,7 @@ function addOrbit(distance=2){
     orbitDistance += distance;
     addFigure();
 
-    var newoBJ = new THREE.RingGeometry( orbitDistance, orbitDistance+0.05, 40, 1 );
+    var newoBJ = new THREE.RingGeometry( orbitDistance, orbitDistance+0.05, 64, 1 );
     var newMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
     var newMesh = new THREE.Mesh( newoBJ, newMaterial );
     newMesh.rotation.x = Math.PI /2;
