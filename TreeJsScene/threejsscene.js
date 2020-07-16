@@ -151,7 +151,7 @@ function addSatelite() {
 
     let newGroup;
     if (objects[objects.length - 1].hasSat) {
-        newGroup = groups[objects.length - 1];
+        newGroup = groups[groups.length - 1];
     } else {
         newGroup = new THREE.Object3D;
         newGroup.position.set(
@@ -175,8 +175,6 @@ function addSatelite() {
 
     objects[objects.length-1].satelites.push(newMesh)
     newGroup.add(newMesh);
-    //console.log(objects)
-    //console.log(groups)
 }
 
 function AddGroup() {
@@ -187,17 +185,16 @@ function AddGroup() {
 }
 
 function clearFigures() {
-    console.log(groups.length)
-    console.log(groups[groups.length - 1].children.length)
-    /*
-    while (objects.length > 0) {
-        groups[groups.length - 1].remove(objects.pop());
-    }
+    console.log(objects)
+    console.log(groups[0].children)
+
+    groups[0].remove(...groups[0].children)
+
     posOffset = {
         x: 0,
         y: 0,
         z: 0
-    }*/
+    }
 }
 
 function animate() {
