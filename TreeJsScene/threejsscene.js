@@ -3,6 +3,7 @@ let renderer = null,
     camera = null;
 
 let objects = [];
+let rings = [];
 let groups = [];
 
 let duration = 5000; // ms
@@ -73,7 +74,6 @@ function createScene(canvas) {
 
     // Create new Geometry
     addFigure();
-    addFigure();
 
     // Add to scene
     scene.add(groups[0]);
@@ -121,7 +121,7 @@ function addFigure() {
     let yT = (Math.random() * 1);
     if(plusOrMinus) yT*=-1;
     //console.log(xT,zT)
-    newMesh.position.set(xT, yT, zT);
+    newMesh.position.set(xT, 0, zT);
     objects.push({
         'mesh': newMesh,
         'hasSat': false,
@@ -139,15 +139,22 @@ function addFigure() {
 
 
 function addOrbit(distance=2){
+    if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
     orbitDistance += distance;
     addFigure();
+
+    var newoBJ = new THREE.RingGeometry( orbitDistance, orbitDistance+0.05, 40, 1 );
+    var newMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+    var newMesh = new THREE.Mesh( newoBJ, newMaterial );
+    newMesh.rotation.x = Math.PI /2;
+    rings.push( newMesh );
+    groups[0].add(newMesh)
 }
 
 function addSatelite() {
-    // Creating Group
     if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
     let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-
+    // Creating Group
     let newGroup;
     if (objects[objects.length - 1].hasSat) {
         newGroup = groups[groups.length - 1];
@@ -190,7 +197,8 @@ function AddGroup() {
 
 function clearFigures() {
     groups[0].remove(...groups[0].children)
-    objects = []
+    objects = [];
+    rings = [];
     while(groups.length > 1){
         groups.pop()
     }
