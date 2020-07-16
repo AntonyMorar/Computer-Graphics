@@ -53,6 +53,7 @@ function btnEvnts() {
 
     document.getElementById("satelite").addEventListener("click", function () {
         console.log("satelite");
+        addSatelite();
     });
 
     document.getElementById("clear").addEventListener("click", function () {
