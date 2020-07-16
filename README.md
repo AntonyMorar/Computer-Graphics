@@ -1,8 +1,11 @@
 # Computer-Graphics
+Digital imaging processes as well as interactive graphic applications programming.
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/wasabeef/awesome-android-ui)
 
-# Table of contetnt
+## Goals
+
+## Table of contetnt
 - [Sierpinsky Triangle](SierpinskiTriangle)
 - [Pong](Pong)
 - [Mini Paint](Paint)
