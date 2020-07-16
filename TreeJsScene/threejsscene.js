@@ -3,7 +3,6 @@ let renderer = null,
     camera = null;
 
 let objects = [];
-let tests = [];
 let groups = [];
 
 let duration = 5000; // ms
@@ -119,41 +118,19 @@ function AddFigure(sat = false) {
     }
     let newMesh = new THREE.Mesh(newObj, material);
     newMesh.position.set(posOffset.x, posOffset.y, posOffset.z);
-    objects.push(newMesh);
-    tests.push({'mesh':newMesh, 'hasSat':false})
-    console.log(tests);
+    objects.push({
+        'mesh': newMesh,
+        'hasSat': false,
+        'satelites': []
+    });
     // Add to the group
 
     if (!sat) {
-        groups[0].add(objects[objects.length - 1]);
+        groups[0].add(objects[objects.length - 1].mesh);
         offsetParams();
     } else {
-        groups[groups.length - 1].add(objects[objects.length - 1]);
+        groups[groups.length - 1].add(objects[objects.length - 1].mesh);
     }
-}
-
-function addSatelite() {
-    // Creating Group
-    if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
-    let newGroup = new THREE.Object3D;
-    let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-    newGroup.position.set(
-        objects[objects.length - 1].position.x,
-        objects[objects.length - 1].position.y,
-        objects[objects.length - 1].position.z
-    );
-    groups.push(newGroup);
-    groups[0].add(newGroup);
-
-    //Creating Satelite
-    let newObj = new THREE.DodecahedronGeometry(0.2, 0);
-    let material = new THREE.MeshPhongMaterial({
-        color: 0x04f30f
-    });
-    let newMesh = new THREE.Mesh(newObj, material);
-    newMesh.position.set(-0.75 * plusOrMinus, 0, 0);
-
-    newGroup.add(newMesh);
 }
 
 function offsetParams() {
@@ -167,6 +144,41 @@ function offsetParams() {
     if (objects.length == 1) objsSize = 0.5;
 }
 
+function addSatelite() {
+    // Creating Group
+    if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
+    let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+
+    let newGroup;
+    if (objects[objects.length - 1].hasSat) {
+        newGroup = groups[objects.length - 1];
+    } else {
+        newGroup = new THREE.Object3D;
+        newGroup.position.set(
+            objects[objects.length - 1].mesh.position.x,
+            objects[objects.length - 1].mesh.position.y,
+            objects[objects.length - 1].mesh.position.z
+        );
+        groups.push(newGroup);
+        groups[0].add(newGroup);
+
+        objects[objects.length - 1].hasSat = true;
+    }
+
+    //Creating Satelite
+    let newObj = new THREE.DodecahedronGeometry(0.2, 0);
+    let material = new THREE.MeshPhongMaterial({
+        color: 0x04f30f
+    });
+    let newMesh = new THREE.Mesh(newObj, material);
+    newMesh.position.set(-0.75 * plusOrMinus, 0, 0);
+
+    objects[objects.length-1].satelites.push(newMesh)
+    newGroup.add(newMesh);
+    //console.log(objects)
+    //console.log(groups)
+}
+
 function AddGroup() {
     // Create a group to hold all the objects
     let newGroup = new THREE.Object3D;
@@ -176,7 +188,7 @@ function AddGroup() {
 
 function clearFigures() {
     console.log(groups.length)
-    console.log(groups[groups.length -1].children.length)
+    console.log(groups[groups.length - 1].children.length)
     /*
     while (objects.length > 0) {
         groups[groups.length - 1].remove(objects.pop());
@@ -196,20 +208,20 @@ function animate() {
     let angle = Math.PI * 2 * fract;
 
     // Base revolution about its Y axis
-    let i=0;
+    let i = 0;
     groups.forEach(gp => {
-        if(i==0)gp.rotation.y -= angle / 2.5;
+        if (i == 0) gp.rotation.y -= angle / 2.5;
         else(gp.rotation.y += angle * 2)
-        
+
         i++;
     });
 
-    
-    let j=0;
+
+    let j = 0;
     // Base rotation about its Y axis
     objects.forEach(object => {
-        if(j==0) object.rotation.y += angle;
-        else object.rotation.y -= angle;
+        if (j == 0) object.mesh.rotation.y += angle;
+        else object.mesh.rotation.y -= angle;
         j++;
     });
 }
