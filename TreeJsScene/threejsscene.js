@@ -7,11 +7,7 @@ let groups = [];
 
 let duration = 5000; // ms
 let currentTime = Date.now();
-let posOffset = {
-    x: 0,
-    y: 0,
-    z: 0
-};
+let orbitDistance = 0;
 let objsSize = 0.75;
 
 
@@ -38,7 +34,7 @@ function createScene(canvas) {
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.5, 4000);
-    camera.position.set(0, 3.75, 10);
+    camera.position.set(0, 3.75, 13);
     camera.rotation.x = -0.35;
     scene.add(camera);
 
@@ -76,8 +72,8 @@ function createScene(canvas) {
     AddGroup();
 
     // Create new Geometry
-    AddFigure();
-    AddFigure();
+    addFigure();
+    addFigure();
 
     // Add to scene
     scene.add(groups[0]);
@@ -91,8 +87,9 @@ function createScene(canvas) {
 }
 
 // Add figure to the actual group
-function AddFigure(sat = false) {
+function addFigure() {
     if (groups.length == 0 || groups == null) AddGroup();
+    let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
     // Create new Geometry
     let r = Math.floor(Math.random() * 4);
     let newObj;
@@ -117,31 +114,33 @@ function AddFigure(sat = false) {
             break;
     }
     let newMesh = new THREE.Mesh(newObj, material);
-    newMesh.position.set(posOffset.x, posOffset.y, posOffset.z);
+
+    let randAngle = Math.random() * Math.PI * 2;
+    let xT = Math.cos(randAngle) * orbitDistance;
+    let zT = Math.sin(randAngle) * orbitDistance;
+    let yT = (Math.random() * 1);
+    if(plusOrMinus) yT*=-1;
+    //console.log(xT,zT)
+    newMesh.position.set(xT, yT, zT);
     objects.push({
         'mesh': newMesh,
         'hasSat': false,
         'satelites': []
     });
     // Add to the group
-
-    if (!sat) {
-        groups[0].add(objects[objects.length - 1].mesh);
-        offsetParams();
-    } else {
-        groups[groups.length - 1].add(objects[objects.length - 1].mesh);
-    }
+    groups[0].add(objects[objects.length - 1].mesh);
+    
+    //Change init params    
+    if (objects.length == 1){
+        objsSize = 0.5;
+        orbitDistance += 2;
+    } 
 }
 
-function offsetParams() {
-    //Change init params
-    rSign = Math.random() >= 0.5;
-    randomX = (Math.random() * 1.9) + 0.9;
-    randomZ = (Math.random() * 1.9) + 0.9;
-    posOffset.x += randomX;
-    posOffset.y = (Math.random() * 2) - 1;
-    posOffset.z += randomZ;
-    if (objects.length == 1) objsSize = 0.5;
+
+function addOrbit(distance=2){
+    orbitDistance += distance;
+    addFigure();
 }
 
 function addSatelite() {
@@ -171,7 +170,12 @@ function addSatelite() {
         color: 0x04f30f
     });
     let newMesh = new THREE.Mesh(newObj, material);
-    newMesh.position.set(-0.75 * plusOrMinus, 0, 0);
+    let randAngle = Math.random() * Math.PI * 2;
+    let xT = Math.cos(randAngle) * 0.75;
+    let zT = Math.sin(randAngle) * 0.75;
+    let yT = Math.random() * 0.5;
+    if(plusOrMinus) yT*=-1;
+    newMesh.position.set(xT, yT, zT);
 
     objects[objects.length-1].satelites.push(newMesh)
     newGroup.add(newMesh);
@@ -190,15 +194,7 @@ function clearFigures() {
     while(groups.length > 1){
         groups.pop()
     }
-
-    posOffset = {
-        x: 0,
-        y: 0,
-        z: 0
-    }
-
-    console.log(objects)
-    console.log(groups)
+    orbitDistance = 0;
 }
 
 function animate() {

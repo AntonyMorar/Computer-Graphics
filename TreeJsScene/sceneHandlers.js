@@ -47,7 +47,11 @@ function addMouseHandler(canvas, group) {
 
 function btnEvnts() {
     document.getElementById("add").addEventListener("click", function () {
-        AddFigure();
+        addFigure();
+    });
+
+    document.getElementById("addOrbit").addEventListener("click", function () {
+        addOrbit();
     });
 
     document.getElementById("satelite").addEventListener("click", function () {
