@@ -185,16 +185,20 @@ function AddGroup() {
 }
 
 function clearFigures() {
-    console.log(objects)
-    console.log(groups[0].children)
-
     groups[0].remove(...groups[0].children)
+    objects = []
+    while(groups.length > 1){
+        groups.pop()
+    }
 
     posOffset = {
         x: 0,
         y: 0,
         z: 0
     }
+
+    console.log(objects)
+    console.log(groups)
 }
 
 function animate() {
@@ -213,13 +217,16 @@ function animate() {
         i++;
     });
 
-
     let j = 0;
     // Base rotation about its Y axis
     objects.forEach(object => {
         if (j == 0) object.mesh.rotation.y += angle;
         else object.mesh.rotation.y -= angle;
         j++;
+
+        object.satelites .forEach(sat => {
+            sat.rotation.y += angle*2;
+        });
     });
 }
 
