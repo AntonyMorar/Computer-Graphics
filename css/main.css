@@ -3,12 +3,14 @@
 * {
     font-family: Arial;
     font-size:20px;
-    font-style: italic;
 }
 
 body {
 	color:rgb(10, 0, 0);
+	margin: 0;
 }
+
+canvas { display: block; }
 
 #container {
 	position:absolute;
@@ -19,3 +21,7 @@ body {
 	background-color:#ffffff;
 }
 
+#buttons{
+	position:absolute;
+	top: 635px;
+}
