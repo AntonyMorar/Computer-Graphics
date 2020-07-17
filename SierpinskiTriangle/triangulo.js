@@ -1,10 +1,12 @@
+let canvasElement;
+
 function main(){
-    let canvasElement = document.querySelector("#trianC");
+    canvasElement = document.querySelector("#trianC");
     let context = canvasElement.getContext("2d");
     let iterations = 0;   
     sliderEvent(context);
 
-    sierpinski(context, iterations,200,0,0,400,400,400)
+    sierpinski(context, iterations,canvasElement.width/2,0,0,canvasElement.height,canvasElement.width,canvasElement.height)
 }
 
 function sierpinski(con, i,ax,ay,bx,by,cx,cy){
@@ -18,7 +20,6 @@ function sierpinski(con, i,ax,ay,bx,by,cx,cy){
 }
 
 function draw_triangle(con,ax,ay,bx,by,cx,cy){
-    
     // Triangle
     con.beginPath();
     con.moveTo(ax, ay);
@@ -26,16 +27,23 @@ function draw_triangle(con,ax,ay,bx,by,cx,cy){
     con.lineTo(cx, cy);
     con.closePath();
     // Color
-    con.fillStyle = "#FFCC00";
+    con.fillStyle = getColor();
     con.fill();
     con.stroke();
+}
+
+function getColor(){
+    let r = Math.floor(Math.random() * 255);
+    let g = r + 80;
+    g = Math.min(g, 255);
+    return 'rgb(' + r + ',' + g + ',255)'
 }
 
 function sliderEvent(context)
 {
     document.getElementById("slider").oninput = function(event) {
         document.getElementById("sliderValue").innerHTML = event.target.value;
-        context.clearRect(0, 0, 400, 400);
-        sierpinski(context, event.target.value,200,0,0,400,400,400)
+        context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        sierpinski(context, event.target.value,canvasElement.width/2,0,0,canvasElement.height,canvasElement.width,canvasElement.height)
     };
 }
