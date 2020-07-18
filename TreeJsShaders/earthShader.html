@@ -9,41 +9,43 @@
 
 	<script id="fragmentShader" type="x-shader/x-fragment">
 				uniform float time;
-
 				uniform float fogDensity;
 				uniform vec3 fogColor;
+				uniform vec3 diffuse;
 
 				// Textures
 				uniform sampler2D baseTexture;
 				uniform sampler2D bumpTexture;
 				uniform sampler2D cloudsTexture;
 				uniform sampler2D cloudsAlphaTexture;
+				uniform sampler2D perlinTexture;
 
 				varying vec2 vUv;
 
 				void main( void ) {
 					// Move uv texture in x
-					vec2 T1 = vUv + vec2(-0.01,0) * time;
-					vec2 T2 = vUv + vec2(-0.005,0) * time;
+					vec2 T1 = vUv + vec2(-0.013,0) * time;
+					vec2 T2 = vUv + vec2(-0.009,0) * time;
 
 					vec4 baseColor = texture2D( baseTexture, T1);
-					vec4 bumpMap = texture2D( bumpTexture, T1);
-					vec4 clouds = texture2D( cloudsTexture, T2);
+					//vec4 clouds = texture2D( cloudsTexture, T2);
 					vec4 cloudsAlpha = texture2D( cloudsAlphaTexture, T2);
-
-					float alphaR = (texture2D(cloudsAlphaTexture, T2).r * -1.0) +1.0; // invert the channel
-
-					vec4 finalCloud = clouds * vec4(1,1,1,alphaR);
-					vec4 color = cloudsAlpha + baseColor;
+					
+					float alphaR = (cloudsAlpha.r * -1.0) + 1.0; // invert the channel
+					alphaR *= 0.8;
+					//vec4 finalCloud = clouds * vec4(1,1,1,alphaR);
+					vec4 color = baseColor + vec4(alphaR,alphaR,alphaR,0);
 
 					gl_FragColor = color;
 				}
 		</script>
 
 	<script id="vertexShader" type="x-shader/x-vertex">
+				varying vec3 vViewPosition;
+				varying vec2 vUv;
+
 				uniform vec2 uvScale;
 				uniform float time;
-				varying vec2 vUv;
 
 				void main()
 				{
@@ -51,13 +53,16 @@
 					//vec3 newPosition = position + vec3(sin(time),0,0);
 					vec3 newPosition = position;
 					vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
+					vViewPosition = - mvPosition.xyz; // vector from vertex to camera
 					gl_Position = projectionMatrix * mvPosition;
 				}
 		</script>
 
+
 	<script src="../../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 	<script src="../../libs/jquery-ui/jquery-ui.js"></script>
-	<script src="../../libs/three.js/three.min.js"></script>
+	<script src="../../libs/three.js/three.js"></script>
+	<script src="../../libs/three.js/ShaderMaterialExtend.js"></script>
 	<script src="earthShader.js"></script>
 
 	<script type="text/javascript">

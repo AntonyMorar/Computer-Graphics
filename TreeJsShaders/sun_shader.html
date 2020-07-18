@@ -26,8 +26,8 @@
 
 					vec4 noise = texture2D( texture1, vUv );
 				
-					T1.x += noise.a * 2.0;
-					T1.y += noise.a * 2.0;
+					//T1.x += noise.a * 5.0;
+					//T1.y += noise.a * 2.0;
 
 					T2.x -= noise.r * 2.0;
 					T2.y += noise.g * 0.8;
@@ -47,8 +47,9 @@
 		</script>
 
 		<script id="vertexShader" type="x-shader/x-vertex">
-				uniform vec2 uvScale;
 				varying vec2 vUv;
+
+				uniform vec2 uvScale;
 
 				void main()
 				{
