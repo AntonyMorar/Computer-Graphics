@@ -46,26 +46,22 @@ function createScene(canvas) {
      * Light
      */
     // Add a directional light to show off the objects
-    let light = new THREE.DirectionalLight(0xffffff, 1.0);
-    // let light = new THREE.DirectionalLight( "rgb(255, 255, 100)", 1.5);
-
-    // Position the light out from the scene, pointing at the origin
-    light.position.set(-.5, .2, 1);
-    light.target.position.set(0, -2, 0);
+    let light = new THREE.PointLight( 0xfff1c9, 1.5, 300 );
+    light.position.set(0, 0, 0);
     scene.add(light);
 
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
-    let ambientLight = new THREE.AmbientLight(0xffccaa, 0.2);
+    let ambientLight = new THREE.AmbientLight(0xffffcc, 0.12);
     scene.add(ambientLight);
 
     /****************************************************************************
      * Textures and materials
      */
     // Sun
-    let sunUrl = "../images/planets/sunmap.jpg";
+    let sunUrl = "../images/planets/sunMap.jpg";
     let sunTexture = new THREE.TextureLoader().load(sunUrl);
-    let sunMaterial = new THREE.MeshPhongMaterial({
+    let sunMaterial = new THREE.MeshBasicMaterial({
         map: sunTexture
     });
 
@@ -77,23 +73,29 @@ function createScene(canvas) {
     let mercuryMaterial = new THREE.MeshPhongMaterial({
         map: mercuryTexture,
         bumpMap: mercuryBumpTexture, 
-        bumpScale: 0.1
+        bumpScale: 0.05
     });
 
     // Venus
     let venusUrl = "../images/planets/venusmap.jpg";
     let venusBumpUrl = "../images/planets/venusbump.jpg";
     let venusTexture = new THREE.TextureLoader().load(venusUrl);
+    let venusBumpTexture = new THREE.TextureLoader().load(venusBumpUrl);
     let venusMaterial = new THREE.MeshPhongMaterial({
-        map: venusTexture
+        map: venusTexture,
+        bumpMap: venusBumpTexture, 
+        bumpScale: 0.05
     });
 
     // Earth
     let earthUrl = "../images/planets/earthmap1k.jpg";
     let earthBumpUrl = "../images/planets/earthbump1k.jpg";
     let earthTexture = new THREE.TextureLoader().load(earthUrl);
+    let earthBumpTexture = new THREE.TextureLoader().load(earthBumpUrl);
     let earthMaterial = new THREE.MeshPhongMaterial({
-        map: earthTexture
+        map: earthTexture,
+        bumpMap: earthBumpTexture, 
+        bumpScale: 0.05
     });
     
     // Mars
@@ -146,56 +148,55 @@ function createScene(canvas) {
      */
 
     //Create the first group (Sun group)
-    AddGroup({x:0,y:0,z:0})
+    AddGroup({x:0,y:0,z:0});
     
     // Create the Sun
-    addPlanet(sunMaterial, 25)
+    addPlanet(sunMaterial, 25);
 
     //Add orbit
     addOrbit(40);
     // Create Mercury
-    addPlanet(mercuryMaterial, 1)
+    addPlanet(mercuryMaterial, 1);
 
     //Add orbit
     addOrbit(10);
     // Create Venus
-    addPlanet(venusMaterial, 2)
+    addPlanet(venusMaterial, 2);
 
     //Add orbit
     addOrbit(10);
     // Create Earth
-    addPlanet(earthMaterial, 2)
+    addPlanet(earthMaterial, 2);
 
     //Add orbit
     addOrbit(10);
     // Create mars
-    addPlanet(marsMaterial, 1.5)
+    addPlanet(marsMaterial, 1.5);
 
     //Add orbit
     addOrbit(35);
     // Create Jupiter
-    addPlanet(jupiterMaterial, 9)
+    addPlanet(jupiterMaterial, 9);
 
     //Add orbit
     addOrbit(32);
     // Create Saturn
-    addPlanet(saturnMaterial, 7)
+    addPlanet(saturnMaterial, 7);
 
     //Add orbit
     addOrbit(25);
     // Create Uraus
-    addPlanet(uranusMaterial, 4)
+    addPlanet(uranusMaterial, 4);
 
     //Add orbit
     addOrbit(20);
     // Create Neptune
-    addPlanet(neptuneMaterial, 3.5)
+    addPlanet(neptuneMaterial, 3.5);
 
     //Add orbit
     addOrbit(12);
     // Create Pluto
-    addPlanet(plutoMaterial, 2)
-
+    addPlanet(plutoMaterial, 2);
     // Add all planets to scene
     scene.add(groups[0]);
 
