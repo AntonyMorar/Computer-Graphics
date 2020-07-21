@@ -10,6 +10,7 @@ function rotateScene(deltax, group) {
 function scaleScene(scale, group) {
     group.scale.set(scale, scale, scale);
     $("#scale").html("scale: " + scale);
+
 }
 
 function onMouseMove(evt, group) {
@@ -41,24 +42,8 @@ function addMouseHandler(canvas, group) {
     canvas.addEventListener('mousemove', e => onMouseMove(e, group), false);
     canvas.addEventListener('mousedown', e => onMouseDown(e), false);
     canvas.addEventListener('mouseup', e => onMouseUp(e), false);
-
-    $("#slider").on("slide", (e, u) => scaleScene(u.value, group));
 }
 
-function btnEvnts() {
-    document.getElementById("add").addEventListener("click", function () {
-        addFigure();
-    });
-
-    document.getElementById("addOrbit").addEventListener("click", function () {
-        addOrbit();
-    });
-
-    document.getElementById("satelite").addEventListener("click", function () {
-        addSatelite();
-    });
-
-    document.getElementById("clear").addEventListener("click", function () {
-        clearFigures();
-    });
-}
+window.addEventListener('resize', function() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+ });

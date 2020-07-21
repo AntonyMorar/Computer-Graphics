@@ -22,20 +22,19 @@ function createScene(canvas) {
         antialias: true
     });
     // Set the viewport size
-    renderer.setSize(canvas.width, canvas.height);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     // Create a new Three.js scene
     scene = new THREE.Scene();
     // Set the background color 
-    scene.background = new THREE.Color(0.16, 0.16, 0.185);
-    // scene.background = new THREE.Color( "rgb(100, 100, 100)" );
+    scene.background = new THREE.Color(0.06, 0.0, 0.07);
 
     /****************************************************************************
      * Camera
      */
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
-    camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.5, 4000);
-    camera.position.set(0, 3.75, 13);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000);
+    camera.position.set(0, 15, 45);
     camera.rotation.x = -0.35;
     scene.add(camera);
 
@@ -59,21 +58,34 @@ function createScene(canvas) {
     /****************************************************************************
      * Textures and materials
      */
-    let textureUrl = "../images/checker_large.gif";
-    let texture = new THREE.TextureLoader().load(textureUrl);
-    let material = new THREE.MeshPhongMaterial({
-        map: texture
+
+     // Earth
+    let earthUrl = "../images/planets/sunmap.jpg";
+    let earthTexture = new THREE.TextureLoader().load(earthUrl);
+    let earthMaterial = new THREE.MeshPhongMaterial({
+        map: earthTexture
     });
 
     /****************************************************************************
      * Geometry
      */
 
-    //Create the first group (empty)
-    AddGroup();
+    //Create the first group (Sun group)
+    let newGroup = new THREE.Object3D;
+    newGroup.position.set(0, 0, 0);
+    groups.push(newGroup);
+    
+    // Create the Sun
+    let geometry = new THREE.SphereGeometry(10, 24, 24);
+    let sunMesh = new THREE.Mesh(geometry, earthMaterial);
+    sunMesh.position.set(0, 0, 0);
+    objects.push({
+        'mesh': sunMesh,
+        'satelites': []
+    });
+    // Add to the group
+    groups[0].add(objects[objects.length - 1].mesh);
 
-    // Create new Geometry
-    addFigure();
 
     // Add to scene
     scene.add(groups[0]);
@@ -83,48 +95,25 @@ function createScene(canvas) {
      */
     // add mouse handling so we can rotate the scene
     addMouseHandler(canvas, groups[0]);
-    btnEvnts();
 }
 
 // Add figure to the actual group
 function addFigure() {
     if (groups.length == 0 || groups == null) AddGroup();
-    let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
     // Create new Geometry
-    let r = Math.floor(Math.random() * 4);
-    let newObj;
+    let newObj = new THREE.SphereGeometry(objsSize, 12, 12);;
     let material = new THREE.MeshPhongMaterial({
         color: 0xffff00
     });
-    switch (r) {
-        case (0):
-            newObj = new THREE.DodecahedronGeometry(objsSize, 0);
-            break;
-        case (1):
-            newObj = new THREE.IcosahedronGeometry(objsSize, 0);
-            break;
-        case (2):
-            newObj = new THREE.OctahedronGeometry(objsSize, 0);
-            break;
-        case (3):
-            newObj = new THREE.SphereGeometry(objsSize, 10, 8);
-            break;
-        default:
-            newObj = new THREE.BoxGeometry(objsSize, 1, 1);
-            break;
-    }
     let newMesh = new THREE.Mesh(newObj, material);
 
     let randAngle = Math.random() * Math.PI * 2;
     let xT = Math.cos(randAngle) * orbitDistance;
     let zT = Math.sin(randAngle) * orbitDistance;
-    let yT = (Math.random() * 1);
-    if(plusOrMinus) yT*=-1;
     //console.log(xT,zT)
     newMesh.position.set(xT, 0, zT);
     objects.push({
         'mesh': newMesh,
-        'hasSat': false,
         'satelites': []
     });
     // Add to the group
@@ -156,7 +145,7 @@ function addSatelite() {
     let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
     // Creating Group
     let newGroup;
-    if (objects[objects.length - 1].hasSat) {
+    if (objects[objects.length - 1].satelites > 0) {
         newGroup = groups[groups.length - 1];
     } else {
         newGroup = new THREE.Object3D;
@@ -167,8 +156,6 @@ function addSatelite() {
         );
         groups.push(newGroup);
         groups[0].add(newGroup);
-
-        objects[objects.length - 1].hasSat = true;
     }
 
     //Creating Satelite

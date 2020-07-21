@@ -26,7 +26,7 @@ function createScene(canvas) {
     // Create a new Three.js scene
     scene = new THREE.Scene();
     // Set the background color 
-    scene.background = new THREE.Color(0.1, 0.1, 0.12);
+    scene.background = new THREE.Color(0.09, 0.09, 0.12);
     // scene.background = new THREE.Color( "rgb(100, 100, 100)" );
 
     /****************************************************************************
@@ -124,7 +124,6 @@ function addFigure() {
     newMesh.position.set(xT, 0, zT);
     objects.push({
         'mesh': newMesh,
-        'hasSat': false,
         'satelites': []
     });
     // Add to the group
@@ -156,7 +155,7 @@ function addSatelite() {
     let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
     // Creating Group
     let newGroup;
-    if (objects[objects.length - 1].hasSat) {
+    if (objects[objects.length - 1].satelites > 0) {
         newGroup = groups[groups.length - 1];
     } else {
         newGroup = new THREE.Object3D;
@@ -167,8 +166,6 @@ function addSatelite() {
         );
         groups.push(newGroup);
         groups[0].add(newGroup);
-
-        objects[objects.length - 1].hasSat = true;
     }
 
     //Creating Satelite
