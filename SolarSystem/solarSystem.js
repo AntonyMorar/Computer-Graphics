@@ -58,13 +58,81 @@ function createScene(canvas) {
     /****************************************************************************
      * Textures and materials
      */
+    // Sun
+    let sunUrl = "../images/planets/sunmap.jpg";
+    let sunTexture = new THREE.TextureLoader().load(sunUrl);
+    let sunMaterial = new THREE.MeshPhongMaterial({
+        map: sunTexture
+    });
 
-     // Earth
-    let earthUrl = "../images/planets/sunmap.jpg";
+    // Mercury
+    let mercuryUrl = "../images/planets/mercurymap.jpg";
+    let mercuryBumpUrl = "../images/planets/mercurybump.jpg";
+    let mercuryTexture = new THREE.TextureLoader().load(mercuryUrl);
+    let mercuryMaterial = new THREE.MeshPhongMaterial({
+        map: mercuryTexture
+    });
+
+    // Venus
+    let venusUrl = "../images/planets/venusmap.jpg";
+    let venusBumpUrl = "../images/planets/venusbump.jpg";
+    let venusTexture = new THREE.TextureLoader().load(venusUrl);
+    let venusMaterial = new THREE.MeshPhongMaterial({
+        map: venusTexture
+    });
+
+    // Earth
+    let earthUrl = "../images/planets/earthmap1k.jpg";
+    let earthBumpUrl = "../images/planets/earthbump1k.jpg";
     let earthTexture = new THREE.TextureLoader().load(earthUrl);
     let earthMaterial = new THREE.MeshPhongMaterial({
         map: earthTexture
     });
+    
+    // Mars
+    let marsUrl = "../images/planets/marsmap1k.jpg";
+    let marsBumpUrl = "../images/planets/marsbump1k.jpg";
+    let marsTexture = new THREE.TextureLoader().load(marsUrl);
+    let marsMaterial = new THREE.MeshPhongMaterial({
+        map: marsTexture
+    });
+
+    // Jupiter
+    let jupiterUrl = "../images/planets/jupitermap.jpg";
+    let jupiterTexture = new THREE.TextureLoader().load(jupiterUrl);
+    let jupiterMaterial = new THREE.MeshPhongMaterial({
+        map: jupiterTexture
+    });
+
+    // Saturn
+    let saturnUrl = "../images/planets/saturnmap.jpg";
+    let saturnTexture = new THREE.TextureLoader().load(saturnUrl);
+    let saturnMaterial = new THREE.MeshPhongMaterial({
+        map: saturnTexture
+    });
+
+    // Uranus
+    let uranusUrl = "../images/planets/uranusmap.jpg";
+    let uranusTexture = new THREE.TextureLoader().load(uranusUrl);
+    let uranusMaterial = new THREE.MeshPhongMaterial({
+        map: uranusTexture
+    });
+
+    // Neptune
+    let neptuneUrl = "../images/planets/neptunemap.jpg";
+    let neptuneTexture = new THREE.TextureLoader().load(neptuneUrl);
+    let neptuneMaterial = new THREE.MeshPhongMaterial({
+        map: neptuneTexture
+    });
+
+    // Pluto
+    let plutoUrl = "../images/planets/plutomap1k.jpg";
+    let plutoBumpUrl = "../images/planets/plutobump1k.jpg";
+    let plutoTexture = new THREE.TextureLoader().load(plutoUrl);
+    let plutoMaterial = new THREE.MeshPhongMaterial({
+        map: plutoTexture
+    });
+    
 
     /****************************************************************************
      * Geometry
@@ -77,7 +145,7 @@ function createScene(canvas) {
     
     // Create the Sun
     let geometry = new THREE.SphereGeometry(10, 24, 24);
-    let sunMesh = new THREE.Mesh(geometry, earthMaterial);
+    let sunMesh = new THREE.Mesh(geometry, sunMaterial);
     sunMesh.position.set(0, 0, 0);
     objects.push({
         'mesh': sunMesh,
@@ -86,8 +154,22 @@ function createScene(canvas) {
     // Add to the group
     groups[0].add(objects[objects.length - 1].mesh);
 
+    //Add orbit
+    orbitDistance += 10;
+    // Create Mercury
+    geometry = new THREE.SphereGeometry(0.5, 24, 24);
+    let mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
+    let rx = Math.cos(Math.random() * Math.PI * 2) * orbitDistance;
+    let rz = Math.sin(Math.random() * Math.PI * 2) * orbitDistance;
+    mercuryMesh.position.set(rx, 0, rz);
+    objects.push({
+        'mesh': mercuryMesh,
+        'satelites': []
+    });
+    // Add to the group
+    groups[0].add(objects[objects.length - 1].mesh);
 
-    // Add to scene
+    // Add all planets to scene
     scene.add(groups[0]);
 
     /****************************************************************************
