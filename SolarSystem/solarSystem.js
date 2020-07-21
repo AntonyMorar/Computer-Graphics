@@ -1,6 +1,7 @@
 let renderer = null,
     scene = null,
-    camera = null;
+    camera = null,
+    controls = null;
 
 let objects = [];
 let rings = [];
@@ -34,8 +35,11 @@ function createScene(canvas) {
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000);
-    camera.position.set(0, 15, 45);
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+    camera.position.set(0, 25, 75);
     camera.rotation.x = -0.35;
+    controls.update();
     scene.add(camera);
 
     /****************************************************************************
@@ -69,8 +73,11 @@ function createScene(canvas) {
     let mercuryUrl = "../images/planets/mercurymap.jpg";
     let mercuryBumpUrl = "../images/planets/mercurybump.jpg";
     let mercuryTexture = new THREE.TextureLoader().load(mercuryUrl);
+    let mercuryBumpTexture = new THREE.TextureLoader().load(mercuryBumpUrl);
     let mercuryMaterial = new THREE.MeshPhongMaterial({
-        map: mercuryTexture
+        map: mercuryTexture,
+        bumpMap: mercuryBumpTexture, 
+        bumpScale: 0.1
     });
 
     // Venus
@@ -139,35 +146,55 @@ function createScene(canvas) {
      */
 
     //Create the first group (Sun group)
-    let newGroup = new THREE.Object3D;
-    newGroup.position.set(0, 0, 0);
-    groups.push(newGroup);
+    AddGroup({x:0,y:0,z:0})
     
     // Create the Sun
-    let geometry = new THREE.SphereGeometry(10, 24, 24);
-    let sunMesh = new THREE.Mesh(geometry, sunMaterial);
-    sunMesh.position.set(0, 0, 0);
-    objects.push({
-        'mesh': sunMesh,
-        'satelites': []
-    });
-    // Add to the group
-    groups[0].add(objects[objects.length - 1].mesh);
+    addPlanet(sunMaterial, 25)
 
     //Add orbit
-    orbitDistance += 10;
+    addOrbit(40);
     // Create Mercury
-    geometry = new THREE.SphereGeometry(0.5, 24, 24);
-    let mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
-    let rx = Math.cos(Math.random() * Math.PI * 2) * orbitDistance;
-    let rz = Math.sin(Math.random() * Math.PI * 2) * orbitDistance;
-    mercuryMesh.position.set(rx, 0, rz);
-    objects.push({
-        'mesh': mercuryMesh,
-        'satelites': []
-    });
-    // Add to the group
-    groups[0].add(objects[objects.length - 1].mesh);
+    addPlanet(mercuryMaterial, 1)
+
+    //Add orbit
+    addOrbit(10);
+    // Create Venus
+    addPlanet(venusMaterial, 2)
+
+    //Add orbit
+    addOrbit(10);
+    // Create Earth
+    addPlanet(earthMaterial, 2)
+
+    //Add orbit
+    addOrbit(10);
+    // Create mars
+    addPlanet(marsMaterial, 1.5)
+
+    //Add orbit
+    addOrbit(35);
+    // Create Jupiter
+    addPlanet(jupiterMaterial, 9)
+
+    //Add orbit
+    addOrbit(32);
+    // Create Saturn
+    addPlanet(saturnMaterial, 7)
+
+    //Add orbit
+    addOrbit(25);
+    // Create Uraus
+    addPlanet(uranusMaterial, 4)
+
+    //Add orbit
+    addOrbit(20);
+    // Create Neptune
+    addPlanet(neptuneMaterial, 3.5)
+
+    //Add orbit
+    addOrbit(12);
+    // Create Pluto
+    addPlanet(plutoMaterial, 2)
 
     // Add all planets to scene
     scene.add(groups[0]);
@@ -179,20 +206,22 @@ function createScene(canvas) {
     addMouseHandler(canvas, groups[0]);
 }
 
-// Add figure to the actual group
-function addFigure() {
+function AddGroup(pos) {
+    // Create a group to hold all the objects
+    let newGroup = new THREE.Object3D;
+    newGroup.position.set(pos.x, pos.y, pos.z);
+    groups.push(newGroup);
+}
+
+function addPlanet(material, size){
     if (groups.length == 0 || groups == null) AddGroup();
     // Create new Geometry
-    let newObj = new THREE.SphereGeometry(objsSize, 12, 12);;
-    let material = new THREE.MeshPhongMaterial({
-        color: 0xffff00
-    });
-    let newMesh = new THREE.Mesh(newObj, material);
-
+    let geometry = new THREE.SphereGeometry(size, 24, 24);
+    let newMesh = new THREE.Mesh(geometry, material);
+    
     let randAngle = Math.random() * Math.PI * 2;
     let xT = Math.cos(randAngle) * orbitDistance;
-    let zT = Math.sin(randAngle) * orbitDistance;
-    //console.log(xT,zT)
+    let zT = Math.sin(randAngle) * orbitDistance; 
     newMesh.position.set(xT, 0, zT);
     objects.push({
         'mesh': newMesh,
@@ -200,16 +229,22 @@ function addFigure() {
     });
     // Add to the group
     groups[0].add(objects[objects.length - 1].mesh);
-    
-    //Change init params    
-    if (objects.length == 1){
-        objsSize = 0.5;
-        orbitDistance += 2;
-    } 
+}
+
+function addOrbit(distance){
+    orbitDistance += distance;
+
+    var newObj = new THREE.TorusGeometry( orbitDistance, 0.05,12,100);
+    var newMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
+    var newMesh = new THREE.Mesh( newObj, newMaterial );
+    newMesh.rotation.x = Math.PI /2;
+    rings.push( newMesh );
+    groups[0].add(newMesh)
 }
 
 
-function addOrbit(distance=2){
+
+function andsoo(distance=2){
     if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
     orbitDistance += distance;
     addFigure();
@@ -255,23 +290,6 @@ function addSatelite() {
 
     objects[objects.length-1].satelites.push(newMesh)
     newGroup.add(newMesh);
-}
-
-function AddGroup() {
-    // Create a group to hold all the objects
-    let newGroup = new THREE.Object3D;
-    newGroup.position.set(0, 0, 0);
-    groups.push(newGroup);
-}
-
-function clearFigures() {
-    groups[0].remove(...groups[0].children)
-    objects = [];
-    rings = [];
-    while(groups.length > 1){
-        groups.pop()
-    }
-    orbitDistance = 0;
 }
 
 function animate() {
