@@ -12,4 +12,5 @@ Digital imaging processes as well as interactive graphic applications programmin
 - [WebGL Simple Figures](WebGLSimpleFigures)
 - [WebGL Complex Figures (Homework 1)](Tarea1)
 - [Sierpinsky Pyramid (Exam 1)](Examen1)
-- [Treejs Scene](TreeJsScene)
+- [Treejs Shaders](TreeJsScene)
+- [Solar System (Homework 2)](SolarSystem)

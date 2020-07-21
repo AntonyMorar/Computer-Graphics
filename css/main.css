@@ -1,27 +1,22 @@
 @charset "UTF-8";
 
 * {
-    font-family: Arial;
+    font-family: 'Montserrat', Arial;
     font-size:20px;
 }
 
 body {
-	color:rgb(10, 0, 0);
+	color:#0a0a0a;
 	margin: 0;
 }
 
 canvas { display: block; }
 
 #container {
-	position:absolute;
+	position:relative;
 }
 
 #webglcanvas {
 	border:none;
 	background-color:#ffffff;
-}
-
-#buttons{
-	position:absolute;
-	top: 635px;
 }

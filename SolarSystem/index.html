@@ -1,18 +1,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Three.js Scene Graph</title>
+<title>Solar System</title>
 
 <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css" />
 <link rel="stylesheet" href="../css/main.css" />
-<link rel="stylesheet" href="../css/threejsscene.css" />
 
 <script src="../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="../libs/jquery-ui/jquery-ui.js"></script>
 <script src="../libs/three.js/three.min.js"></script>
 
 <script src="sceneHandlers.js"></script>
-<script src="threejsscene.js"></script>
+<script src="solarSystem.js"></script>
 
 <script type="text/javascript">
        
@@ -31,26 +30,15 @@
 
 </head>
 <body>
-	<div class="section">
-		<div class="controls">
-			<div id="slider"></div>
-			<div id="buttons">
-				<button id="add">Add Object</button>
-				<button id="addOrbit">Add Orbit</button>
-				<button id="satelite">Satelite</button>
-				<button id="clear">Clear</button>
-			</div>
-		</div>
-		<div id="container">
-			<canvas id="webglcanvas" width=1000 height=600></canvas>
-			<div id="prompt">
-				Drag the mouse to rotate the scene<br>Drag the slider to scale.
-			</div>
-			<div id="status">
-				<div id="rotation">rotation: 0,0,0</div>
-				<div id="scale">scale: 1</div>
-			</div>
-		</div>
+
+	<div id="container">
+	    <canvas id="webglcanvas" width=1000 height=600></canvas>
+	</div>
+	<div id="buttons">
+		<button id="add">Add Object</button>
+		<button id="addOrbit">Add Orbit</button>
+		<button id="satelite">Satelite</button>
+		<button id="clear">Clear</button>
 	</div>
 </body>
 

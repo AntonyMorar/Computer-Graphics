@@ -26,7 +26,7 @@ function createScene(canvas) {
     // Create a new Three.js scene
     scene = new THREE.Scene();
     // Set the background color 
-    scene.background = new THREE.Color(0.1, 0.1, 0.12);
+    scene.background = new THREE.Color(0.16, 0.16, 0.185);
     // scene.background = new THREE.Color( "rgb(100, 100, 100)" );
 
     /****************************************************************************

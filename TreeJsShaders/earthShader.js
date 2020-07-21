@@ -97,9 +97,7 @@ function init(canvas) {
 		fragment: {
 			'gl_FragColor = vec4( outgoingLight, diffuseColor.a );': `
 			gl_FragColor.rgb += (0.2 * pow(1.0 - abs(dot(normalize(NM*vEye), vNN )), 2.5) * 2.0) * vec3(0,0.2,1);
-			`,
-			'#include <map>':
-			''
+			`
 		},
 		// Uniforms (will be applied to existing or added)
 

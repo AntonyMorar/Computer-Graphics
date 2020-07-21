@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+body{
+	background-color: #2D2F3A;
+	color: white;
+}
+
 #webglcanvas {
 	border:none;
 	background-color:#ffffff;
@@ -41,12 +46,10 @@
 }
 
 #slider {
-	position:absolute;
-	width:800px;
-	top:610px;
-	height:10px;
+	width:100%;
+	height:12px;
 	background:#e9e9e9;
-	left: 15px;
+	margin-bottom: 20px;
 }
 
 #slider .ui-slider-handle {
@@ -60,3 +63,31 @@
 }
 
 
+.controls{
+	padding: 30px;
+	padding-top: 60px;
+	flex-grow: 2;
+}
+
+#buttons{
+	display: flex;
+	flex-direction: column;
+	top: 635px;
+}
+
+#buttons button{
+	margin-bottom: 10px;
+	background-color: #0390E9;
+	color: white;
+	border-radius: 4px;
+	border: none;
+	cursor: pointer;
+}
+
+#buttons button:hover{
+	background-color: #0071b8;
+}
+
+.section{
+	display: flex;
+}
