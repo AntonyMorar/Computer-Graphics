@@ -6,6 +6,7 @@ let renderer = null,
 let objects = [];
 let rings = [];
 let groups = [];
+let orbitGroup = null;
 
 let duration = 5000; // ms
 let currentTime = Date.now();
@@ -34,10 +35,10 @@ function createScene(canvas) {
      */
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 2000);
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-    camera.position.set(0, 25, 75);
+    camera.position.set(0, 25,250);
     camera.rotation.x = -0.35;
     controls.update();
     scene.add(camera);
@@ -46,7 +47,7 @@ function createScene(canvas) {
      * Light
      */
     // Add a directional light to show off the objects
-    let light = new THREE.PointLight( 0xfff1c9, 1.5, 300 );
+    let light = new THREE.PointLight( 0xfff1c9, 1.5, 1000 );
     light.position.set(0, 0, 0);
     scene.add(light);
 
@@ -102,8 +103,11 @@ function createScene(canvas) {
     let marsUrl = "../images/planets/marsmap1k.jpg";
     let marsBumpUrl = "../images/planets/marsbump1k.jpg";
     let marsTexture = new THREE.TextureLoader().load(marsUrl);
+    let marsBumpTexture = new THREE.TextureLoader().load(marsBumpUrl);
     let marsMaterial = new THREE.MeshPhongMaterial({
-        map: marsTexture
+        map: marsTexture,
+        bumpMap: marsBumpTexture, 
+        bumpScale: 0.05
     });
 
     // Jupiter
@@ -138,8 +142,11 @@ function createScene(canvas) {
     let plutoUrl = "../images/planets/plutomap1k.jpg";
     let plutoBumpUrl = "../images/planets/plutobump1k.jpg";
     let plutoTexture = new THREE.TextureLoader().load(plutoUrl);
+    let plutoBumpTexture = new THREE.TextureLoader().load(plutoBumpUrl);
     let plutoMaterial = new THREE.MeshPhongMaterial({
-        map: plutoTexture
+        map: plutoTexture,
+        bumpMap: plutoBumpTexture, 
+        bumpScale: 0.05
     });
     
 
@@ -149,56 +156,62 @@ function createScene(canvas) {
 
     //Create the first group (Sun group)
     AddGroup({x:0,y:0,z:0});
+    //Static group
+    orbitGroup = new THREE.Object3D;
+    orbitGroup.position.set(0, 0, 0);
     
     // Create the Sun
-    addPlanet(sunMaterial, 25);
+    addPlanet('Sun',sunMaterial, 30, 0.002, 0);
 
     //Add orbit
     addOrbit(40);
     // Create Mercury
-    addPlanet(mercuryMaterial, 1);
+    addPlanet('Mercury',mercuryMaterial, 0.5, 0.02,1.57);
 
     //Add orbit
-    addOrbit(10);
+    addOrbit(5);
     // Create Venus
-    addPlanet(venusMaterial, 2);
+    addPlanet('Venus',venusMaterial, 1.65, 0.004,1.17);
 
     //Add orbit
-    addOrbit(10);
+    addOrbit(6);
     // Create Earth
-    addPlanet(earthMaterial, 2);
+    addPlanet('Earth',earthMaterial, 2, 1,1);
 
     //Add orbit
-    addOrbit(10);
+    addOrbit(4.75);
     // Create mars
-    addPlanet(marsMaterial, 1.5);
+    addPlanet('Mars',marsMaterial, 1, 0.96,0.805);
 
     //Add orbit
-    addOrbit(35);
+    addOrbit(45);
     // Create Jupiter
-    addPlanet(jupiterMaterial, 9);
+    addPlanet('Jupiter',jupiterMaterial, 15, 2.4,0.43);
 
     //Add orbit
-    addOrbit(32);
+    addOrbit(50);
     // Create Saturn
-    addPlanet(saturnMaterial, 7);
+    addPlanet('Saturn',saturnMaterial, 7, 2.243,0.325);
 
     //Add orbit
-    addOrbit(25);
+    addOrbit(60);
     // Create Uraus
-    addPlanet(uranusMaterial, 4);
+    addPlanet('Uraus',uranusMaterial, 4, 1.4,0.228);
 
     //Add orbit
-    addOrbit(20);
+    addOrbit(100);
     // Create Neptune
-    addPlanet(neptuneMaterial, 3.5);
+    addPlanet('Neptune',neptuneMaterial, 4.5, 1.5,0.182);
 
     //Add orbit
-    addOrbit(12);
+    addOrbit(90);
     // Create Pluto
-    addPlanet(plutoMaterial, 2);
+    addPlanet('Pluto',plutoMaterial, 2, 1.68,0.058);
+
+    console.log(orbitDistance)
     // Add all planets to scene
     scene.add(groups[0]);
+    scene.add(orbitGroup);
 
     /****************************************************************************
      * Events
@@ -214,7 +227,7 @@ function AddGroup(pos) {
     groups.push(newGroup);
 }
 
-function addPlanet(material, size){
+function addPlanet(name,material, size, yRotation, speed){
     if (groups.length == 0 || groups == null) AddGroup();
     // Create new Geometry
     let geometry = new THREE.SphereGeometry(size, 24, 24);
@@ -225,7 +238,12 @@ function addPlanet(material, size){
     let zT = Math.sin(randAngle) * orbitDistance; 
     newMesh.position.set(xT, 0, zT);
     objects.push({
+        'name': name,
         'mesh': newMesh,
+        'yRotation': yRotation,
+        'speed': speed,
+        'radius': orbitDistance,
+        'actualAngle': randAngle,
         'satelites': []
     });
     // Add to the group
@@ -235,28 +253,14 @@ function addPlanet(material, size){
 function addOrbit(distance){
     orbitDistance += distance;
 
-    var newObj = new THREE.TorusGeometry( orbitDistance, 0.05,12,100);
+    var newObj = new THREE.TorusGeometry( orbitDistance, 0.05,14,150);
     var newMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
     var newMesh = new THREE.Mesh( newObj, newMaterial );
     newMesh.rotation.x = Math.PI /2;
     rings.push( newMesh );
-    groups[0].add(newMesh)
+    orbitGroup.add(newMesh)
 }
 
-
-
-function andsoo(distance=2){
-    if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
-    orbitDistance += distance;
-    addFigure();
-
-    var newoBJ = new THREE.RingGeometry( orbitDistance, orbitDistance+0.05, 64, 1 );
-    var newMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff, side: THREE.DoubleSide } );
-    var newMesh = new THREE.Mesh( newoBJ, newMaterial );
-    newMesh.rotation.x = Math.PI /2;
-    rings.push( newMesh );
-    groups[0].add(newMesh)
-}
 
 function addSatelite() {
     if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
@@ -298,14 +302,25 @@ function animate() {
     let deltat = now - currentTime;
     currentTime = now;
     let fract = deltat / duration;
-    let angle = Math.PI * 2 * fract;
+    let deltaAngle = Math.PI * 2 * fract;
 
+    // Base rotation about its Y axis
+    for(let i=0; i<objects.length; i++){
+        objects[i].mesh.rotation.y += 1 * deltaAngle * objects[i].yRotation;
+    }
+
+    // Base revolution about its Y axis
+    for(let i=1; i<objects.length; i++){
+        objects[i].mesh.position.x = Math.cos(Math.PI * 2 * objects[i].actualAngle) * objects[i].radius;
+        objects[i].mesh.position.z = Math.sin(Math.PI * 2 * objects[i].actualAngle) * objects[i].radius;
+        objects[i].actualAngle = objects[i].actualAngle + (0.005 * deltaAngle * objects[i].speed)
+    }
+    /*
     // Base revolution about its Y axis
     let i = 0;
     groups.forEach(gp => {
-        if (i == 0) gp.rotation.y -= angle / 2.5;
-        else(gp.rotation.y += angle * 2)
-
+        if (i == 0) gp.rotation.y -= deltaAngle / 2.5;
+        else(gp.rotation.y += deltaAngle * 2)
         i++;
     });
 
@@ -313,13 +328,14 @@ function animate() {
     // Base rotation about its Y axis
     objects.forEach(object => {
         if (j == 0) object.mesh.rotation.y += angle;
-        else object.mesh.rotation.y -= angle;
+        else object.mesh.rotation.y -= deltaAngle;
         j++;
 
         object.satelites .forEach(sat => {
-            sat.rotation.y += angle*2;
+            sat.rotation.y += deltaAngle*2;
         });
     });
+    */
 }
 
 function run() {
