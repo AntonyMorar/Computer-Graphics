@@ -35,11 +35,14 @@ function createScene(canvas) {
      */
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 2000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 4000);
     controls = new THREE.OrbitControls( camera, renderer.domElement );
 
     camera.position.set(0, 25,250);
     camera.rotation.x = -0.35;
+
+    controls.minDistance = 31;
+    controls.maxDistance = 1500;
     controls.update();
     scene.add(camera);
 
@@ -111,7 +114,7 @@ function createScene(canvas) {
     });
 
     // Jupiter
-    let jupiterUrl = "../images/planets/jupitermap.jpg";
+    let jupiterUrl = "../images/planets/jupiter2_1k.jpg";
     let jupiterTexture = new THREE.TextureLoader().load(jupiterUrl);
     let jupiterMaterial = new THREE.MeshPhongMaterial({
         map: jupiterTexture
@@ -161,22 +164,19 @@ function createScene(canvas) {
     });
 
     // Jupiter Moon 1
-    let jupterMoon1Url = "../images/planets/jupiterMoon.jpg";
-    let jupterMoon1Texture = new THREE.TextureLoader().load(jupterMoon1Url);
+    let jupterMoon1Texture = new THREE.TextureLoader().load("../images/planets/jupiterMoon.jpg");
     let jupterMoon1Material = new THREE.MeshPhongMaterial({
         map: jupterMoon1Texture
     });
 
     // Jupiter Moon 2
-    let jupterMoon2Url = "../images/planets/jupiterMoon2.jpg";
-    let jupterMoon2Texture = new THREE.TextureLoader().load(jupterMoon2Url);
+    let jupterMoon2Texture = new THREE.TextureLoader().load("../images/planets/jupiterMoon2.jpg");
     let jupterMoon2Material = new THREE.MeshPhongMaterial({
         map: jupterMoon2Texture
     });
 
     // Phobos
-    let phobosBumpUrl = "../images/planets/phobosbump.jpg";
-    let phobosBumpTexture = new THREE.TextureLoader().load(phobosBumpUrl);
+    let phobosBumpTexture = new THREE.TextureLoader().load("../images/planets/phobosbump.jpg");
     let phobosMaterial = new THREE.MeshPhongMaterial({
         color: 0x707070,
         bumpMap: phobosBumpTexture, 
@@ -184,14 +184,35 @@ function createScene(canvas) {
     });
 
     // Deimos
-    let deimosBumpUrl = "../images/planets/deimosbump.jpg";
-    let deimosBumpTexture = new THREE.TextureLoader().load(deimosBumpUrl);
+    let deimosBumpTexture = new THREE.TextureLoader().load("../images/planets/deimosbump.jpg");
     let deimosMaterial = new THREE.MeshPhongMaterial({
         color: 0x707070,
         bumpMap: deimosBumpTexture, 
         bumpScale: 0.1
     });
 
+    let bgMatArray =[]
+    let bg_ft = new THREE.TextureLoader().load("../images/stars/corona_ft.png");
+    let bg_bk = new THREE.TextureLoader().load("../images/stars/corona_bk.png");
+    let bg_up = new THREE.TextureLoader().load("../images/stars/corona_up.png");
+    let bg_dn = new THREE.TextureLoader().load("../images/stars/corona_dn.png");
+    let bg_rt = new THREE.TextureLoader().load("../images/stars/corona_rt.png");
+    let bg_lf = new THREE.TextureLoader().load("../images/stars/corona_lf.png");
+    
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_ft}));
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_bk}))
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_up}))
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_dn}))
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_rt}))
+    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_lf}))
+
+    for(let i=0; i<6; i++){
+        bgMatArray[i].side = THREE.BackSide
+    }
+
+    let skyboxGeo = new THREE.BoxGeometry(3000,3000,3000);
+    let skybox = new THREE.Mesh(skyboxGeo, bgMatArray);
+    scene.add(skybox)
     /****************************************************************************
      * Geometry
      */
@@ -346,7 +367,7 @@ function animate() {
     for(let i=0; i<objects.length; i++){
         objects[i].mesh.rotation.y += 1 * deltaAngle * objects[i].yRotation;
 
-        for(let j=0; j<objects[i].satelites.length; i++){
+        for(let j=0; j<objects[i].satelites.length; j++){
             objects[i].satelites[j].mesh.rotation.y += 1 * deltaAngle * objects[i].satelites[j].yRotation;
         }
     }
