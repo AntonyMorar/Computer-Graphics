@@ -5,7 +5,9 @@ let renderer = null,
 
 let objects = [];
 let rings = [];
+let rocks = [];
 let groups = [];
+let rocksGroup = null;
 let orbitGroup = null;
 
 let duration = 5000; // ms
@@ -36,13 +38,13 @@ function createScene(canvas) {
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 4000);
-    controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    camera.position.set(0, 25,250);
+    camera.position.set(0, 25, 250);
     camera.rotation.x = -0.35;
 
     controls.minDistance = 31;
-    controls.maxDistance = 1500;
+    controls.maxDistance = 1300;
     controls.update();
     scene.add(camera);
 
@@ -50,7 +52,7 @@ function createScene(canvas) {
      * Light
      */
     // Add a directional light to show off the objects
-    let light = new THREE.PointLight( 0xfff1c9, 1.5, 1000 );
+    let light = new THREE.PointLight(0xfff1c9, 1.5, 1000);
     light.position.set(0, 0, 0);
     scene.add(light);
 
@@ -76,7 +78,7 @@ function createScene(canvas) {
     let mercuryBumpTexture = new THREE.TextureLoader().load(mercuryBumpUrl);
     let mercuryMaterial = new THREE.MeshPhongMaterial({
         map: mercuryTexture,
-        bumpMap: mercuryBumpTexture, 
+        bumpMap: mercuryBumpTexture,
         bumpScale: 0.05
     });
 
@@ -87,7 +89,7 @@ function createScene(canvas) {
     let venusBumpTexture = new THREE.TextureLoader().load(venusBumpUrl);
     let venusMaterial = new THREE.MeshPhongMaterial({
         map: venusTexture,
-        bumpMap: venusBumpTexture, 
+        bumpMap: venusBumpTexture,
         bumpScale: 0.05
     });
 
@@ -98,10 +100,10 @@ function createScene(canvas) {
     let earthBumpTexture = new THREE.TextureLoader().load(earthBumpUrl);
     let earthMaterial = new THREE.MeshPhongMaterial({
         map: earthTexture,
-        bumpMap: earthBumpTexture, 
+        bumpMap: earthBumpTexture,
         bumpScale: 0.05
     });
-    
+
     // Mars
     let marsUrl = "../images/planets/marsmap1k.jpg";
     let marsBumpUrl = "../images/planets/marsbump1k.jpg";
@@ -109,7 +111,7 @@ function createScene(canvas) {
     let marsBumpTexture = new THREE.TextureLoader().load(marsBumpUrl);
     let marsMaterial = new THREE.MeshPhongMaterial({
         map: marsTexture,
-        bumpMap: marsBumpTexture, 
+        bumpMap: marsBumpTexture,
         bumpScale: 0.05
     });
 
@@ -148,7 +150,7 @@ function createScene(canvas) {
     let plutoBumpTexture = new THREE.TextureLoader().load(plutoBumpUrl);
     let plutoMaterial = new THREE.MeshPhongMaterial({
         map: plutoTexture,
-        bumpMap: plutoBumpTexture, 
+        bumpMap: plutoBumpTexture,
         bumpScale: 0.05
     });
 
@@ -159,7 +161,7 @@ function createScene(canvas) {
     let moonBumpTexture = new THREE.TextureLoader().load(moonBumpUrl);
     let moonMaterial = new THREE.MeshPhongMaterial({
         map: moonTexture,
-        bumpMap: moonBumpTexture, 
+        bumpMap: moonBumpTexture,
         bumpScale: 0.05
     });
 
@@ -179,7 +181,7 @@ function createScene(canvas) {
     let phobosBumpTexture = new THREE.TextureLoader().load("../images/planets/phobosbump.jpg");
     let phobosMaterial = new THREE.MeshPhongMaterial({
         color: 0x707070,
-        bumpMap: phobosBumpTexture, 
+        bumpMap: phobosBumpTexture,
         bumpScale: 0.1
     });
 
@@ -187,30 +189,42 @@ function createScene(canvas) {
     let deimosBumpTexture = new THREE.TextureLoader().load("../images/planets/deimosbump.jpg");
     let deimosMaterial = new THREE.MeshPhongMaterial({
         color: 0x707070,
-        bumpMap: deimosBumpTexture, 
+        bumpMap: deimosBumpTexture,
         bumpScale: 0.1
     });
 
-    let bgMatArray =[]
+    let bgMatArray = []
     let bg_ft = new THREE.TextureLoader().load("../images/stars/corona_ft.png");
     let bg_bk = new THREE.TextureLoader().load("../images/stars/corona_bk.png");
     let bg_up = new THREE.TextureLoader().load("../images/stars/corona_up.png");
     let bg_dn = new THREE.TextureLoader().load("../images/stars/corona_dn.png");
     let bg_rt = new THREE.TextureLoader().load("../images/stars/corona_rt.png");
     let bg_lf = new THREE.TextureLoader().load("../images/stars/corona_lf.png");
-    
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_ft}));
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_bk}))
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_up}))
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_dn}))
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_rt}))
-    bgMatArray.push(new THREE.MeshBasicMaterial({map:bg_lf}))
 
-    for(let i=0; i<6; i++){
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_ft
+    }));
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_bk
+    }))
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_up
+    }))
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_dn
+    }))
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_rt
+    }))
+    bgMatArray.push(new THREE.MeshBasicMaterial({
+        map: bg_lf
+    }))
+
+    for (let i = 0; i < 6; i++) {
         bgMatArray[i].side = THREE.BackSide
     }
 
-    let skyboxGeo = new THREE.BoxGeometry(3000,3000,3000);
+    let skyboxGeo = new THREE.BoxGeometry(3500, 3500, 3500);
     let skybox = new THREE.Mesh(skyboxGeo, bgMatArray);
     scene.add(skybox)
     /****************************************************************************
@@ -218,66 +232,76 @@ function createScene(canvas) {
      */
 
     //Create the first group (Sun group)
-    AddGroup({x:0,y:0,z:0});
+    AddGroup({
+        x: 0,
+        y: 0,
+        z: 0
+    });
     //Static group
     orbitGroup = new THREE.Object3D;
     orbitGroup.position.set(0, 0, 0);
-    
+    rocksGroup = new THREE.Object3D;
+    rocksGroup.position.set(0, 0, 0);
+
     // Create the Sun
-    addPlanet('Sun',sunMaterial, 30, 0.002, 0);
+    addPlanet('Sun', sunMaterial, 30, 0.002, 0);
 
     //Add orbit
     addOrbit(40);
     // Create Mercury
-    addPlanet('Mercury',mercuryMaterial, 0.5, 0.016,1.57);
+    addPlanet('Mercury', mercuryMaterial, 0.5, 0.016, 1.57);
 
     //Add orbit
     addOrbit(7);
     // Create Venus
-    addPlanet('Venus',venusMaterial, 1.65, 0.0044,1.17);
+    addPlanet('Venus', venusMaterial, 1.65, 0.0044, 1.17);
 
     //Add orbit
     addOrbit(8.4);
     // Create Earth
-    let earthMeshT = addPlanet('Earth',earthMaterial, 2, 1,1);
-    addSatelite('moon',moonMaterial, 0.3, 0, 1.5, 2.5, earthMeshT);
+    let earthMeshT = addPlanet('Earth', earthMaterial, 2, 1, 1);
+    addSatelite('moon', moonMaterial, 0.3, 0, 1.5, 2.5, earthMeshT);
     //Add orbit
     addOrbit(6.65);
     // Create mars
-    let marshMeshT = addPlanet('Mars',marsMaterial, 1, 0.96,0.805);
-    addSatelite('Phobos',phobosMaterial, 0.1, -0.04, 1, 1.4, marshMeshT);
+    let marshMeshT = addPlanet('Mars', marsMaterial, 1, 0.96, 0.805);
+    addSatelite('Phobos', phobosMaterial, 0.1, -0.04, 1, 1.4, marshMeshT);
     addSatelite('Deimos', deimosMaterial, 0.05, 0.036, 0.2, 2.6, marshMeshT);
     //Add orbit
-    addOrbit(50);
+    addOrbit(30);
+    addAsteroidBelt(200);
+    //Add orbit
+    addOrbit(30);
     // Create Jupiter
-    let jupiterhMeshT = addPlanet('Jupiter',jupiterMaterial, 15, 0.16,0.43);
-    addSatelite('Io',jupterMoon1Material, 0.3, 0.05, 2, 16, jupiterhMeshT);
-    addSatelite('Europa',jupterMoon2Material, 0.15, 0.1,1.5, 16.5,jupiterhMeshT);
-    addSatelite('Ganymede',jupterMoon1Material, 0.75, 0.17,1, 17.5,jupiterhMeshT);
-    addSatelite('Callisto',jupterMoon2Material, 0.55, 0.25,0.8, 19,jupiterhMeshT);
+    let jupiterhMeshT = addPlanet('Jupiter', jupiterMaterial, 15, 0.16, 0.43);
+    addSatelite('Io', jupterMoon1Material, 0.3, 0.05, 2, 16, jupiterhMeshT);
+    addSatelite('Europa', jupterMoon2Material, 0.15, 0.1, 1.5, 16.5, jupiterhMeshT);
+    addSatelite('Ganymede', jupterMoon1Material, 0.75, 0.17, 1, 17.5, jupiterhMeshT);
+    addSatelite('Callisto', jupterMoon2Material, 0.55, 0.25, 0.8, 19, jupiterhMeshT);
     //Add orbit
-    addOrbit(55);
+    addOrbit(56);
     // Create Saturn
-    addPlanet('Saturn',saturnMaterial, 7, 1.26,0.325);
+    addPlanet('Saturn', saturnMaterial, 7, 1.26, 0.325);
 
     //Add orbit
-    addOrbit(65);
+    addOrbit(66);
     // Create Uraus
-    addPlanet('Uraus',uranusMaterial, 4, 1.4,0.228);
+    addPlanet('Uraus', uranusMaterial, 4, 1.4, 0.228);
 
     //Add orbit
-    addOrbit(105);
+    addOrbit(107);
     // Create Neptune
-    addPlanet('Neptune',neptuneMaterial, 4.5, 1.5,0.182);
+    addPlanet('Neptune', neptuneMaterial, 4.5, 1.5, 0.182);
 
     //Add orbit
-    addOrbit(95);
+    addOrbit(100);
     // Create Pluto
-    addPlanet('Pluto',plutoMaterial, 2, 1.68,0.058);
+    addPlanet('Pluto', plutoMaterial, 2, 1.68, 0.058);
 
     // Add all planets to scene
     scene.add(groups[0]);
-    scene.add(orbitGroup);
+    groups[0].add(orbitGroup);
+    groups[0].add(rocksGroup);
     /****************************************************************************
      * Events
      */
@@ -292,17 +316,21 @@ function AddGroup(pos) {
     groups.push(newGroup);
 }
 
-function addPlanet(name,material, size, yRotation, speed){
+function addPlanet(name, material, size, yRotation, speed) {
     if (groups.length == 0 || groups == null) AddGroup();
     // Create new Geometry
     let geometry = new THREE.SphereGeometry(size, 24, 24);
     let newMesh = new THREE.Mesh(geometry, material);
-    
+
     let randAngle = Math.random() * Math.PI * 2;
     let xT = Math.cos(randAngle) * orbitDistance;
-    let zT = Math.sin(randAngle) * orbitDistance; 
+    let zT = Math.sin(randAngle) * orbitDistance;
     // Create new group
-    AddGroup({x:xT, y:0, z:zT});
+    AddGroup({
+        x: xT,
+        y: 0,
+        z: zT
+    });
     //newMesh.position.set(xT, 0, zT);
     newMesh.position.set(0, 0, 0);
     let newObject = {
@@ -321,16 +349,20 @@ function addPlanet(name,material, size, yRotation, speed){
     return newObject;
 }
 
-function addOrbit(distance){
+function addOrbit(distance) {
     orbitDistance += distance;
 
-    var newObj = new THREE.TorusGeometry( orbitDistance, 0.15,14,150);
-    var newMaterial = new THREE.MeshBasicMaterial( { color: 0xc4c4c4, side: THREE.DoubleSide } );
-    var newMesh = new THREE.Mesh( newObj, newMaterial );
-    newMesh.rotation.x = Math.PI /2;
-    rings.push( newMesh );
+    var newObj = new THREE.TorusGeometry(orbitDistance, 0.15, 14, 150);
+    var newMaterial = new THREE.MeshBasicMaterial({
+        color: 0xc4c4c4,
+        side: THREE.DoubleSide
+    });
+    var newMesh = new THREE.Mesh(newObj, newMaterial);
+    newMesh.rotation.x = Math.PI / 2;
+    rings.push(newMesh);
     orbitGroup.add(newMesh)
 }
+
 function addSatelite(name, material, size, yRotation, speed, distance, planetObj) {
     if ((groups.length <= 1 || groups == null) && objects.length <= 0) return;
 
@@ -340,7 +372,7 @@ function addSatelite(name, material, size, yRotation, speed, distance, planetObj
 
     let randAngle = Math.random() * Math.PI * 2;
     let xT = Math.cos(randAngle) * distance;
-    let zT = Math.sin(randAngle) * distance; 
+    let zT = Math.sin(randAngle) * distance;
     newMesh.position.set(xT, 0, zT);
 
     let newObject = {
@@ -356,6 +388,38 @@ function addSatelite(name, material, size, yRotation, speed, distance, planetObj
     planetObj.mesh.parent.add(newMesh);
 }
 
+function addAsteroidBelt(asteroidsNum) {
+    // Creating Ateroid
+    let newMat = new THREE.MeshPhongMaterial({
+        color: 0x7a7a7a
+    });
+
+    for (let i = 0; i < asteroidsNum; i++) {
+        // Random values
+        let randSize = (Math.random() * 0.75) +0.35;
+        let randAngle = Math.random() * Math.PI * 2;
+        let plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+        // Geometry
+        let geometry = new THREE.SphereGeometry(randSize, 4, 4);
+        // Mesh
+        let newMesh = new THREE.Mesh(geometry, newMat);
+        let xT = Math.cos(randAngle) * orbitDistance;
+        let zT = Math.sin(randAngle) * orbitDistance;
+        let yT = (Math.random() * 1.5);
+        if (plusOrMinus){
+            yT *= -1;
+            xT = xT + (Math.random() * -2);
+            yT = yT + (Math.random() * -2);
+        } else{
+            xT = xT + (Math.random() * 2);
+            yT = yT + (Math.random() * 2);
+        }
+        newMesh.position.set(xT, yT, zT);
+        rocks.push(newMesh);
+        rocksGroup.add(newMesh)
+    }
+}
+
 function animate() {
     let now = Date.now();
     let deltat = now - currentTime;
@@ -364,26 +428,29 @@ function animate() {
     let deltaAngle = Math.PI * 2 * fract;
 
     // Base rotation about its Y axis
-    for(let i=0; i<objects.length; i++){
+    for (let i = 0; i < objects.length; i++) {
         objects[i].mesh.rotation.y += 1 * deltaAngle * objects[i].yRotation;
 
-        for(let j=0; j<objects[i].satelites.length; j++){
+        for (let j = 0; j < objects[i].satelites.length; j++) {
             objects[i].satelites[j].mesh.rotation.y += 1 * deltaAngle * objects[i].satelites[j].yRotation;
         }
     }
 
     // Base revolution about its Y axis
-    for(let i=1; i<objects.length; i++){
+    for (let i = 1; i < objects.length; i++) {
         objects[i].mesh.parent.position.x = Math.cos(Math.PI * 2 * objects[i].actualAngle) * objects[i].radius;
         objects[i].mesh.parent.position.z = Math.sin(Math.PI * 2 * objects[i].actualAngle) * objects[i].radius;
         objects[i].actualAngle = objects[i].actualAngle + (0.005 * deltaAngle * objects[i].speed);
 
-        for(let j=0; j<objects[i].satelites.length; j++){
+        for (let j = 0; j < objects[i].satelites.length; j++) {
             objects[i].satelites[j].mesh.position.x = Math.cos(Math.PI * 2 * objects[i].satelites[j].actualAngle) * objects[i].satelites[j].distance;
             objects[i].satelites[j].mesh.position.z = Math.sin(Math.PI * 2 * objects[i].satelites[j].actualAngle) * objects[i].satelites[j].distance;
             objects[i].satelites[j].actualAngle = objects[i].satelites[j].actualAngle - (0.1 * deltaAngle * objects[i].satelites[j].speed);
         }
     }
+
+    // Asteroids revolution
+    rocksGroup.rotation.y += deltaAngle * 0.02;
 }
 
 function run() {
@@ -394,4 +461,8 @@ function run() {
     renderer.render(scene, camera);
 
     animate();
+}
+
+function onTransitionEnd(event) {
+    event.target.remove();
 }
