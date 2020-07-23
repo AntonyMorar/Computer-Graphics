@@ -1,0 +1,24 @@
+@charset "UTF-8";
+
+* {
+    font-family: 'Montserrat', Arial;
+    font-size:20px;
+}
+
+body {
+	background-color: rgb(224,248,249);
+	color:#0a0a0a;
+	margin: 0;
+}
+
+canvas { 
+    display: block; 
+}
+
+#container {
+	position:relative;
+}
+
+#webglcanvas {
+	border:none;
+}

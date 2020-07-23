@@ -1,0 +1,40 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Final Project</title>
+
+<link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css" />
+<link rel="stylesheet" href="main.css" />
+
+<script src="../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script src="../libs/jquery-ui/jquery-ui.js"></script>
+<script src="../libs/three.js/three.min.js"></script>
+
+<script src="sceneHandlers.js"></script>
+<script src="learnCode.js"></script>
+
+<script type="text/javascript">
+       
+	$(document).ready(
+			function() {	
+				let canvas = document.getElementById("webglcanvas");
+				// Resize Canvas
+				canvas.width = window.innerWidth;
+            	canvas.height = window.innerHeight;
+				// create the scene
+				createScene(canvas);
+		        // Run the run loop
+		        run();
+			}
+	);
+
+</script>
+
+</head>
+<body>
+	<div id="canvasContainer">
+	    <canvas id="webglcanvas" width="1000" height="600"></canvas>
+	</div>
+</body>
+
+</html>
