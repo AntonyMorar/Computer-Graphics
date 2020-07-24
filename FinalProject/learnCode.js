@@ -2,11 +2,14 @@ let renderer = null,
     scene = null,
     camera = null;
 
-let duration = 5000; // ms
+let menu = null;
+let level = null;
+
+let duration = 1000; // ms
 let currentTime = Date.now();
 
 
-function createScene(canvas) {
+function main(canvas) {
     /****************************************************************************
      * Scene
      */
@@ -50,28 +53,25 @@ function createScene(canvas) {
     scene.add(ambientLight);
 
     /****************************************************************************
-     * Textures and materials
+     * Game
      */
-    let textureUrl = "../images/checker_large.gif";
-    let texture = new THREE.TextureLoader().load(textureUrl);
-    let material = new THREE.MeshPhongMaterial({
-        map: texture
-    });
-
-    /****************************************************************************
-     * Geometry
-     */
-
-
+    game = new Game();
+    level = new Level();
+    level.createLevel(1);
 
     /****************************************************************************
      * Events
      */
     // add mouse handling so we can rotate the scene
     windowEvent();
+
+    /****************************************************************************
+    * Run the loop
+    */
+    run();
 }
 
-function animate() {
+function _update() {
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
@@ -79,11 +79,46 @@ function animate() {
 }
 
 function run() {
-    requestAnimationFrame(function () {
-        run();
-    });
+    requestAnimationFrame(() => run());
     // Render the scene
     renderer.render(scene, camera);
+    _update();
+}
 
-    animate();
+class Game{
+    constructor() {
+        if (!!Game.instance) return Game.instance;
+        Game.instance = this;
+
+        this.state = "start";
+        this.gameOver = false;
+        this.level = 1;
+        this.audioManager = document.createElement("audio");
+        return this;
+    }
+}
+
+class Level{
+    constructor(){
+        // s: start, f: front, e:end
+        this.levels = ["sffe"];
+        //Textures and materials
+        this.textureUrl = "../images/checker_large.gif";
+        this.texture = new THREE.TextureLoader().load(this.textureUrl);
+        this.material = new THREE.MeshPhongMaterial({
+            map: this.texture
+        });
+        this.geometry = new THREE.BoxGeometry(1, 0.25, 1);
+        this.meshes = []
+        return this;
+    }
+
+    createLevel(lvl){
+        for(let i=0; i<this.levels[0].length;i++){
+            this.meshes.push(new THREE.Mesh(this.geometry, this.material))
+            this.meshes[this.meshes.length-1].position.set(i, 0, 0);
+            scene.add( this.meshes[this.meshes.length-1] );
+        }
+        //this.newMesh.position.set(1, 0, 0);
+    }
 }

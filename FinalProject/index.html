@@ -22,9 +22,7 @@
 				canvas.width = window.innerWidth;
             	canvas.height = window.innerHeight;
 				// create the scene
-				createScene(canvas);
-		        // Run the run loop
-		        run();
+				main(canvas);
 			}
 	);
 
@@ -32,8 +30,18 @@
 
 </head>
 <body>
-	<div id="canvasContainer">
-	    <canvas id="webglcanvas" width="1000" height="600"></canvas>
+	<div id="root">
+		<div class="container">
+			<div id="controls">
+				<div class="leftNav">
+					<button id="soundBtn">Sound</button>
+					<button id="infoBtn">info</button>
+					<button id="shareBtn">Share</button>
+				</div>
+			</div>
+	
+			<canvas id="webglcanvas" width="1000" height="600"></canvas>
+		</div>
 	</div>
 </body>
 

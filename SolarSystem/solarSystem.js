@@ -296,7 +296,10 @@ function createScene(canvas) {
     //Add orbit
     addOrbit(100);
     // Create Pluto
-    addPlanet('Pluto', plutoMaterial, 2, 1.68, 0.058);
+    let plutoMeshT = addPlanet('Pluto', plutoMaterial, 2, 1.68, 0.058);
+    addSatelite('PlutoMoon1', jupterMoon1Material, 0.3, 0.4,2,2.8,plutoMeshT);
+    addSatelite('PlutoMoon1', jupterMoon1Material, 0.2, 0.3,1.54,3.5,plutoMeshT);
+
 
     // Add all planets to scene
     scene.add(groups[0]);
