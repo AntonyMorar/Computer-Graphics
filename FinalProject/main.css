@@ -35,7 +35,7 @@ canvas {
 }
 
 /* Controls
-	******************************************************/
+******************************************************/
 #controls {
 	z-index: 99;
 	position: absolute;
@@ -51,4 +51,62 @@ canvas {
 	flex-direction: column;
 	flex-flow: column nowrap;
 	position: absolute;
+}
+
+/* Drag and Drop
+******************************************************/
+#dragAndDrop{
+	opacity: 1;
+	pointer-events: all;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+#dropzoneContainer{
+	height: 65px;
+	display: flex;
+}
+
+#dropzone{
+	display: flex;
+	height: 100%;
+	align-items: center;
+	background-color: darkgray;
+	min-width: 400px;
+	color: white;
+	padding: 0px 10px;
+}
+
+.floatText{
+	position: absolute;
+    z-index: 1;
+}
+
+#playTurn{
+	margin-left: 10px;
+	cursor: pointer;
+}
+
+#draggables{
+	display: flex;
+	height: 90px;
+	align-items: center;
+}
+
+.draggable{
+	cursor: pointer;
+	background-color: gray;
+    width: 55px;
+	height: 55px;
+	color: white;
+	margin-right: 10px;
+	z-index: 10;
+}
+
+.draggable:last-child{
+	margin-right: 0;
 }

@@ -31,8 +31,10 @@ function main(canvas) {
     // Add  a camera so we can view the scene
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.5, 4000);
-    camera.position.set(0, 3.75, 13);
-    camera.rotation.x = -0.35;
+    //camera = new THREE.OrthographicCamera( canvas.width / - 2, canvas.width / 2, canvas.height / 2, canvas.height / - 2, 0.5, 2000 );
+    camera.position.set(3, 4, 8);
+    camera.rotation.x = -0.4;
+    camera.rotation.y = 0.0;
     scene.add(camera);
 
     /****************************************************************************
@@ -63,8 +65,8 @@ function main(canvas) {
      * Events
      */
     // add mouse handling so we can rotate the scene
-    windowEvent();
-
+    gameEvents();
+    buttonEvents(game);
     /****************************************************************************
     * Run the loop
     */
@@ -76,6 +78,9 @@ function _update() {
     let deltat = now - currentTime;
     currentTime = now;
     let fract = deltat / duration;
+
+    game.update();
+    level.update();
 }
 
 function run() {
@@ -92,9 +97,33 @@ class Game{
 
         this.state = "start";
         this.gameOver = false;
+        this.playing = false;
         this.level = 1;
-        this.audioManager = document.createElement("audio");
+        this.ambienAudio = document.createElement("audio");
+        this.ambienAudio.src = "src/bg.mp3";
+        this.ambienAudio.volume = 0.2;
         return this;
+    }
+
+    update(){
+
+    }
+
+    togglePlaySound(){
+        if(this.ambienAudio.paused) {
+            this.ambienAudio.play();
+            return true;
+        }
+        else {
+            this.ambienAudio.pause();
+            return false;
+        }
+    }
+
+    play(){
+        this.state = "game";
+        this.playing = true;
+        if(this.ambienAudio.paused) this.togglePlaySound();
     }
 }
 
@@ -108,9 +137,13 @@ class Level{
         this.material = new THREE.MeshPhongMaterial({
             map: this.texture
         });
-        this.geometry = new THREE.BoxGeometry(1, 0.25, 1);
+        this.geometry = new THREE.BoxGeometry(1, 0.3, 1);
         this.meshes = []
         return this;
+    }
+
+    update(){
+        
     }
 
     createLevel(lvl){
@@ -120,5 +153,11 @@ class Level{
             scene.add( this.meshes[this.meshes.length-1] );
         }
         //this.newMesh.position.set(1, 0, 0);
+    }
+}
+
+class Player{
+    constructor(){
+
     }
 }

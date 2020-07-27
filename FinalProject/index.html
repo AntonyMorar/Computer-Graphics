@@ -10,7 +10,7 @@
 <script src="../libs/jquery-ui/jquery-ui.js"></script>
 <script src="../libs/three.js/three.min.js"></script>
 
-<script src="sceneHandlers.js"></script>
+<script src="inputHandlers.js"></script>
 <script src="learnCode.js"></script>
 
 <script type="text/javascript">
@@ -34,9 +34,22 @@
 		<div class="container">
 			<div id="controls">
 				<div class="leftNav">
-					<button id="soundBtn">Sound</button>
+					<button id="soundBtn">Sound On</button>
 					<button id="infoBtn">info</button>
 					<button id="shareBtn">Share</button>
+					<button id="startGame">Play</button>
+				</div>
+
+				<div id="dragAndDrop">
+					<div id="dropzoneContainer">
+						<div id="dropzone"><span class="floatText">Dropzone</span></div>
+						<button id="playTurn">Play</button>
+					</div>
+					<div id="draggables">
+						<div id="DragFront" class="draggable" draggable="true">Front</div>
+						<div id="DragLeft" class="draggable" draggable="true">Left</div>
+						<div id="DragRight" class="draggable" draggable="true">Right</div>
+					</div>
 				</div>
 			</div>
 	
