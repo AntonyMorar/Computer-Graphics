@@ -34,6 +34,14 @@ canvas {
 	border: none;
 }
 
+button{
+	cursor: pointer;
+}
+
+button:disabled{
+	cursor: not-allowed;
+}
+
 /* Controls
 ******************************************************/
 #controls {
@@ -88,7 +96,6 @@ canvas {
 
 #playTurn{
 	margin-left: 10px;
-	cursor: pointer;
 }
 
 #draggables{
@@ -105,8 +112,27 @@ canvas {
 	color: white;
 	margin-right: 10px;
 	z-index: 10;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.draggable.inStack{
+	cursor: default;
 }
 
 .draggable:last-child{
 	margin-right: 0;
+}
+
+/* Main Menu
+******************************************************/
+#mainMenu{
+	padding: calc(6vw + 80px) 6vw 6vw calc(12vw + 130px);
+}
+
+/* Next Level
+******************************************************/
+#nextLevel{
+	position: absolute;
 }

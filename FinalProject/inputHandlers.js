@@ -1,4 +1,4 @@
-function gameEvents() {
+function gameEvents(game, level) {
     window.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -14,18 +14,10 @@ function gameEvents() {
     document.getElementById("dropzone").addEventListener("dragover", event => onDragOver(event));
 
     //  Drop events
-    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event));
-}
+    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, level));
 
-function buttonEvents(game) {
-    document.getElementById("soundBtn").addEventListener("click", () => {
-        let sound = game.togglePlaySound();
-        console.log(sound)
-        if (sound) document.getElementById("soundBtn").innerHTML = "Sound off"
-        else document.getElementById("soundBtn").innerHTML = "Sound on"
-
-    });
-
+    document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
+    
     document.getElementById("infoBtn").addEventListener("click", () => {
         console.log("info");
     });
@@ -35,8 +27,12 @@ function buttonEvents(game) {
     });
 
     document.getElementById("startGame").addEventListener("click", () => {
-        document.getElementById("startGame").style.display = "none";
-        game.play();
+        game.playLevel();
+        document.getElementById("mainMenu").style.display = "none";
+    });
+
+    document.getElementById("playTurn").addEventListener("click", () => {
+        level.playTurn();
     });
 }
 
@@ -50,13 +46,27 @@ function onDragOver(event) {
     event.dataTransfer.dropEffect = 'copy';
 }
 
-function onDrop(event) {
+function onDrop(event, level) {
     event.preventDefault();
     const id = event.dataTransfer.getData('text');
+    // Level 
+    level.stack.push(id)
+    // HTML
     const draggableElement = document.getElementById(id);
+    // Clone and modify the element
     let cln = draggableElement.cloneNode(true);
     cln.removeEventListener('dragstart', ()=>{})
-    //const dropzone = event.target;
+    cln.draggable = false;
+    cln.classList.add("inStack");
+
     document.getElementById("dropzone").appendChild(cln);
     event.dataTransfer.clearData();
+
+    if(level.stack.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
+}
+
+function toggleSound(game){
+    game.togglePlaySound();
+    if (game.ambienAudio.paused) document.getElementById("soundBtn").innerHTML = "Sound On"
+    else document.getElementById("soundBtn").innerHTML = "Sound Off"
 }

@@ -9,6 +9,9 @@
 <script src="../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="../libs/jquery-ui/jquery-ui.js"></script>
 <script src="../libs/three.js/three.min.js"></script>
+<script src="../libs/three.js/loaders/GLTFLoader.js"></script>
+<script src="../libs/three.js/loaders/inflate.min.js"></script>
+<script src="../libs/three.js/loaders/FBXLoader.js"></script>
 
 <script src="inputHandlers.js"></script>
 <script src="learnCode.js"></script>
@@ -37,13 +40,12 @@
 					<button id="soundBtn">Sound On</button>
 					<button id="infoBtn">info</button>
 					<button id="shareBtn">Share</button>
-					<button id="startGame">Play</button>
 				</div>
 
 				<div id="dragAndDrop">
 					<div id="dropzoneContainer">
 						<div id="dropzone"><span class="floatText">Dropzone</span></div>
-						<button id="playTurn">Play</button>
+						<button id="playTurn" disabled>Play</button>
 					</div>
 					<div id="draggables">
 						<div id="DragFront" class="draggable" draggable="true">Front</div>
@@ -51,6 +53,13 @@
 						<div id="DragRight" class="draggable" draggable="true">Right</div>
 					</div>
 				</div>
+
+				<div id="mainMenu">
+					<h1>This project is an educational logic game for kids</h1>
+					<button id="startGame">Start Game</button>
+				</div>
+
+				<div id="nextLevel"></div>
 			</div>
 	
 			<canvas id="webglcanvas" width="1000" height="600"></canvas>
