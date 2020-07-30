@@ -147,18 +147,31 @@ class Game {
 
     update() {
         if (!this.loaded && level.loaded && player.loaded) {
-            let loader = document.getElementById("startGame")
-            loader.disabled = false;
-            loader.innerHTML = 'Start Game'
+            hud.startButton();
         }
 
-        if(this.state == "game" && this.playing){
-            if(!player.inAction){ 
-                if(this.commands.length <= 0) {
+        if (this.state == "game" && this.playing) {
+            if (!player.inAction) {
+                if (this.commands.length <= 0) {
                     this.playing = false;
+                    hud.togglePlayBtn(false)
                     return;
                 }
-                this.commands.pop()
+                let actualCommand = this.commands.shift()
+                console.log(actualCommand)
+                switch (actualCommand) {
+                    case 'DragFront':
+                        player.isFrontTween = true;
+                        break;
+                    case 'DragLeft':
+                        player.isLeftTween = true;
+                        break;
+                    case 'DragRight':
+                        player.isRightTween = true;
+                        break;
+                    default:
+                        break;
+                }
                 player.playTweenAnimation()
             }
         }
@@ -188,11 +201,12 @@ class Game {
     playTurn() {
         console.log(this.commands)
         this.playing = true;
+        hud.togglePlayBtn(true)
         //playAnimations()
         //player.playTweenAnimation()
     }
 
-    resetLevel(){
+    resetLevel() {
         this.gameOver = false;
         this.playing = false;
         this.commands = []
@@ -205,6 +219,7 @@ class Level {
     constructor(levelData) {
         // s: start, f: front, e:end
         this.loaded = false;
+        this.win = false;
         this.level = levelData.level;
         this.buttons = levelData.buttons;
         this.tiles = []
@@ -241,7 +256,7 @@ class Level {
             });
         }
     }
-    
+
 }
 
 class Tile {
@@ -304,10 +319,17 @@ class Player {
         });
         // Animation
         this.actionAnim = null;
-        this.durationTween = 2; // sec
-        this.positionTween = null;
-        this.tweenFront = true;
-
+        //Tween durations
+        this.durationTween = 1.5; // sec
+        //Front anim
+        this.frontTween = null;
+        this.isFrontTween = false;
+        // LeftAnim
+        this.leftTween = null;
+        this.isLeftTween = false;
+        // RightAnim
+        this.rightTween = null;
+        this.isRightTween = false;
         // Loader
         this.loader = new THREE.FBXLoader();
         this.loader.load(
@@ -323,10 +345,10 @@ class Player {
     }
 
     update(deltat) {
-        if (this.loaded){
-            if(this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
+        if (this.loaded) {
+            if (this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
 
-        } 
+        }
 
     }
 
@@ -336,11 +358,14 @@ class Player {
         root.add(playerGroup);
     }
 
-    reset(){
+    reset() {
         this.inAction = false;
         this.action = 'idle'
-        if(this.positionTween) this.positionTween.stop()
-        playerGroup.position.set(0,0,0)
+        if (this.frontTween) this.frontTween.stop()
+        if (this.leftTween) this.leftTween.stop()
+        if (this.rightTween) this.rightTween.stop()
+        playerGroup.position.set(0, 0, 0)
+        playerGroup.rotation.set(0, 0, 0)
         console.log(this)
     }
 
@@ -373,18 +398,18 @@ class Player {
     }
 
     playTweenAnimation() {
-        if(this.inAction) return;
-        this.inAction = true;
-        this.action = 'front';
-        // override tween animation
-        if (this.positionTween) this.positionTween.stop();  
-
-        if (this.tweenFront) {
-            this.positionTween =
+        if (this.inAction) return;
+        // Front animation
+        if (this.frontTween) this.frontTween.stop(); // override tween animation
+        if (this.isFrontTween) {
+            let target = new THREE.Vector3(1,0,0).applyQuaternion( playerGroup.quaternion )
+            this.inAction = true;
+            this.action = 'front';
+            this.frontTween =
                 new TWEEN.Tween(playerGroup.position).to({
-                    x: playerGroup.position.x + 1,
-                    y: 0,
-                    z: 0
+                    x: playerGroup.position.x + target.x,
+                    y: playerGroup.position.y + target.y,
+                    z: playerGroup.position.z + target.z
                 }, this.durationTween * 1000)
                 .interpolation(TWEEN.Interpolation.Linear)
                 .delay(0)
@@ -392,6 +417,47 @@ class Player {
                 .repeat(0)
                 .start()
                 .onComplete(() => {
+                    this.isFrontTween = false;
+                    this.inAction = false;
+                    this.action = 'idle';
+                })
+        }
+
+        if (this.leftTween) this.leftTween.stop(); // override tween animation
+        if (this.isLeftTween) {
+            this.inAction = true;
+            this.action = 'left';
+            this.leftTween =
+                new TWEEN.Tween(playerGroup.rotation).to({
+                    y: playerGroup.rotation.y + Math.PI / 2
+                }, this.durationTween * 1000)
+                .interpolation(TWEEN.Interpolation.Linear)
+                .delay(0)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isLeftTween = false;
+                    this.inAction = false;
+                    this.action = 'idle';
+                })
+        }
+
+        if (this.rightTween) this.rightTween.stop(); // override tween animation
+        if (this.isRightTween) {
+            this.inAction = true;
+            this.action = 'right';
+            this.rightTween =
+                new TWEEN.Tween(playerGroup.rotation).to({
+                    y: playerGroup.rotation.y - Math.PI / 2
+                }, this.durationTween * 1000)
+                .interpolation(TWEEN.Interpolation.Linear)
+                .delay(0)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isRightTween = false;
                     this.inAction = false;
                     this.action = 'idle';
                 })
@@ -399,21 +465,31 @@ class Player {
     }
 }
 
-class HUD{
-    constructor(){
+class HUD {
+    constructor() {
         this.dragAndDrop = document.getElementById("dragAndDrop");
         this.dropzone = document.getElementById("dropzone");
         this.startBtn = document.getElementById("startGame")
         this.playBtn = document.getElementById("playTurn");
     }
 
-    toggleDragAndDrop(visible){
-        if(visible) dragAndDrop.style.opacity = 1;
+    toggleDragAndDrop(visible) {
+        if (visible) dragAndDrop.style.opacity = 1;
         else dragAndDrop.style.opacity = 0;
     }
 
-    resetDragAndDrop(){
-        while(this.dropzone.firstChild) this.dropzone.removeChild(this.dropzone.lastChild);
+    togglePlayBtn(disable){
+        if(disable) this.playBtn.disabled = true;
+        else this.playBtn.disabled = false;
+    }
+
+    resetDragAndDrop() {
+        while (this.dropzone.firstChild) this.dropzone.removeChild(this.dropzone.lastChild);
         this.playBtn.disabled = true;
+    }
+
+    startButton() {
+        this.startBtn.disabled = false;
+        this.startBtn.innerHTML = 'Start Game'
     }
 }
