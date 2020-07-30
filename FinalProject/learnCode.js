@@ -339,6 +339,7 @@ class Player {
     reset(){
         this.inAction = false;
         this.action = 'idle'
+        if(this.positionTween) this.positionTween.stop()
         playerGroup.position.set(0,0,0)
         console.log(this)
     }
@@ -403,6 +404,7 @@ class HUD{
         this.dragAndDrop = document.getElementById("dragAndDrop");
         this.dropzone = document.getElementById("dropzone");
         this.startBtn = document.getElementById("startGame")
+        this.playBtn = document.getElementById("playTurn");
     }
 
     toggleDragAndDrop(visible){
@@ -411,7 +413,7 @@ class HUD{
     }
 
     resetDragAndDrop(){
-        console.log("resetDragAndDrop");
         while(this.dropzone.firstChild) this.dropzone.removeChild(this.dropzone.lastChild);
+        this.playBtn.disabled = true;
     }
 }
