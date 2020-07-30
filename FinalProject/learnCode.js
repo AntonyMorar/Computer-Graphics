@@ -2,6 +2,8 @@ let renderer = null,
     scene = null,
     camera = null;
 
+let root = null;
+let playerGroup = null;
 let game = null;
 let level = null;
 let player = null;
@@ -59,9 +61,14 @@ function main(canvas) {
     /****************************************************************************
      * Game
      */
+    // Create a group to hold all the objects
+    root = new THREE.Object3D;
     game = new Game()
     level = new Level(game.levelsData[game.level]);
     player = new Player();
+
+    // Now add the group to our scene
+    scene.add(root);
 
     /****************************************************************************
      * Events
@@ -95,7 +102,10 @@ function run() {
     requestAnimationFrame(() => run());
     // Render the scene
     renderer.render(scene, camera);
+
     _update();
+    // Update the animations
+    TWEEN.update();
 }
 
 class Game {
@@ -108,6 +118,7 @@ class Game {
         this.gameOver = false;
         this.playing = false;
         this.level = 0;
+        this.commands = []
         this.levelsData = [{
                 level: "sfffe",
                 buttons: {
@@ -133,7 +144,7 @@ class Game {
     }
 
     update() {
-        if(!this.loaded && level.loaded && player.loaded){
+        if (!this.loaded && level.loaded && player.loaded) {
             let loader = document.getElementById("startGame")
             loader.disabled = false;
             loader.innerHTML = 'Start Game'
@@ -162,6 +173,11 @@ class Game {
         dragAndDrop.style.opacity = 1;
         this.loaded = true;
     }
+
+    playTurn() {
+        console.log(this.commands)
+        playAnimations()
+    }
 }
 
 class Level {
@@ -183,33 +199,33 @@ class Level {
     }
 
     update() {
-        if(this.tiles.length > 0 && !this.loaded){
-            if(this.tiles.every(this.isTileLoad)) this.loaded = true;
+        if (this.tiles.length > 0 && !this.loaded) {
+            if (this.tiles.every(this.isTileLoad)) this.loaded = true;
         }
     }
 
-    isTileLoad(tile){
-        return(tile.loaded)
+    isTileLoad(tile) {
+        return (tile.loaded)
     }
 
-    getTiles(){
+    getTiles() {
         for (let i = 0; i < this.level.length; i++) {
-            let tile = new Tile({x:i, y:0, z:0});
+            let tile = new Tile({
+                x: i,
+                y: 0,
+                z: 0
+            });
             this.tiles.push(tile);
         }
         //this.loaded = true;
     }
 
-    showLevel(){
-        if(this.loaded){
+    showLevel() {
+        if (this.loaded) {
             this.tiles.forEach(tile => {
-                scene.add(tile.obj);
+                root.add(tile.obj);
             });
         }
-    }
-
-    playTurn() {
-        console.log(this.tiles)
     }
 }
 
@@ -269,6 +285,7 @@ class Player {
         });
         this.obj = null;
         this.action = null;
+        this.moveTween = null;
         this.loader = new THREE.FBXLoader();
         this.loader.load(
             // resource URL
@@ -284,10 +301,13 @@ class Player {
 
     update(deltat) {
         if (this.loaded && this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
+
     }
 
-    showPlayer(){
-        scene.add(this.obj);
+    showPlayer() {
+        playerGroup = new THREE.Object3D;
+        playerGroup.add(this.obj)
+        root.add(playerGroup);
     }
 
     updloadSuccess(robotObj) {
@@ -315,5 +335,30 @@ class Player {
     uploadError(error) {
         console.log('An error happened');
         console.log(error)
+    }
+}
+
+let durationTween = 2; // sec
+let positionTween = null;
+let tweenPosition = true;
+
+function playAnimations() {
+    console.log(playerGroup)
+    // position tween
+    if (positionTween) positionTween.stop();
+    playerGroup.position.set(0, 0, 0);
+
+    if (tweenPosition) {
+        positionTween =
+            new TWEEN.Tween(playerGroup.position).to({
+                x: 2,
+                y: 2,
+                z: -3
+            }, durationTween * 1000)
+            .interpolation(TWEEN.Interpolation.Linear)
+            .delay(0)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .repeat(0)
+            .start();
     }
 }

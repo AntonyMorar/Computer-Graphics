@@ -14,7 +14,7 @@ function gameEvents(game, level, player) {
     document.getElementById("dropzone").addEventListener("dragover", event => onDragOver(event));
 
     //  Drop events
-    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, level));
+    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game));
 
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
     
@@ -32,7 +32,7 @@ function gameEvents(game, level, player) {
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
-        level.playTurn();
+        game.playTurn();
     });
 }
 
@@ -47,12 +47,11 @@ function onDragOver(event) {
     event.dataTransfer.dropEffect = 'copy';
 }
 
-function onDrop(event, level) {
+function onDrop(event, game) {
     event.preventDefault();
-    console.log(event.dataTransfer)
     const id = event.dataTransfer.getData('text');
-    // Level 
-    //level.stack.push(id)
+    // Game 
+    game.commands.push(id)
     // HTML
     const draggableElement = document.getElementById(id);
     // Clone and modify the element
@@ -64,7 +63,7 @@ function onDrop(event, level) {
     document.getElementById("dropzone").appendChild(cln);
     event.dataTransfer.clearData();
 
-    //if(level.stack.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
+    if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
 }
 
 function toggleSound(game){
