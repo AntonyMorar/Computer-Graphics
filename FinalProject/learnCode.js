@@ -1,6 +1,4 @@
-let renderer = null,
-    scene = null,
-    camera = null;
+let renderer = null, scene = null, camera = null;
 
 let root = null;
 let playerGroup = null;
@@ -66,8 +64,12 @@ function main(canvas) {
     root = new THREE.Object3D;
     game = new Game();
     hud = new HUD();
-    let lData = Object.assign({}, game.levelsData[game.level]);
-    level = new Level(lData);
+    let target = {...game.levelsData[game.level]};
+    let lData = Object.assign(target, game.levelsData[game.level]);
+
+    let deepClone = JSON.parse(JSON.stringify(game.levelsData[game.level]));
+
+    level = new Level(deepClone);
     player = new Player();
 
     // Now add the group to our scene
@@ -127,7 +129,8 @@ class Game {
                 buttons: {
                     DragFront: 2,
                     DragLeft: 0,
-                    DragRight: 0
+                    DragRight: 0,
+                    name: "default"
                 }
             },
             {
@@ -135,7 +138,8 @@ class Game {
                 buttons: {
                     DragFront: 3,
                     DragLeft: 1,
-                    DragRight: 0
+                    DragRight: 0,
+                    name: "default"
                 }
             },
         ]
@@ -224,6 +228,12 @@ class Level {
         this.tiles = []
         this.setTiles()
         this.setHudDraggables()
+
+        this.buttons.name = "asd";
+
+        console.log("this", this.buttons);
+        console.log("level", levelData.buttons);
+
         return this;
     }
 
@@ -260,7 +270,8 @@ class Level {
     // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
         console.log(game.levelsData)
-        this.buttons = game.levelsData[game.level].buttons;
+        // this.buttons = game.levelsData[game.level].buttons;
+        this.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
         hud.resetDrag();
 
         for (const [key, value] of Object.entries(game.levelsData[game.level].buttons)) {
@@ -325,7 +336,7 @@ class Player {
         this.action = 'idle'
         this.obj = null;
         //Resources
-        this.resourceUrl = 'src/robot.fbx';
+        this.resourceUrl = 'src/robot2.fbx';
         this.textureUrl = 'src/robotTexture.png';
         this.texture = new THREE.TextureLoader().load(this.textureUrl);
         this.textureEm = new THREE.TextureLoader().load('src/robotEmissive.png');
