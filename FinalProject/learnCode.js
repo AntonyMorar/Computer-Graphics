@@ -7,7 +7,25 @@ let playerGroup = null;
 let game = null;
 let level = null;
 let player = null;
-let hud = null
+let hud = null;
+
+const levelsData = [{
+        level: "sflfe",
+        buttons: {
+            DragFront: 2,
+            DragLeft: 0,
+            DragRight: 0
+        }
+    },
+    {
+        level: "sfflfe",
+        buttons: {
+            DragFront: 3,
+            DragLeft: 1,
+            DragRight: 0
+        }
+    },
+]
 
 let duration = 1000; // ms
 let currentTime = Date.now();
@@ -66,8 +84,7 @@ function main(canvas) {
     root = new THREE.Object3D;
     game = new Game();
     hud = new HUD();
-    let lData = Object.assign({}, game.levelsData[game.level]);
-    level = new Level(lData);
+    level = new Level();
     player = new Player();
 
     // Now add the group to our scene
@@ -122,23 +139,6 @@ class Game {
         this.playing = false;
         this.level = 0;
         this.commands = []
-        this.levelsData = [{
-                level: "sfffe",
-                buttons: {
-                    DragFront: 2,
-                    DragLeft: 0,
-                    DragRight: 0
-                }
-            },
-            {
-                level: "sfflfe",
-                buttons: {
-                    DragFront: 3,
-                    DragLeft: 1,
-                    DragRight: 0
-                }
-            },
-        ]
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
         //this.ambienAudio.volume = 0.25;
@@ -215,12 +215,14 @@ class Game {
 }
 
 class Level {
-    constructor(levelData) {
+    constructor() {
         // s: start, f: front, e:end
         this.loaded = false;
         this.win = false;
-        this.level = levelData.level;
-        this.buttons = levelData.buttons;
+        // Level struct
+        this.level = levelsData[game.level].level;
+
+        this.btns = levelsData[game.level].buttons;
         this.tiles = []
         this.setTiles()
         this.setHudDraggables()
@@ -238,13 +240,54 @@ class Level {
     }
 
     setTiles() {
+        let pos = {
+            x: 0,
+            y: 0,
+            z: 0
+        }
+        let dir = 0 // (0) foward - x+, (1) left - z-, (2) right - z+, (3) backward - x-,
         for (let i = 0; i < this.level.length; i++) {
-            let tile = new Tile({
-                x: i,
-                y: 0,
-                z: 0
-            });
-            this.tiles.push(tile);
+            let tileType = this.level[i];
+
+            console.log(tileType)
+            if (tileType == 's') {
+                let tile = new Tile({
+                    x: pos.x,
+                    y: pos.y,
+                    z: pos.z
+                });
+                this.tiles.push(tile);
+            } else if (tileType == 'f' || tileType == 'e') {
+                let offset = {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
+
+                if(dir==0)offset.x = 1;
+                else if(dir==1)offset.z = -1;
+                else if(dir==2)offset.x = -1;
+                else if(dir==3)offset.z = 1;
+
+                pos.x += offset.x;
+                pos.z += offset.z;
+                console.log(pos)
+                let tile = new Tile({
+                    x: pos.x,
+                    y: pos.y,
+                    z: pos.z
+                });
+                this.tiles.push(tile);
+            }else if(tileType == 'l'){
+                dir = (dir+1)%4
+                
+            }else if(tileType == 'r'){
+                dir--;
+                if(dir < 0) dir = 3;
+                console.log(dir)
+            }
+
+            if (tileType == 'e') return;
         }
         //this.loaded = true;
     }
@@ -259,20 +302,20 @@ class Level {
 
     // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
-        console.log(game.levelsData)
-        this.buttons = game.levelsData[game.level].buttons;
+        this.btns = levelsData[game.level].buttons;
+        console.log(this.btns)
         hud.resetDrag();
 
-        for (const [key, value] of Object.entries(game.levelsData[game.level].buttons)) {
+        for (const [key, value] of Object.entries(levelsData[game.level].buttons)) {
             //console.log(`${key}: ${value}`);
-            if(value > 0) hud.appendDragable(key, value)
+            if (value > 0) hud.appendDragable(key, value)
         }
     }
 
     //with actual level values
-    removeBtn(id){
-        this.buttons[id] -= 1;
-        hud.updateDraggable(id, this.buttons[id]);
+    removeBtn(id) {
+        this.btns[id] -= 1;
+        hud.updateDraggable(id, this.btns[id]);
     }
 
 }
@@ -499,7 +542,7 @@ class HUD {
         else this.playBtn.disabled = false;
     }
 
-    resetDrag(){
+    resetDrag() {
         while (this.draggables.firstChild) this.draggables.removeChild(this.draggables.lastChild);
     }
 
@@ -548,21 +591,21 @@ class HUD {
         this.draggables.appendChild(draggable);
     }
 
-    updateDraggable(id, num){
+    updateDraggable(id, num) {
         let draggable = document.getElementById(id);
-        if(!draggable) return;
-        
+        if (!draggable) return;
+
         for (var i = 0; i < draggable.childNodes.length; i++) {
             if (draggable.childNodes[i].className == "number") {
-                if(num > 0){
+                if (num > 0) {
                     draggable.childNodes[i].innerHTML = num
-                }else{
+                } else {
                     draggable.draggable = false;
                     draggable.classList.add("disabled");
                     draggable.removeChild(draggable.childNodes[i])
                 }
                 break;
-            }        
+            }
         }
         console.log(draggable)
     }
