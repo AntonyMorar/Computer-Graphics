@@ -1,6 +1,4 @@
-let renderer = null,
-    scene = null,
-    camera = null;
+let renderer = null, scene = null, camera = null;
 
 let root = null;
 let playerGroup = null;
@@ -84,7 +82,12 @@ function main(canvas) {
     root = new THREE.Object3D;
     game = new Game();
     hud = new HUD();
-    level = new Level();
+    let target = {...game.levelsData[game.level]};
+    let lData = Object.assign(target, game.levelsData[game.level]);
+
+    let deepClone = JSON.parse(JSON.stringify(game.levelsData[game.level]));
+
+    level = new Level(deepClone);
     player = new Player();
 
     // Now add the group to our scene
@@ -139,6 +142,25 @@ class Game {
         this.playing = false;
         this.level = 0;
         this.commands = []
+        this.levelsData = [{
+                level: "sfffe",
+                buttons: {
+                    DragFront: 2,
+                    DragLeft: 0,
+                    DragRight: 0,
+                    name: "default"
+                }
+            },
+            {
+                level: "sfflfe",
+                buttons: {
+                    DragFront: 3,
+                    DragLeft: 1,
+                    DragRight: 0,
+                    name: "default"
+                }
+            },
+        ]
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
         //this.ambienAudio.volume = 0.25;
@@ -226,6 +248,12 @@ class Level {
         this.tiles = []
         this.setTiles()
         this.setHudDraggables()
+
+        this.buttons.name = "asd";
+
+        console.log("this", this.buttons);
+        console.log("level", levelData.buttons);
+
         return this;
     }
 
@@ -302,8 +330,9 @@ class Level {
 
     // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
-        this.btns = levelsData[game.level].buttons;
-        console.log(this.btns)
+        console.log(game.levelsData)
+        // this.buttons = game.levelsData[game.level].buttons;
+        this.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
         hud.resetDrag();
 
         for (const [key, value] of Object.entries(levelsData[game.level].buttons)) {
@@ -368,7 +397,7 @@ class Player {
         this.action = 'idle'
         this.obj = null;
         //Resources
-        this.resourceUrl = 'src/robot.fbx';
+        this.resourceUrl = 'src/robot2.fbx';
         this.textureUrl = 'src/robotTexture.png';
         this.texture = new THREE.TextureLoader().load(this.textureUrl);
         this.textureEm = new THREE.TextureLoader().load('src/robotEmissive.png');
