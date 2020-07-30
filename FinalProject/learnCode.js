@@ -7,24 +7,6 @@ let level = null;
 let player = null;
 let hud = null;
 
-const levelsData = [{
-        level: "sflfe",
-        buttons: {
-            DragFront: 2,
-            DragLeft: 0,
-            DragRight: 0
-        }
-    },
-    {
-        level: "sfflfe",
-        buttons: {
-            DragFront: 3,
-            DragLeft: 1,
-            DragRight: 0
-        }
-    },
-]
-
 let duration = 1000; // ms
 let currentTime = Date.now();
 
@@ -237,23 +219,16 @@ class Game {
 }
 
 class Level {
-    constructor() {
+    constructor(levelData) {
         // s: start, f: front, e:end
         this.loaded = false;
         this.win = false;
         // Level struct
-        this.level = levelsData[game.level].level;
-
-        this.btns = levelsData[game.level].buttons;
+        this.level = levelData.level;
+        this.buttons = levelData.buttons;
         this.tiles = []
         this.setTiles()
         this.setHudDraggables()
-
-        this.buttons.name = "asd";
-
-        console.log("this", this.buttons);
-        console.log("level", levelData.buttons);
-
         return this;
     }
 
@@ -335,16 +310,16 @@ class Level {
         this.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
         hud.resetDrag();
 
-        for (const [key, value] of Object.entries(levelsData[game.level].buttons)) {
+        for (const [key, value] of Object.entries(game.levelsData[game.level].buttons)) {
             //console.log(`${key}: ${value}`);
-            if (value > 0) hud.appendDragable(key, value)
+            if(value > 0) hud.appendDragable(key, value)
         }
     }
 
     //with actual level values
     removeBtn(id) {
-        this.btns[id] -= 1;
-        hud.updateDraggable(id, this.btns[id]);
+        this.buttons[id] -= 1;
+        hud.updateDraggable(id, this.buttons[id]);
     }
 
 }
@@ -397,7 +372,7 @@ class Player {
         this.action = 'idle'
         this.obj = null;
         //Resources
-        this.resourceUrl = 'src/robot2.fbx';
+        this.resourceUrl = 'src/robot.fbx';
         this.textureUrl = 'src/robotTexture.png';
         this.texture = new THREE.TextureLoader().load(this.textureUrl);
         this.textureEm = new THREE.TextureLoader().load('src/robotEmissive.png');
