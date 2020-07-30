@@ -7,6 +7,7 @@ let playerGroup = null;
 let game = null;
 let level = null;
 let player = null;
+let hud = null
 
 let duration = 1000; // ms
 let currentTime = Date.now();
@@ -66,6 +67,7 @@ function main(canvas) {
     game = new Game()
     level = new Level(game.levelsData[game.level]);
     player = new Player();
+    hud = new HUD();
 
     // Now add the group to our scene
     scene.add(root);
@@ -149,6 +151,17 @@ class Game {
             loader.disabled = false;
             loader.innerHTML = 'Start Game'
         }
+
+        if(this.state == "game" && this.playing){
+            if(!player.inAction){ 
+                if(this.commands.length <= 0) {
+                    this.playing = false;
+                    return;
+                }
+                this.commands.pop()
+                player.playTweenAnimation()
+            }
+        }
     }
 
     togglePlaySound() {
@@ -164,19 +177,27 @@ class Game {
     playLevel() {
         console.log("play level")
         this.state = "game";
-        this.playing = true;
         if (this.ambienAudio.paused) this.togglePlaySound();
-        level.showLevel();
-        player.showPlayer();
+        level.show();
+        player.show();
 
-        let dragAndDrop = document.getElementById("dragAndDrop");
-        dragAndDrop.style.opacity = 1;
+        hud.toggleDragAndDrop(true)
         this.loaded = true;
     }
 
     playTurn() {
         console.log(this.commands)
-        playAnimations()
+        this.playing = true;
+        //playAnimations()
+        //player.playTweenAnimation()
+    }
+
+    resetLevel(){
+        this.gameOver = false;
+        this.playing = false;
+        this.commands = []
+        player.reset();
+        hud.resetDragAndDrop()
     }
 }
 
@@ -186,13 +207,6 @@ class Level {
         this.loaded = false;
         this.level = levelData.level;
         this.buttons = levelData.buttons;
-        //Textures and materials
-        this.textureUrl = "../images/checker_large.gif";
-        this.texture = new THREE.TextureLoader().load(this.textureUrl);
-        this.material = new THREE.MeshPhongMaterial({
-            map: this.texture
-        });
-        this.geometry = new THREE.BoxGeometry(1.5, 0.5, 1.5);
         this.tiles = []
         this.getTiles()
         return this;
@@ -220,13 +234,14 @@ class Level {
         //this.loaded = true;
     }
 
-    showLevel() {
+    show() {
         if (this.loaded) {
             this.tiles.forEach(tile => {
                 root.add(tile.obj);
             });
         }
     }
+    
 }
 
 class Tile {
@@ -271,8 +286,12 @@ class Tile {
 
 class Player {
     constructor() {
-        this.isMoving = false;
+        // General
         this.loaded = false;
+        this.inAction = false;
+        this.action = 'idle'
+        this.obj = null;
+        //Resources
         this.resourceUrl = 'src/robot.fbx';
         this.textureUrl = 'src/robotTexture.png';
         this.texture = new THREE.TextureLoader().load(this.textureUrl);
@@ -283,9 +302,13 @@ class Player {
             emissive: 0xffffff,
             emissiveMap: this.textureEm
         });
-        this.obj = null;
-        this.action = null;
-        this.moveTween = null;
+        // Animation
+        this.actionAnim = null;
+        this.durationTween = 2; // sec
+        this.positionTween = null;
+        this.tweenFront = true;
+
+        // Loader
         this.loader = new THREE.FBXLoader();
         this.loader.load(
             // resource URL
@@ -300,14 +323,24 @@ class Player {
     }
 
     update(deltat) {
-        if (this.loaded && this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
+        if (this.loaded){
+            if(this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
+
+        } 
 
     }
 
-    showPlayer() {
+    show() {
         playerGroup = new THREE.Object3D;
         playerGroup.add(this.obj)
         root.add(playerGroup);
+    }
+
+    reset(){
+        this.inAction = false;
+        this.action = 'idle'
+        playerGroup.position.set(0,0,0)
+        console.log(this)
     }
 
     updloadSuccess(robotObj) {
@@ -319,13 +352,14 @@ class Player {
         robotObj.rotation.y = Math.PI / 2;
 
         if (robotObj.animations.length > 0) {
-            this.action = robotObj.mixer.clipAction(robotObj.animations[0], robotObj);
-            this.action.play();
+            this.actionAnim = robotObj.mixer.clipAction(robotObj.animations[0], robotObj);
+            this.actionAnim.play();
         }
 
         this.obj = robotObj;
         //dancers.push(robotObj);
         this.loaded = true;
+        console.log(this)
     }
 
     uploadProcessing(xhr) {
@@ -336,29 +370,48 @@ class Player {
         console.log('An error happened');
         console.log(error)
     }
+
+    playTweenAnimation() {
+        if(this.inAction) return;
+        this.inAction = true;
+        this.action = 'front';
+        // override tween animation
+        if (this.positionTween) this.positionTween.stop();  
+
+        if (this.tweenFront) {
+            this.positionTween =
+                new TWEEN.Tween(playerGroup.position).to({
+                    x: playerGroup.position.x + 1,
+                    y: 0,
+                    z: 0
+                }, this.durationTween * 1000)
+                .interpolation(TWEEN.Interpolation.Linear)
+                .delay(0)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.inAction = false;
+                    this.action = 'idle';
+                })
+        }
+    }
 }
 
-let durationTween = 2; // sec
-let positionTween = null;
-let tweenPosition = true;
+class HUD{
+    constructor(){
+        this.dragAndDrop = document.getElementById("dragAndDrop");
+        this.dropzone = document.getElementById("dropzone");
+        this.startBtn = document.getElementById("startGame")
+    }
 
-function playAnimations() {
-    console.log(playerGroup)
-    // position tween
-    if (positionTween) positionTween.stop();
-    playerGroup.position.set(0, 0, 0);
+    toggleDragAndDrop(visible){
+        if(visible) dragAndDrop.style.opacity = 1;
+        else dragAndDrop.style.opacity = 0;
+    }
 
-    if (tweenPosition) {
-        positionTween =
-            new TWEEN.Tween(playerGroup.position).to({
-                x: 2,
-                y: 2,
-                z: -3
-            }, durationTween * 1000)
-            .interpolation(TWEEN.Interpolation.Linear)
-            .delay(0)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .repeat(0)
-            .start();
+    resetDragAndDrop(){
+        console.log("resetDragAndDrop");
+        while(this.dropzone.firstChild) this.dropzone.removeChild(this.dropzone.lastChild);
     }
 }

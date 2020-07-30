@@ -95,7 +95,8 @@ button:disabled{
     z-index: 1;
 }
 
-#playTurn{
+#playTurn,
+#resetLvl{
 	margin-left: 10px;
 }
 

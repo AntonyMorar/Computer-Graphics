@@ -34,10 +34,13 @@ function gameEvents(game, level, player) {
     document.getElementById("playTurn").addEventListener("click", () => {
         game.playTurn();
     });
+
+    document.getElementById("resetLvl").addEventListener("click", () => {
+        game.resetLevel();
+    });
 }
 
 function onDragStart(event) {
-    console.log(event.target.id)
     event.dataTransfer.setData('text/plain', event.target.id);
     event.currentTarget.style.backgroundColor = 'black';
 }
