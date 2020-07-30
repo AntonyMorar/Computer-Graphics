@@ -64,7 +64,6 @@ button:disabled{
 /* Drag and Drop
 ******************************************************/
 #dragAndDrop{
-	opacity: 1;
 	pointer-events: all;
 	position: absolute;
 	bottom: 0;
@@ -72,6 +71,8 @@ button:disabled{
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+
+	opacity: 0;
 }
 
 #dropzoneContainer{
@@ -91,7 +92,7 @@ button:disabled{
 
 .floatText{
 	position: absolute;
-    z-index: 1;
+    z-index: 0;
 }
 
 #playTurn{
@@ -128,7 +129,7 @@ button:disabled{
 /* Main Menu
 ******************************************************/
 #mainMenu{
-	padding: calc(6vw + 80px) 6vw 6vw calc(12vw + 130px);
+	padding: calc(12vw + 80px) 6vw 6vw calc(12vw + 130px);
 }
 
 /* Next Level

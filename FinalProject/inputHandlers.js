@@ -1,4 +1,4 @@
-function gameEvents(game, level) {
+function gameEvents(game, level, player) {
     window.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -47,6 +47,7 @@ function onDragOver(event) {
 }
 
 function onDrop(event, level) {
+    console.log(event.dataTransfer)
     event.preventDefault();
     const id = event.dataTransfer.getData('text');
     // Level 
