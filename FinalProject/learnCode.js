@@ -66,7 +66,8 @@ function main(canvas) {
     root = new THREE.Object3D;
     game = new Game();
     hud = new HUD();
-    level = new Level(game.levelsData[game.level]);
+    let lData = Object.assign({}, game.levelsData[game.level]);
+    level = new Level(lData);
     player = new Player();
 
     // Now add the group to our scene
@@ -208,7 +209,8 @@ class Game {
         this.playing = false;
         this.commands = []
         player.reset();
-        hud.resetDragAndDrop()
+        hud.resetDrop()
+        level.setHudDraggables();
     }
 }
 
@@ -255,14 +257,19 @@ class Level {
         }
     }
 
+    // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
-        for (const [key, value] of Object.entries(this.buttons)) {
+        console.log(game.levelsData)
+        this.buttons = game.levelsData[game.level].buttons;
+        hud.resetDrag();
+
+        for (const [key, value] of Object.entries(game.levelsData[game.level].buttons)) {
             //console.log(`${key}: ${value}`);
-            //hud.appendDragable(key, value)
             if(value > 0) hud.appendDragable(key, value)
         }
     }
 
+    //with actual level values
     removeBtn(id){
         this.buttons[id] -= 1;
         hud.updateDraggable(id, this.buttons[id]);
@@ -492,7 +499,11 @@ class HUD {
         else this.playBtn.disabled = false;
     }
 
-    resetDragAndDrop() {
+    resetDrag(){
+        while (this.draggables.firstChild) this.draggables.removeChild(this.draggables.lastChild);
+    }
+
+    resetDrop() {
         while (this.dropzone.firstChild) this.dropzone.removeChild(this.dropzone.lastChild);
         this.playBtn.disabled = true;
     }
