@@ -108,19 +108,38 @@ button:disabled{
 
 .draggable{
 	cursor: pointer;
-	background-color: gray;
+	background-color: rgb(32, 32, 32);
     width: 55px;
 	height: 55px;
 	color: white;
-	margin-right: 10px;
+	margin-right: 14px;
 	z-index: 10;
 	display: flex;
     align-items: center;
-    justify-content: center;
+	justify-content: center;
+	position: relative;
+}
+
+.draggable.disabled{
+	background-color: rgb(175, 175, 175);
+	cursor: not-allowed;
 }
 
 .draggable.inStack{
 	cursor: default;
+}
+
+.draggable .number{
+	background-color: red;
+	border-radius: 50%;
+    position: absolute;
+    top: -10;
+    right: -10;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .draggable:last-child{

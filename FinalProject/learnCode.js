@@ -64,10 +64,10 @@ function main(canvas) {
      */
     // Create a group to hold all the objects
     root = new THREE.Object3D;
-    game = new Game()
+    game = new Game();
+    hud = new HUD();
     level = new Level(game.levelsData[game.level]);
     player = new Player();
-    hud = new HUD();
 
     // Now add the group to our scene
     scene.add(root);
@@ -76,7 +76,7 @@ function main(canvas) {
      * Events
      */
     // add mouse handling so we can rotate the scene
-    gameEvents(game, level, player);
+    gameEvents(game, level, player, hud);
     /****************************************************************************
      * Run the loop
      */
@@ -158,7 +158,6 @@ class Game {
                     return;
                 }
                 let actualCommand = this.commands.shift()
-                console.log(actualCommand)
                 switch (actualCommand) {
                     case 'DragFront':
                         player.isFrontTween = true;
@@ -188,7 +187,6 @@ class Game {
     }
 
     playLevel() {
-        console.log("play level")
         this.state = "game";
         if (this.ambienAudio.paused) this.togglePlaySound();
         level.show();
@@ -199,7 +197,6 @@ class Game {
     }
 
     playTurn() {
-        console.log(this.commands)
         this.playing = true;
         hud.togglePlayBtn(true)
         //playAnimations()
@@ -223,7 +220,8 @@ class Level {
         this.level = levelData.level;
         this.buttons = levelData.buttons;
         this.tiles = []
-        this.getTiles()
+        this.setTiles()
+        this.setHudDraggables()
         return this;
     }
 
@@ -237,7 +235,7 @@ class Level {
         return (tile.loaded)
     }
 
-    getTiles() {
+    setTiles() {
         for (let i = 0; i < this.level.length; i++) {
             let tile = new Tile({
                 x: i,
@@ -255,6 +253,19 @@ class Level {
                 root.add(tile.obj);
             });
         }
+    }
+
+    setHudDraggables() {
+        for (const [key, value] of Object.entries(this.buttons)) {
+            //console.log(`${key}: ${value}`);
+            //hud.appendDragable(key, value)
+            if(value > 0) hud.appendDragable(key, value)
+        }
+    }
+
+    removeBtn(id){
+        this.buttons[id] -= 1;
+        hud.updateDraggable(id, this.buttons[id]);
     }
 
 }
@@ -347,9 +358,7 @@ class Player {
     update(deltat) {
         if (this.loaded) {
             if (this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
-
         }
-
     }
 
     show() {
@@ -366,7 +375,6 @@ class Player {
         if (this.rightTween) this.rightTween.stop()
         playerGroup.position.set(0, 0, 0)
         playerGroup.rotation.set(0, 0, 0)
-        console.log(this)
     }
 
     updloadSuccess(robotObj) {
@@ -385,7 +393,6 @@ class Player {
         this.obj = robotObj;
         //dancers.push(robotObj);
         this.loaded = true;
-        console.log(this)
     }
 
     uploadProcessing(xhr) {
@@ -402,7 +409,7 @@ class Player {
         // Front animation
         if (this.frontTween) this.frontTween.stop(); // override tween animation
         if (this.isFrontTween) {
-            let target = new THREE.Vector3(1,0,0).applyQuaternion( playerGroup.quaternion )
+            let target = new THREE.Vector3(1, 0, 0).applyQuaternion(playerGroup.quaternion)
             this.inAction = true;
             this.action = 'front';
             this.frontTween =
@@ -467,10 +474,12 @@ class Player {
 
 class HUD {
     constructor() {
+        // In game items
         this.dragAndDrop = document.getElementById("dragAndDrop");
         this.dropzone = document.getElementById("dropzone");
-        this.startBtn = document.getElementById("startGame")
+        this.startBtn = document.getElementById("startGame");
         this.playBtn = document.getElementById("playTurn");
+        this.draggables = document.getElementById("draggables");
     }
 
     toggleDragAndDrop(visible) {
@@ -478,8 +487,8 @@ class HUD {
         else dragAndDrop.style.opacity = 0;
     }
 
-    togglePlayBtn(disable){
-        if(disable) this.playBtn.disabled = true;
+    togglePlayBtn(disable) {
+        if (disable) this.playBtn.disabled = true;
         else this.playBtn.disabled = false;
     }
 
@@ -491,5 +500,59 @@ class HUD {
     startButton() {
         this.startBtn.disabled = false;
         this.startBtn.innerHTML = 'Start Game'
+    }
+
+    appendDragable(id, num = 1) {
+        let draggable = document.createElement('div');
+        draggable.id = id;
+        draggable.innerHTML = "Null";
+        switch (id) {
+            case 'DragFront':
+                draggable.innerHTML = "Front";
+                break;
+            case 'DragLeft':
+                draggable.innerHTML = "Left";
+                break;
+            case 'DragRight':
+                draggable.innerHTML = "Right";
+                break;
+            default:
+                break;
+        }
+
+        draggable.className = 'draggable';
+        draggable.draggable = true;
+        // Start drag events
+        draggable.addEventListener("dragstart", event => onDragStart(event));
+
+        if (num > 0) {
+            let number = document.createElement('span');
+            number.innerHTML = num;
+            number.className = 'number';
+            draggable.appendChild(number)
+        } else {
+            draggable.draggable = false;
+            draggable.classList.add("disabled");
+        }
+        this.draggables.appendChild(draggable);
+    }
+
+    updateDraggable(id, num){
+        let draggable = document.getElementById(id);
+        if(!draggable) return;
+        
+        for (var i = 0; i < draggable.childNodes.length; i++) {
+            if (draggable.childNodes[i].className == "number") {
+                if(num > 0){
+                    draggable.childNodes[i].innerHTML = num
+                }else{
+                    draggable.draggable = false;
+                    draggable.classList.add("disabled");
+                    draggable.removeChild(draggable.childNodes[i])
+                }
+                break;
+            }        
+        }
+        console.log(draggable)
     }
 }

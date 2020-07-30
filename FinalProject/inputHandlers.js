@@ -5,16 +5,11 @@ function gameEvents(game, level, player) {
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Start drag events
-    document.getElementById("DragFront").addEventListener("dragstart", event => onDragStart(event));
-    document.getElementById("DragLeft").addEventListener("dragstart", event => onDragStart(event));
-    document.getElementById("DragRight").addEventListener("dragstart", event => onDragStart(event));
-
     // DragOver events
     document.getElementById("dropzone").addEventListener("dragover", event => onDragOver(event));
 
     //  Drop events
-    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game));
+    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game, level));
 
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
     
@@ -42,7 +37,7 @@ function gameEvents(game, level, player) {
 
 function onDragStart(event) {
     event.dataTransfer.setData('text/plain', event.target.id);
-    event.currentTarget.style.backgroundColor = 'black';
+    //event.currentTarget.style.backgroundColor = 'black';
 }
 
 function onDragOver(event) {
@@ -50,21 +45,30 @@ function onDragOver(event) {
     event.dataTransfer.dropEffect = 'copy';
 }
 
-function onDrop(event, game) {
+function onDrop(event, game, level) {
     event.preventDefault();
     const id = event.dataTransfer.getData('text');
-    // Game 
-    game.commands.push(id)
     // HTML
     const draggableElement = document.getElementById(id);
+    if(draggableElement==null) return;
+    game.commands.push(id)
     // Clone and modify the element
     let cln = draggableElement.cloneNode(true);
     cln.removeEventListener('dragstart', ()=>{})
     cln.draggable = false;
     cln.classList.add("inStack");
-
+    cln.removeAttribute('id');
+    for (var i = 0; i < cln.childNodes.length; i++) {
+        if (cln.childNodes[i].className == "number") {
+            cln.removeChild(cln.childNodes[i])
+            break;
+        }        
+    }
     document.getElementById("dropzone").appendChild(cln);
     event.dataTransfer.clearData();
+
+    // Update draggable elements
+    level.removeBtn(id)
 
     if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
 }
