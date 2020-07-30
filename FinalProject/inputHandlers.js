@@ -37,6 +37,7 @@ function gameEvents(game, level, player) {
 }
 
 function onDragStart(event) {
+    console.log(event.target.id)
     event.dataTransfer.setData('text/plain', event.target.id);
     event.currentTarget.style.backgroundColor = 'black';
 }
@@ -47,11 +48,11 @@ function onDragOver(event) {
 }
 
 function onDrop(event, level) {
-    console.log(event.dataTransfer)
     event.preventDefault();
+    console.log(event.dataTransfer)
     const id = event.dataTransfer.getData('text');
     // Level 
-    level.stack.push(id)
+    //level.stack.push(id)
     // HTML
     const draggableElement = document.getElementById(id);
     // Clone and modify the element
@@ -63,7 +64,7 @@ function onDrop(event, level) {
     document.getElementById("dropzone").appendChild(cln);
     event.dataTransfer.clearData();
 
-    if(level.stack.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
+    //if(level.stack.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
 }
 
 function toggleSound(game){
