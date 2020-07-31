@@ -148,12 +148,15 @@ button:disabled{
 
 /* Main Menu
 ******************************************************/
-#mainMenu{
+#mainMenu,
+#levelComplete{
 	padding: calc(12vw + 80px) 6vw 6vw calc(12vw + 130px);
+	position: absolute;
+    top: 0;
 }
 
-/* Next Level
+/* Level Complete
 ******************************************************/
-#nextLevel{
-	position: absolute;
+#levelComplete{
+	display: none;
 }

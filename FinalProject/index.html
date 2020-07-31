@@ -50,14 +50,6 @@
 						<button id="resetLvl">Reset</button>
 					</div>
 					<div id="draggables">
-						<!--
-						<div id="DragFront" class="draggable" draggable="true">
-							Front
-							<span class="number">2</span>
-						</div>
-						<div id="DragLeft" class="draggable" draggable="true">Left</div>
-						<div id="DragRight" class="draggable" draggable="true">Right</div> 
-					-->
 					</div>
 				</div>
 
@@ -66,7 +58,12 @@
 					<button id="startGame" disabled>Loading...</button>
 				</div>
 
-				<div id="nextLevel"></div>
+				<div id="levelComplete">
+					<h1>Level 1 Complete</h1>
+					<h3>Let's try the next level</h3>
+					<button id="nextLevel">Next Level</button>
+					<button id="tryAgain">Try again</button>
+				</div>
 			</div>
 	
 			<canvas id="webglcanvas" width="1000" height="600"></canvas>

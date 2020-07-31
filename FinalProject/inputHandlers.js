@@ -33,6 +33,14 @@ function gameEvents(game, level, player) {
     document.getElementById("resetLvl").addEventListener("click", () => {
         game.resetLevel();
     });
+
+    document.getElementById("nextLevel").addEventListener("click", () => {
+        game.nextLevel();
+    });
+
+    document.getElementById("tryAgain").addEventListener("click", () => {
+        game.resetLevel();
+    });
 }
 
 function onDragStart(event) {
@@ -68,6 +76,7 @@ function onDrop(event, game, level) {
     event.dataTransfer.clearData();
 
     // Update draggable elements
+    console.log(id)
     level.removeBtn(id)
 
     if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
