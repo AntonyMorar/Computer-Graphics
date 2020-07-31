@@ -1,4 +1,4 @@
-function gameEvents(game, level, player) {
+function gameEvents(game) {
     window.addEventListener('resize', function () {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -9,23 +9,27 @@ function gameEvents(game, level, player) {
     document.getElementById("dropzone").addEventListener("dragover", event => onDragOver(event));
 
     //  Drop events
-    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game, level));
+    document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game));
 
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
     
     document.getElementById("infoBtn").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         console.log("info");
     });
 
     document.getElementById("shareBtn").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         console.log("share");
     });
 
     document.getElementById("startGame").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         game.playGame();
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         game.playTurn();
     });
 /*
@@ -34,10 +38,12 @@ function gameEvents(game, level, player) {
     });
 */
     document.getElementById("nextLevel").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         game.sceneIn();
     });
 
     document.getElementById("tryAgain").addEventListener("click", () => {
+        game.playSound("src/click.mp3");
         game.resetLevel();
     });
 
@@ -56,7 +62,7 @@ function onDragOver(event) {
     event.dataTransfer.dropEffect = 'copy';
 }
 
-function onDrop(event, game, level) {
+function onDrop(event, game) {
     event.preventDefault();
     const id = event.dataTransfer.getData('text');
     // HTML
@@ -85,7 +91,7 @@ function onDrop(event, game, level) {
 }
 
 function toggleSound(game){
-    game.togglePlaySound();
+    game.toggleAmbienSound();
     if (game.ambienAudio.paused) document.getElementById("soundBtn").innerHTML = "Sound On"
     else document.getElementById("soundBtn").innerHTML = "Sound Off"
 }

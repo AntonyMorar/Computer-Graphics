@@ -139,6 +139,14 @@ class Game {
                 }
             },
             {
+                level: "slfrf",
+                buttons: {
+                    DragFront: 2,
+                    DragLeft: 1,
+                    DragRight: 1
+                }
+            },
+            {
                 level: "sflfrffre",
                 buttons: {
                     DragFront: 5,
@@ -155,7 +163,7 @@ class Game {
         this.ambienAudio.src = "src/bg.mp3";
         this.ambienAudio.volume = 0.25;
         this.robotAudio = document.createElement("audio");
-        this.robotAudio.volume = 0.5;
+        this.robotAudio.volume = 0.3;
         return this;
 
     }
@@ -248,7 +256,7 @@ class Game {
         if (this.levelObj) this.levelObj.update();
     }
 
-    togglePlaySound() {
+    toggleAmbienSound() {
         if (this.ambienAudio.paused) {
             this.ambienAudio.play();
             return true;
@@ -271,7 +279,7 @@ class Game {
 
     sceneIn() {
         this.isSceneIn = true;
-        if (this.ambienAudio.paused) this.togglePlaySound();
+        if (this.ambienAudio.paused) this.toggleAmbienSound();
         // Add to the scene if they are not
         if (!this.levelObj.inThreeScene) this.levelObj.add();
         if (!player.inThreeScene) player.add();
@@ -321,6 +329,11 @@ class Game {
                 if(tile.boxColiderH) tile.boxColiderH.visible = !tile.boxColiderH.visible
             });
         }
+    }
+
+    playSound(soundSrc){
+        this.robotAudio.src = soundSrc;
+        this.robotAudio.play();
     }
 }
 
@@ -651,7 +664,7 @@ class Player {
             if (this.action == "fall") {
                 playerGroup.position.y -= 0.005 * deltat;
                 //Avoid inifinite falling
-                if (playerGroup.position.y <= -7) {
+                if (playerGroup.position.y <= -8) {
                     this.inAction = false;
                     this.action = "idle"
                 }
@@ -730,6 +743,9 @@ class Player {
         // Front animation
         if (this.frontTween) this.frontTween.stop(); // override tween animation
         if (this.isFrontTween) {
+            //Play sound
+            game.playSound("src/robotFront.mp3");
+
             let target = new THREE.Vector3(1, 0, 0).applyQuaternion(playerGroup.quaternion)
             this.inAction = true;
             this.action = 'front';
