@@ -165,7 +165,6 @@ class Game {
                 if (this.commands.length <= 0) {
                     this.playing = false;
                     //hud.togglePlayBtn(false);
-                    player.checkFloor();
                     //Collision detenction
                     game.levelObj.tiles.forEach(tile => {
                         if (tile.boxColider && player.boxColider) {
@@ -505,6 +504,8 @@ class Player {
                 this.boxColider = new THREE.Box3().setFromObject(this.obj);
                 if (this.boxColiderH) this.boxColiderH.update();
             }
+
+            console.log(this.inAction)
         }
     }
 
@@ -580,6 +581,7 @@ class Player {
                     this.isFrontTween = false;
                     this.inAction = false;
                     this.action = 'idle';
+                    this.checkFloor();
                 })
         }
 
@@ -625,9 +627,12 @@ class Player {
     }
 
     checkFloor() {
-        console.log("checking floor...")
+        console.log("checking floor...");
         let intersects = this.raycaster.intersectObjects(root.children, true, []);
-        if (intersects.length <= 0) this.action = "fall"
+        if (intersects.length <= 0) {
+            this.action = "fall"
+            game.state = "lose"
+        }
     }
 }
 
@@ -663,7 +668,6 @@ class HUD {
         this.clearDrop();
         this.clearDrag();
 
-        console.log(game.levelsData[game.level].buttons)
         for (const [key, value] of Object.entries(game.levelsData[game.level].buttons)) {
             //console.log(`${key}: ${value}`);
             if (value > 0) this.appendDragable(key, value)
