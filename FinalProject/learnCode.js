@@ -139,7 +139,7 @@ class Game {
                 }
             },
             {
-                level: "slfrf",
+                level: "slfre",
                 buttons: {
                     DragFront: 2,
                     DragLeft: 1,
@@ -164,6 +164,9 @@ class Game {
         this.ambienAudio.volume = 0.25;
         this.robotAudio = document.createElement("audio");
         this.robotAudio.volume = 0.3;
+        this.hudAudio = document.createElement("audio");
+        this.hudAudio.src = "src/click.mp3";
+        this.hudAudio.volume = 0.35;
         return this;
 
     }
@@ -299,6 +302,8 @@ class Game {
 
     }
 
+    resetLevel
+
     resetLevelParams() {
         this.playing = false; // If characer are executing commands
         this.levelWin = false; // If player wins the level
@@ -331,7 +336,12 @@ class Game {
         }
     }
 
+    playHudSound(){
+        this.hudAudio.play();
+    }
+
     playSound(soundSrc){
+        this.robotAudio.pause();
         this.robotAudio.src = soundSrc;
         this.robotAudio.play();
     }
@@ -768,6 +778,8 @@ class Player {
         // Left animation
         if (this.leftTween) this.leftTween.stop(); // override tween animation
         if (this.isLeftTween) {
+            game.playSound("src/robotRot.mp3");
+
             this.inAction = true;
             this.action = 'left';
             this.leftTween =
@@ -788,6 +800,8 @@ class Player {
         // Right animation
         if (this.rightTween) this.rightTween.stop(); // override tween animation
         if (this.isRightTween) {
+            game.playSound("src/robotRot.mp3");
+
             this.inAction = true;
             this.action = 'right';
             this.rightTween =

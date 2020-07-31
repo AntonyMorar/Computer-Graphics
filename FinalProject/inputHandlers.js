@@ -14,22 +14,22 @@ function gameEvents(game) {
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
     
     document.getElementById("infoBtn").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
+        game.playHudSound();
         console.log("info");
     });
 
     document.getElementById("shareBtn").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
+        game.playHudSound();
         console.log("share");
     });
 
     document.getElementById("startGame").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
+        game.playHudSound();
         game.playGame();
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
+        game.playHudSound();
         game.playTurn();
     });
 /*
@@ -38,16 +38,17 @@ function gameEvents(game) {
     });
 */
     document.getElementById("nextLevel").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
+        game.playHudSound();
         game.sceneIn();
     });
 
     document.getElementById("tryAgain").addEventListener("click", () => {
-        game.playSound("src/click.mp3");
-        game.resetLevel();
+        game.playHudSound();
+        game.resetLevelParams();
     });
 
     document.getElementById("debug").addEventListener("click", () => {
+        game.playHudSound();
         game.toggleDebug();
     });
 }
