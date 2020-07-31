@@ -77,7 +77,7 @@ function onDrop(event, game, level) {
 
     // Update draggable elements
     console.log(id)
-    level.removeBtn(id)
+    game.levelObj.removeBtn(id)
 
     if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
 }

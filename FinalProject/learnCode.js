@@ -68,7 +68,7 @@ function main(canvas) {
     game = new Game();
     hud = new HUD();
     let deepClone = JSON.parse(JSON.stringify(game.levelsData[game.level]));
-    level = new Level(deepClone);
+    game.levelObj = new Level(deepClone);
     player = new Player();
 
     // Now add the group to our scene
@@ -78,7 +78,7 @@ function main(canvas) {
      * Events
      */
     // add mouse handling so we can rotate the scene
-    gameEvents(game, level, player, hud);
+    gameEvents(game, game.levelObj, player, hud);
     /****************************************************************************
      * Run the loop
      */
@@ -92,7 +92,7 @@ function _update() {
     let fract = deltat / duration;
 
     game.update();
-    if (level) level.update();
+    //if (level) level.update();
     player.update(deltat);
     /*
         if (dancers.length > 0) {
@@ -147,9 +147,10 @@ class Game {
     }
 
     update() {
+        if(this.levelObj) this.levelObj.update();
         // If player and level exist and loaded is equal to false
-        if (level && player && !this.loaded) {
-            if (level.loaded && player.loaded) {
+        if (game.levelObj && player && !this.loaded) {
+            if (game.levelObj.loaded && player.loaded) {
                 this.loaded = true;
             }
         }
@@ -166,7 +167,7 @@ class Game {
                     //hud.togglePlayBtn(false);
                     player.checkFloor();
                     //Collision detenction
-                    level.tiles.forEach(tile => {
+                    game.levelObj.tiles.forEach(tile => {
                         if (tile.boxColider && player.boxColider) {
                             this.state = tile.boxColider.intersectsBox(player.boxColider) ? 'win' : 'lose';
                         }
@@ -216,7 +217,7 @@ class Game {
     playLevel() {
         this.state = "game";
         if (this.ambienAudio.paused) this.togglePlaySound();
-        level.show();
+        game.levelObj.show();
         player.show();
         hud.toggleDragAndDrop(true)
     }
@@ -243,16 +244,16 @@ class Game {
         this.state = "changeLevel";
         this.loaded = false;
         //Remove old elements
-        level.delete();
-        level = null;
+        game.levelObj.delete();
+        game.levelObj = null;
         // Update
         this.level++;
         hud.toggleLevelComplete(false);
         player.reset();
         // Create
-        console.log(level)
+        console.log(game.levelObj)
         let deepClone = JSON.parse(JSON.stringify(this.levelsData[this.level]));
-        level = new Level(deepClone);
+        game.levelObj = new Level(deepClone);
     }
 }
 
@@ -658,7 +659,7 @@ class HUD {
     // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
         // this.buttons = game.levelsData[game.level].buttons;
-        level.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
+        game.levelObj.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
         this.clearDrop();
         this.clearDrag();
 
