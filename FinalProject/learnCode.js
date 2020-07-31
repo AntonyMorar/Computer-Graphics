@@ -463,7 +463,7 @@ class Tile {
         //Resources ----------------
         this.resourceUrl = 'src/tileB.fbx';
         this.material = new THREE.MeshStandardMaterial({
-            color: 0x33ff33
+            color: 0x00ff43
         });
         this.obj = null;
         this.loader = new THREE.FBXLoader();
@@ -507,7 +507,7 @@ class Tile {
             this.obj.children[0].geometry.computeBoundingBox();
             //this.boxColider = new THREE.Box3();
             this.boxColider = new THREE.Box3().setFromObject(this.obj);
-            this.boxColiderH = new THREE.Box3Helper(this.boxColider, 0x22ff00);
+            this.boxColiderH = new THREE.Box3Helper(this.boxColider, 0xff0033);
             this.boxColiderH.visible = false;
         }
         this.loaded = true;
@@ -708,7 +708,7 @@ class Player {
         // Add collider
         this.boxColider = new THREE.Box3().setFromObject(this.obj);
         //this.boxColiderH = new THREE.Box3Helper( this.boxColider, 0x0022ff ); //BOX3 Helper
-        this.boxColiderH = new THREE.BoxHelper(this.obj, 0x22ff00);
+        this.boxColiderH = new THREE.BoxHelper(this.obj, 0xff0033);
         this.boxColiderH.visible = false;
         this.boxColiderH.update();
 
