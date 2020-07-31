@@ -22,7 +22,7 @@ function gameEvents(game, level, player) {
     });
 
     document.getElementById("startGame").addEventListener("click", () => {
-        game.playLevel();
+        game.playGame();
         document.getElementById("mainMenu").style.display = "none";
     });
 
@@ -76,7 +76,6 @@ function onDrop(event, game, level) {
     event.dataTransfer.clearData();
 
     // Update draggable elements
-    console.log(id)
     game.levelObj.removeBtn(id)
 
     if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false

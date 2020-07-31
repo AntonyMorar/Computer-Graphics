@@ -114,13 +114,18 @@ function run() {
 
 class Game {
     constructor() {
+        // Singleton -----------
         if (!!Game.instance) return Game.instance;
         Game.instance = this;
+        // General ---------------
         this.loaded = false;
-        this.hudUpdated = false;
+        this.playing = false; // If characer are executing commands
+        this.levelWin = false; // If player wins the level
         this.state = "menu";
-        this.actualMenu = "main"; // "main" "win" "lose" "end" 
-        this.playing = false;
+        // Menu -------------
+        this.actualMenu = "main"; // "main" "win" "end" 
+        this.hudUpdated = false;
+        // Level -------------
         this.level = 0;
         this.levelObj = null;
         this.commands = []
@@ -141,20 +146,26 @@ class Game {
                 }
             },
         ]
+        // Animation
+        this.isSceneOut = false;
+        this.isSceneIn = false;
+        // Audio -------------
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
         //this.ambienAudio.volume = 0.25;
         this.ambienAudio.volume = 0.0;
         return this;
+        
     }
 
     update() {
-        console.log(this.state);
-        if (this.levelObj) this.levelObj.update();
-        // If player and level exist and loaded is equal to false
-        if (game.levelObj && player && !this.loaded) {
-            if (game.levelObj.loaded && player.loaded) {
-                this.loaded = true;
+        console.log("=========", this.state);
+        // If player and level exist and
+        if (game.levelObj && player && game.levelObj.loaded && player.loaded) {
+            if(!this.loaded) this.loaded = true;
+            
+            if(!player.isSceneOutTween){
+                this.isSceneOut = false;
             }
         }
 
@@ -168,44 +179,54 @@ class Game {
             if (!player.inAction && this.playing) {
                 if (this.commands.length <= 0) {
                     this.playing = false;
-                    //hud.togglePlayBtn(false);
-                    //Collision detenction
+                    //Collision detenction, chack if player win or lose
                     game.levelObj.tiles.forEach(tile => {
                         if (tile.boxColider && player.boxColider) {
-                            this.state = tile.boxColider.intersectsBox(player.boxColider) ? 'win' : 'lose';
+                            this.levelWin = tile.boxColider.intersectsBox(player.boxColider);
+                            // Game out animation
+                            this.sceneOut();
+                            this.state = "gameOver"
                         }
                     });
-
                     return;
+                }else{
+                    let actualCommand = this.commands.shift()
+                    switch (actualCommand) {
+                        case 'DragFront':
+                            player.isFrontTween = true;
+                            break;
+                        case 'DragLeft':
+                            player.isLeftTween = true;
+                            break;
+                        case 'DragRight':
+                            player.isRightTween = true;
+                            break;
+                        default:
+                            break;
+                    }
+                    player.playTweenAnimation()
                 }
-                let actualCommand = this.commands.shift()
-                switch (actualCommand) {
-                    case 'DragFront':
-                        player.isFrontTween = true;
-                        break;
-                    case 'DragLeft':
-                        player.isLeftTween = true;
-                        break;
-                    case 'DragRight':
-                        player.isRightTween = true;
-                        break;
-                    default:
-                        break;
-                }
-                player.playTweenAnimation()
             }
-        } else if (this.state == "win") {
-            // Game out animation
-            this.sceneOut();
-            // Level complete screen
-            hud.toggleLevelComplete(true);
+        } else if (this.state == "gameOver"){
+            //Check if scene out animation over
+            if(!this.isSceneOut){
+                if(this.levelWin){
+                    //console.log("Gano")
+                }else{
+                    //console.log("Perdio")
+                    this.sceneIn();
+                    this.resetLevel();
+                }
 
-        } else if (this.state == "lose") {
-            // Game out animation
-            this.sceneOut();
-        } else if (this.state == "transition") {
+                this.state="game"
+            }
+            //hud.toggleLevelComplete(true);
+        }else if (this.state == "transition") {
             if (this.loaded) this.sceneIn()
         }
+
+        // Update the level object
+        if (this.levelObj) this.levelObj.update();
     }
 
     togglePlaySound() {
@@ -218,17 +239,22 @@ class Game {
         }
     }
 
+    playGame(){
+        this.state="game";
+        this.sceneIn();
+    }
+
     playTurn() {
         this.playing = true;
         hud.togglePlayBtn(true)
     }
 
     sceneIn() {
-        this.state = "sceneIn";
+        this.isSceneIn = true;
         if (this.ambienAudio.paused) this.togglePlaySound();
         // Add to the scene if they are not
-        if(!this.levelObj.inThreeScene)this.levelObj.add();
-        if(!player.inThreeScene)player.add();
+        if (!this.levelObj.inThreeScene) this.levelObj.add();
+        if (!player.inThreeScene) player.add();
         // Add to the scene (only animation)
         this.levelObj.sceneIn();
         player.sceneIn();
@@ -238,18 +264,19 @@ class Game {
 
     //Scene out all elements in scene
     sceneOut() {
-        this.state = "sceneOut";
+        this.isSceneOut = true;
         player.sceneOut();
         this.levelObj.sceneOut();
-        
+
     }
 
     resetLevel() {
-        this.playing = false;
+        this.playing = false; // If characer are executing commands
+        this.levelWin = false; // If player wins the level
         this.state = "game";
         this.commands = []
 
-        player.reset();
+        //player.reset();
         hud.toggleLevelComplete(false);
         hud.setHudDraggables();
     }
@@ -277,7 +304,7 @@ class Level {
         this.loaded = false;
         this.inThreeScene = false;
         // Level struct
-        this.level = levelData.level;  // s: start, f: front, e:end
+        this.level = levelData.level; // s: start, f: front, e:end
         this.buttons = levelData.buttons;
         this.tiles = []
         this.setTiles()
@@ -363,7 +390,7 @@ class Level {
         }
     }
 
-    sceneIn(){
+    sceneIn() {
         if (this.loaded) {
             this.tiles.forEach(tile => {
                 tile.sceneIn();
@@ -371,7 +398,7 @@ class Level {
         }
     }
 
-    sceneOut(){
+    sceneOut() {
         if (this.loaded) {
             this.tiles.forEach(tile => {
                 tile.sceneOut();
@@ -482,7 +509,7 @@ class Tile {
         this.playTweenAnimation();
     }
     //Scene out animation
-    sceneOut(){
+    sceneOut() {
         //Scene in animation
         this.isSceneOutTween = true;
         this.playTweenAnimation();
@@ -493,11 +520,11 @@ class Tile {
         if (this.sceneInTween) this.sceneInTween.stop(); // override tween animation
         if (this.isSceneInTween) {
             let deepTempPos = JSON.parse(JSON.stringify(this.obj.position)); // Save the actual position 
-            this.obj.position.set(this.obj.position.x, this.obj.position.y + 5, this.obj.position.z);
+            this.obj.position.set(this.obj.position.x, 5, this.obj.position.z);
             this.frontTween =
                 new TWEEN.Tween(this.obj.position).to({
                     x: deepTempPos.x,
-                    y: deepTempPos.y,
+                    y: 0,
                     z: deepTempPos.z
                 }, 2.5 * 1000)
                 .interpolation(TWEEN.Interpolation.Bezier)
@@ -512,12 +539,11 @@ class Tile {
         // Scene Out animation
         if (this.sceneOutTween) this.sceneInTween.stop(); // override tween animation
         if (this.isSceneOutTween) {
-            console.log("oooout tile")
             this.frontTween =
                 new TWEEN.Tween(this.obj.position).to({
                     x: this.obj.position.x,
-                    y: this.obj.position.x - 8,
-                    z: this.obj.position.x
+                    y: this.obj.position.y - 8,
+                    z: this.obj.position.z
                 }, 1.5 * 1000)
                 .interpolation(TWEEN.Interpolation.Bezier)
                 .delay(0)
@@ -591,13 +617,18 @@ class Player {
 
     update(deltat) {
         if (this.loaded) {
+            //console.log("-----> ", this.action)
             // Rig animation 
             if (this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
 
             // Ad gravity to player
             if (this.action == "fall") {
                 playerGroup.position.y -= 0.005 * deltat;
-                if (playerGroup.position.y <= -15) this.action = "idle" //Avoid inifinite falling
+                //Avoid inifinite falling
+                if(playerGroup.position.y <= -7){
+                    this.inAction = false;
+                    this.action = "idle"
+                }
             }
 
             // Update the box collider
@@ -619,7 +650,7 @@ class Player {
         this.isSceneInTween = true;
         this.playTweenAnimation();
     }
-    
+
     sceneOut() {
         this.isSceneOutTween = true;
         this.playTweenAnimation();
@@ -689,8 +720,6 @@ class Player {
                 .start()
                 .onComplete(() => {
                     this.isFrontTween = false;
-                    this.inAction = false;
-                    this.action = 'idle';
                     this.checkFloor();
                 })
         }
@@ -737,15 +766,15 @@ class Player {
         // Scene In animation
         if (this.sceneInTween) this.sceneInTween.stop(); // override tween animation
         if (this.isSceneInTween) {
-            let deepTempPos = JSON.parse(JSON.stringify(playerGroup.position)); // Save the actual position 
-            playerGroup.position.set(playerGroup.position.x, playerGroup.position.y + 5, playerGroup.position.z);
+            //let deepTempPos = JSON.parse(JSON.stringify(playerGroup.position)); // Save the actual position 
+            playerGroup.position.set(0, 5, 0);
             this.inAction = true;
             this.action = 'transition';
             this.frontTween =
                 new TWEEN.Tween(playerGroup.position).to({
-                    x: deepTempPos.x,
-                    y: deepTempPos.y,
-                    z: deepTempPos.z
+                    x: 0,
+                    y: 0,
+                    z: 0
                 }, 2.5 * 1000)
                 .interpolation(TWEEN.Interpolation.Bezier)
                 .delay(0)
@@ -756,7 +785,7 @@ class Player {
                     this.isSceneInTween = false;
                     this.inAction = false;
                     this.action = 'idle';
-                    game.state = 'game';
+                    //game.state = 'game';
                 })
         }
         // Scene Out animation
@@ -784,11 +813,13 @@ class Player {
     }
 
     checkFloor() {
-        console.log("checking floor...");
         let intersects = this.raycaster.intersectObjects(root.children, true, []);
         if (intersects.length <= 0) {
+            this.inAction = true;
             this.action = "fall"
-            game.state = "lose"
+        }else{
+            this.inAction = false;
+            this.action = "idle"
         }
     }
 }
