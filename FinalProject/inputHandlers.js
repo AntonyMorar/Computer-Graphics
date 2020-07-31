@@ -23,23 +23,26 @@ function gameEvents(game, level, player) {
 
     document.getElementById("startGame").addEventListener("click", () => {
         game.playGame();
-        document.getElementById("mainMenu").style.display = "none";
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
         game.playTurn();
     });
-
+/*
     document.getElementById("resetLvl").addEventListener("click", () => {
         game.resetLevel();
     });
-
+*/
     document.getElementById("nextLevel").addEventListener("click", () => {
         game.sceneIn();
     });
 
     document.getElementById("tryAgain").addEventListener("click", () => {
         game.resetLevel();
+    });
+
+    document.getElementById("debug").addEventListener("click", () => {
+        game.toggleDebug();
     });
 }
 

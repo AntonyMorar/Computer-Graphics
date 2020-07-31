@@ -38,8 +38,8 @@ function main(canvas) {
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.5, 4000);
     //camera = new THREE.OrthographicCamera( canvas.width / - 2, canvas.width / 2, canvas.height / 2, canvas.height / - 2, 0.5, 2000 );
-    camera.position.set(3, 4, 8);
-    camera.rotation.x = -0.4;
+    camera.position.set(1.5, 4, 8);
+    camera.rotation.x = -0.5;
     camera.rotation.y = 0.0;
     scene.add(camera);
 
@@ -47,7 +47,7 @@ function main(canvas) {
      * Light
      */
     // Add a directional light to show off the objects
-    let light = new THREE.DirectionalLight(0xffffff, 2.0);
+    let light = new THREE.DirectionalLight(0xffffff, 1.5);
     // let light = new THREE.DirectionalLight( "rgb(255, 255, 100)", 1.5);
 
     // Position the light out from the scene, pointing at the origin
@@ -57,7 +57,7 @@ function main(canvas) {
 
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
-    let ambientLight = new THREE.AmbientLight(0xffccaa, 0.5);
+    let ambientLight = new THREE.AmbientLight(0xffccaa, 0.45);
     scene.add(ambientLight);
 
     /****************************************************************************
@@ -71,6 +71,7 @@ function main(canvas) {
     game.levelObj = new Level(deepClone);
     player = new Player();
 
+    //root.rotation.y = 11 * Math.PI / 6;
     // Now add the group to our scene
     scene.add(root);
 
@@ -152,8 +153,9 @@ class Game {
         // Audio -------------
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
-        //this.ambienAudio.volume = 0.25;
-        this.ambienAudio.volume = 0.0;
+        this.ambienAudio.volume = 0.25;
+        this.robotAudio = document.createElement("audio");
+        this.robotAudio.volume = 0.5;
         return this;
 
     }
@@ -197,6 +199,7 @@ class Game {
                         if (tile.boxColider && player.boxColider) {
                             this.levelWin = tile.boxColider.intersectsBox(player.boxColider);
                             // Game out animation
+                            hud.toggleDragAndDrop();
                             this.sceneOut();
                             this.state = "gameOver"
                         }
@@ -257,6 +260,7 @@ class Game {
 
     playGame() {
         this.state = "game";
+        hud.closeMenu();
         this.sceneIn();
     }
 
@@ -275,7 +279,7 @@ class Game {
         this.levelObj.sceneIn();
         player.sceneIn();
         // Add Drag and drop Hud
-        hud.toggleDragAndDrop(true);
+        hud.toggleDragAndDrop();
         hud.closeMenu();
     }
 
@@ -293,8 +297,6 @@ class Game {
         this.state = "game";
         this.commands = []
 
-        //player.reset();
-        //hud.toggleLevelComplete(false);
         hud.setHudDraggables();
     }
 
@@ -310,6 +312,15 @@ class Game {
         // Create
         let deepClone = JSON.parse(JSON.stringify(this.levelsData[this.level]));
         game.levelObj = new Level(deepClone);
+    }
+
+    toggleDebug(){
+        if(this.loaded){
+            if(player.boxColiderH) player.boxColiderH.visible = !player.boxColiderH.visible;
+            game.levelObj.tiles.forEach(tile => {
+                if(tile.boxColiderH) tile.boxColiderH.visible = !tile.boxColiderH.visible
+            });
+        }
     }
 }
 
@@ -452,7 +463,7 @@ class Tile {
         //Resources ----------------
         this.resourceUrl = 'src/tileB.fbx';
         this.material = new THREE.MeshStandardMaterial({
-            color: 0xffffff
+            color: 0x33ff33
         });
         this.obj = null;
         this.loader = new THREE.FBXLoader();
@@ -497,6 +508,7 @@ class Tile {
             //this.boxColider = new THREE.Box3();
             this.boxColider = new THREE.Box3().setFromObject(this.obj);
             this.boxColiderH = new THREE.Box3Helper(this.boxColider, 0x22ff00);
+            this.boxColiderH.visible = false;
         }
         this.loaded = true;
     }
@@ -697,7 +709,7 @@ class Player {
         this.boxColider = new THREE.Box3().setFromObject(this.obj);
         //this.boxColiderH = new THREE.Box3Helper( this.boxColider, 0x0022ff ); //BOX3 Helper
         this.boxColiderH = new THREE.BoxHelper(this.obj, 0x22ff00);
-        this.boxColiderH.visible = true;
+        this.boxColiderH.visible = false;
         this.boxColiderH.update();
 
         //dancers.push(robotObj);
@@ -846,12 +858,14 @@ class HUD {
         this.dropzone = document.getElementById("dropzone");
         this.startBtn = document.getElementById("startGame");
         this.playBtn = document.getElementById("playTurn");
+        //Menus
         this.levelComplete = document.getElementById("levelComplete");
+        this.mainMenu = document.getElementById("mainMenu");
     }
 
-    toggleDragAndDrop(visible) {
-        if (visible) dragAndDrop.style.opacity = 1;
-        else dragAndDrop.style.opacity = 0;
+    toggleDragAndDrop() {
+        if(dragAndDrop.style.opacity == 1) dragAndDrop.style.opacity = 0
+        else dragAndDrop.style.opacity = 1
     }
 
     clearDrag() {
@@ -863,7 +877,7 @@ class HUD {
         this.playBtn.disabled = true;
     }
 
-    // Set and reset the hud draggables relative to game gamelevel data
+    // Clear and Set the hud draggables relative to game gamelevel data
     setHudDraggables() {
         // this.buttons = game.levelsData[game.level].buttons;
         game.levelObj.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
@@ -912,6 +926,7 @@ class HUD {
         this.draggables.appendChild(draggable);
     }
 
+    // Change the dragable on every drop
     updateDraggable(id, num) {
         let draggable = document.getElementById(id);
         if (!draggable) return;
@@ -930,19 +945,13 @@ class HUD {
         }
     }
 
-    toggleLevelComplete(visible) {
-        if (visible) this.levelComplete.style.display = "block";
-        else this.levelComplete.style.display = "none";
-    }
-
     //Open specific menu
     openMenu(menu){
         switch (menu) {
             case "main":
-                console.log("UI main menu")
+                this.mainMenu.style.display = "block";
                 break;
             case "win":
-                console.log("UI win menu")
                 this.levelComplete.style.display = "block";
                 break;
             case "end":
@@ -956,6 +965,7 @@ class HUD {
     // Close all menus
     closeMenu(){
         this.levelComplete.style.display = "none";
+        this.mainMenu.style.display = "none";
     }
 
     togglePlayBtn(disable) {
