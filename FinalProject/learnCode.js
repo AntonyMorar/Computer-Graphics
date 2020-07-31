@@ -119,6 +119,7 @@ class Game {
         this.loaded = false;
         this.hudUpdated = false;
         this.state = "menu";
+        this.actualMenu = "main"; // "main" "win" "lose" "end" 
         this.playing = false;
         this.level = 0;
         this.levelObj = null;
@@ -200,9 +201,10 @@ class Game {
             hud.toggleLevelComplete(true);
 
         } else if (this.state == "lose") {
-
+            // Game out animation
+            this.sceneOut();
         } else if (this.state == "transition") {
-            if (this.loaded) this.playLevel()
+            if (this.loaded) this.sceneIn()
         }
     }
 
@@ -221,12 +223,12 @@ class Game {
         hud.togglePlayBtn(true)
     }
 
-    playLevel() {
+    sceneIn() {
         this.state = "sceneIn";
         if (this.ambienAudio.paused) this.togglePlaySound();
         // Add to the scene if they are not
-        this.levelObj.add();
-        player.add();
+        if(!this.levelObj.inThreeScene)this.levelObj.add();
+        if(!player.inThreeScene)player.add();
         // Add to the scene (only animation)
         this.levelObj.sceneIn();
         player.sceneIn();
