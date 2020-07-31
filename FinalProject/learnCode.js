@@ -117,7 +117,8 @@ class Game {
         if (!!Game.instance) return Game.instance;
         Game.instance = this;
         this.loaded = false;
-        this.state = "start";
+        this.hudUpdated = false;
+        this.state = "menu";
         this.playing = false;
         this.level = 0;
         this.levelObj = null;
@@ -147,7 +148,8 @@ class Game {
     }
 
     update() {
-        if(this.levelObj) this.levelObj.update();
+        console.log(this.state);
+        if (this.levelObj) this.levelObj.update();
         // If player and level exist and loaded is equal to false
         if (game.levelObj && player && !this.loaded) {
             if (game.levelObj.loaded && player.loaded) {
@@ -155,10 +157,11 @@ class Game {
             }
         }
 
-        if (this.state == "start") {
+        if (this.state == "menu") {
             // Check if all the assets are loaded
-            if (this.loaded) {
+            if (this.loaded & !this.hudUpdated) {
                 hud.startButton();
+                this.hudUpdated = true;
             }
         } else if (this.state == "game") {
             if (!player.inAction && this.playing) {
@@ -191,14 +194,14 @@ class Game {
                 player.playTweenAnimation()
             }
         } else if (this.state == "win") {
-            //Make the animation, then 
-            console.log("win");
+            // Game out animation
+            this.sceneOut();
+            // Level complete screen
             hud.toggleLevelComplete(true);
 
         } else if (this.state == "lose") {
-            console.log("lose");
-        } else if (this.state == "changeLevel") {
-            console.log("changeLevel");
+
+        } else if (this.state == "transition") {
             if (this.loaded) this.playLevel()
         }
     }
@@ -213,19 +216,30 @@ class Game {
         }
     }
 
-    playLevel() {
-        this.state = "game";
-        if (this.ambienAudio.paused) this.togglePlaySound();
-        game.levelObj.show();
-        player.show();
-        hud.toggleDragAndDrop(true)
-    }
-
     playTurn() {
         this.playing = true;
         hud.togglePlayBtn(true)
-        //playAnimations()
-        //player.playTweenAnimation()
+    }
+
+    playLevel() {
+        this.state = "sceneIn";
+        if (this.ambienAudio.paused) this.togglePlaySound();
+        // Add to the scene if they are not
+        this.levelObj.add();
+        player.add();
+        // Add to the scene (only animation)
+        this.levelObj.sceneIn();
+        player.sceneIn();
+        // Add Drag and drop Hud
+        hud.toggleDragAndDrop(true)
+    }
+
+    //Scene out all elements in scene
+    sceneOut() {
+        this.state = "sceneOut";
+        player.sceneOut();
+        this.levelObj.sceneOut();
+        
     }
 
     resetLevel() {
@@ -240,7 +254,7 @@ class Game {
 
     nextLevel() {
         // Change game states
-        this.state = "changeLevel";
+        this.state = "transition";
         this.loaded = false;
         //Remove old elements
         game.levelObj.delete();
@@ -258,11 +272,10 @@ class Game {
 
 class Level {
     constructor(levelData) {
-        // s: start, f: front, e:end
         this.loaded = false;
-        this.win = false;
+        this.inThreeScene = false;
         // Level struct
-        this.level = levelData.level;
+        this.level = levelData.level;  // s: start, f: front, e:end
         this.buttons = levelData.buttons;
         this.tiles = []
         this.setTiles()
@@ -272,7 +285,7 @@ class Level {
     update() {
         // Check if tiles loaded
         if (this.tiles.length > 0 && !this.loaded) {
-            if (this.tiles.every(this.isTileLoad)){
+            if (this.tiles.every(this.isTileLoad)) {
                 hud.setHudDraggables();
                 this.loaded = true;
             }
@@ -339,18 +352,33 @@ class Level {
         }
     }
 
-    show() {
+    add() {
         if (this.loaded) {
             this.tiles.forEach(tile => {
-                root.add(tile.obj);
-                if (tile.boxColiderH) scene.add(tile.boxColiderH);
+                tile.add();
+            });
+            this.inThreeScene = true;
+        }
+    }
+
+    sceneIn(){
+        if (this.loaded) {
+            this.tiles.forEach(tile => {
+                tile.sceneIn();
+            });
+        }
+    }
+
+    sceneOut(){
+        if (this.loaded) {
+            this.tiles.forEach(tile => {
+                tile.sceneOut();
             });
         }
     }
 
     //with actual level values
     removeBtn(id) {
-        console.log(this)
         this.buttons[id] -= 1;
         hud.updateDraggable(id, this.buttons[id]);
     }
@@ -374,10 +402,11 @@ class Level {
 
 class Tile {
     constructor(pos, type) {
-        // General
+        // General ------------
         this.loaded = false;
+        this.inThreeScene = false;
         this.type = type;
-        //Resources
+        //Resources ----------------
         this.resourceUrl = 'src/tileB.fbx';
         this.material = new THREE.MeshStandardMaterial({
             color: 0xffffff
@@ -394,17 +423,19 @@ class Tile {
             // called when loading has errors
             (error) => this.uploadError(error)
         );
-        // Collider (Only e tile use collider)
+        // Collider (Only e tile use collider) ----------
         this.boxColider = null; // Box 3 - Represents an axis-aligned bounding box
         this.boxColiderH = null; // Helper object to visualize a Box3
+        // Animation ------------
+        this.sceneInTween = null;
+        this.isSceneInTween = false;
+        // SceneOut
+        this.sceneOutTween = null;
+        this.isSceneOutTween = false;
         return this;
     }
 
     update() {
-        if (player.action != "idle" && this.boxColider && this.boxColiderH) {
-            this.boxColider = new THREE.Box3().setFromObject(this.obj);
-        }
-
         if (this.boxColider) {
             let newBounds = this.obj.children[0].geometry.boundingBox;
             newBounds.max.z = 1
@@ -420,8 +451,8 @@ class Tile {
         // Add collider
         if (this.type == 'e') {
             this.obj.children[0].geometry.computeBoundingBox();
-            this.boxColider = new THREE.Box3();
-            //this.boxColider = new THREE.Box3().setFromObject(this.obj);
+            //this.boxColider = new THREE.Box3();
+            this.boxColider = new THREE.Box3().setFromObject(this.obj);
             this.boxColiderH = new THREE.Box3Helper(this.boxColider, 0x22ff00);
         }
         this.loaded = true;
@@ -435,16 +466,78 @@ class Tile {
         console.log('An error happened');
         console.log(error)
     }
+
+    // Add objects to the scene
+    add() {
+        root.add(this.obj);
+        if (this.boxColiderH) scene.add(this.boxColiderH);
+        this.inThreeScene = true; // In three.js scene
+    }
+
+    //Scene in animation
+    sceneIn() {
+        this.isSceneInTween = true;
+        this.playTweenAnimation();
+    }
+    //Scene out animation
+    sceneOut(){
+        //Scene in animation
+        this.isSceneOutTween = true;
+        this.playTweenAnimation();
+    }
+
+    playTweenAnimation() {
+        // Scene In animation
+        if (this.sceneInTween) this.sceneInTween.stop(); // override tween animation
+        if (this.isSceneInTween) {
+            let deepTempPos = JSON.parse(JSON.stringify(this.obj.position)); // Save the actual position 
+            this.obj.position.set(this.obj.position.x, this.obj.position.y + 5, this.obj.position.z);
+            this.frontTween =
+                new TWEEN.Tween(this.obj.position).to({
+                    x: deepTempPos.x,
+                    y: deepTempPos.y,
+                    z: deepTempPos.z
+                }, 2.5 * 1000)
+                .interpolation(TWEEN.Interpolation.Bezier)
+                .delay(0)
+                .easing(TWEEN.Easing.Bounce.Out)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isSceneInTween = false;
+                })
+        }
+        // Scene Out animation
+        if (this.sceneOutTween) this.sceneInTween.stop(); // override tween animation
+        if (this.isSceneOutTween) {
+            console.log("oooout tile")
+            this.frontTween =
+                new TWEEN.Tween(this.obj.position).to({
+                    x: this.obj.position.x,
+                    y: this.obj.position.x - 8,
+                    z: this.obj.position.x
+                }, 1.5 * 1000)
+                .interpolation(TWEEN.Interpolation.Bezier)
+                .delay(0)
+                .easing(TWEEN.Easing.Back.In)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isSceneOutTween = false;
+                })
+        }
+    }
 }
 
 class Player {
     constructor() {
-        // General
+        // General --------
         this.loaded = false;
+        this.inThreeScene = false;
         this.inAction = false;
         this.action = 'idle'
         this.obj = null;
-        //Resources
+        //Resources ----------
         this.resourceUrl = 'src/robot.fbx';
         this.textureUrl = 'src/robotTexture.png';
         this.texture = new THREE.TextureLoader().load(this.textureUrl);
@@ -456,7 +549,7 @@ class Player {
             emissiveMap: this.textureEm
         });
         playerGroup = new THREE.Object3D;
-        // Animation
+        // Animation ------------
         this.actionAnim = null;
         //Tween durations
         this.durationTween = 1.5; // sec
@@ -469,12 +562,18 @@ class Player {
         // RightAnim
         this.rightTween = null;
         this.isRightTween = false;
-        // Raycaster( origin, direction, near, far )
+        // SceneIn
+        this.sceneInTween = null;
+        this.isSceneInTween = false;
+        // SceneOut
+        this.sceneOutTween = null;
+        this.isSceneOutTween = false;
+        // Raycaster( origin, direction, near, far ) ------------
         this.raycaster = new THREE.Raycaster(playerGroup.position, new THREE.Vector3(0, -1, 0), 0, 10);
-        // Collider
+        // Collider ----------
         this.boxColider = null; // Box 3 - Represents an axis-aligned bounding box
         this.boxColiderH = null; // Helper object to visualize a Box3
-        // Loader
+        // Loader ----------
         this.loader = new THREE.FBXLoader();
         this.loader.load(
             // resource URL
@@ -504,15 +603,24 @@ class Player {
                 this.boxColider = new THREE.Box3().setFromObject(this.obj);
                 if (this.boxColiderH) this.boxColiderH.update();
             }
-
-            console.log(this.inAction)
         }
     }
 
-    show() {
+    add() {
         playerGroup.add(this.obj);
         if (this.boxColiderH) scene.add(this.boxColiderH);
         root.add(playerGroup);
+        this.inThreeScene = true;
+    }
+    //Scene in animation
+    sceneIn() {
+        this.isSceneInTween = true;
+        this.playTweenAnimation();
+    }
+    
+    sceneOut() {
+        this.isSceneOutTween = true;
+        this.playTweenAnimation();
     }
 
     reset() {
@@ -572,7 +680,7 @@ class Player {
                     y: playerGroup.position.y + target.y,
                     z: playerGroup.position.z + target.z
                 }, this.durationTween * 1000)
-                .interpolation(TWEEN.Interpolation.Linear)
+                .interpolation(TWEEN.Interpolation.Bezier)
                 .delay(0)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
@@ -584,7 +692,7 @@ class Player {
                     this.checkFloor();
                 })
         }
-
+        // Left animation
         if (this.leftTween) this.leftTween.stop(); // override tween animation
         if (this.isLeftTween) {
             this.inAction = true;
@@ -593,7 +701,7 @@ class Player {
                 new TWEEN.Tween(playerGroup.rotation).to({
                     y: playerGroup.rotation.y + Math.PI / 2
                 }, this.durationTween * 1000)
-                .interpolation(TWEEN.Interpolation.Linear)
+                .interpolation(TWEEN.Interpolation.Bezier)
                 .delay(0)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
@@ -604,7 +712,7 @@ class Player {
                     this.action = 'idle';
                 })
         }
-
+        // Right animation
         if (this.rightTween) this.rightTween.stop(); // override tween animation
         if (this.isRightTween) {
             this.inAction = true;
@@ -613,13 +721,60 @@ class Player {
                 new TWEEN.Tween(playerGroup.rotation).to({
                     y: playerGroup.rotation.y - Math.PI / 2
                 }, this.durationTween * 1000)
-                .interpolation(TWEEN.Interpolation.Linear)
+                .interpolation(TWEEN.Interpolation.Bezier)
                 .delay(0)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
                 .onComplete(() => {
                     this.isRightTween = false;
+                    this.inAction = false;
+                    this.action = 'idle';
+                })
+        }
+        // Scene In animation
+        if (this.sceneInTween) this.sceneInTween.stop(); // override tween animation
+        if (this.isSceneInTween) {
+            let deepTempPos = JSON.parse(JSON.stringify(playerGroup.position)); // Save the actual position 
+            playerGroup.position.set(playerGroup.position.x, playerGroup.position.y + 5, playerGroup.position.z);
+            this.inAction = true;
+            this.action = 'transition';
+            this.frontTween =
+                new TWEEN.Tween(playerGroup.position).to({
+                    x: deepTempPos.x,
+                    y: deepTempPos.y,
+                    z: deepTempPos.z
+                }, 2.5 * 1000)
+                .interpolation(TWEEN.Interpolation.Bezier)
+                .delay(0)
+                .easing(TWEEN.Easing.Bounce.Out)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isSceneInTween = false;
+                    this.inAction = false;
+                    this.action = 'idle';
+                    game.state = 'game';
+                })
+        }
+        // Scene Out animation
+        if (this.sceneOutTween) this.sceneInTween.stop(); // override tween animation
+        if (this.isSceneOutTween) {
+            this.inAction = true;
+            this.action = 'transition';
+            this.frontTween =
+                new TWEEN.Tween(playerGroup.position).to({
+                    x: playerGroup.position.x,
+                    y: playerGroup.position.y - 8,
+                    z: playerGroup.position.z
+                }, 1.5 * 1000)
+                .interpolation(TWEEN.Interpolation.Bezier)
+                .delay(0)
+                .easing(TWEEN.Easing.Back.In)
+                .repeat(0)
+                .start()
+                .onComplete(() => {
+                    this.isSceneOutTween = false;
                     this.inAction = false;
                     this.action = 'idle';
                 })
@@ -740,6 +895,6 @@ class HUD {
 
     startButton() {
         this.startBtn.disabled = false;
-        this.startBtn.innerHTML = 'Start Game'
+        this.startBtn.innerHTML = 'Start Game';
     }
 }
