@@ -35,7 +35,7 @@ function gameEvents(game, level, player) {
     });
 
     document.getElementById("nextLevel").addEventListener("click", () => {
-        game.nextLevel();
+        game.sceneIn();
     });
 
     document.getElementById("tryAgain").addEventListener("click", () => {

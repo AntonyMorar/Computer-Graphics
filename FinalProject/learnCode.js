@@ -155,25 +155,38 @@ class Game {
         //this.ambienAudio.volume = 0.25;
         this.ambienAudio.volume = 0.0;
         return this;
-        
+
     }
 
     update() {
-        console.log("=========", this.state);
+        //console.log("=========", this.state);
         // If player and level exist and
         if (game.levelObj && player && game.levelObj.loaded && player.loaded) {
-            if(!this.loaded) this.loaded = true;
-            
-            if(!player.isSceneOutTween){
+            if (!this.loaded) this.loaded = true;
+
+            if (!player.isSceneOutTween) {
                 this.isSceneOut = false;
             }
         }
 
         if (this.state == "menu") {
             // Check if all the assets are loaded
-            if (this.loaded & !this.hudUpdated) {
-                hud.startButton();
-                this.hudUpdated = true;
+            if (!this.hudUpdated) {
+                if(this.loaded){
+                    hud.startButton();
+                    this.hudUpdated = true;
+                }
+            }
+
+            switch (this.actualMenu) {
+                case "main":
+                    break;
+                case "win":
+                    break;
+                case "end":
+                    break;
+                default:
+                    break;
             }
         } else if (this.state == "game") {
             if (!player.inAction && this.playing) {
@@ -189,7 +202,7 @@ class Game {
                         }
                     });
                     return;
-                }else{
+                } else {
                     let actualCommand = this.commands.shift()
                     switch (actualCommand) {
                         case 'DragFront':
@@ -207,21 +220,24 @@ class Game {
                     player.playTweenAnimation()
                 }
             }
-        } else if (this.state == "gameOver"){
+        } else if (this.state == "gameOver") {
             //Check if scene out animation over
-            if(!this.isSceneOut){
-                if(this.levelWin){
-                    //console.log("Gano")
-                }else{
+            if (!this.isSceneOut) {
+                if (this.levelWin) {
+                    this.state = "menu"
+                    this.actualMenu = "win"
+                    this.hudUpdated = false;
+                    hud.openMenu(this.actualMenu)
+                    // Load next level
+                    this.loadNextLevel()
+                } else {
                     //console.log("Perdio")
                     this.sceneIn();
-                    this.resetLevel();
+                    this.resetLevelParams();
+                    this.state = "game"
                 }
-
-                this.state="game"
             }
-            //hud.toggleLevelComplete(true);
-        }else if (this.state == "transition") {
+        } else if (this.state == "transition") {
             if (this.loaded) this.sceneIn()
         }
 
@@ -239,8 +255,8 @@ class Game {
         }
     }
 
-    playGame(){
-        this.state="game";
+    playGame() {
+        this.state = "game";
         this.sceneIn();
     }
 
@@ -259,7 +275,8 @@ class Game {
         this.levelObj.sceneIn();
         player.sceneIn();
         // Add Drag and drop Hud
-        hud.toggleDragAndDrop(true)
+        hud.toggleDragAndDrop(true);
+        hud.closeMenu();
     }
 
     //Scene out all elements in scene
@@ -270,30 +287,27 @@ class Game {
 
     }
 
-    resetLevel() {
+    resetLevelParams() {
         this.playing = false; // If characer are executing commands
         this.levelWin = false; // If player wins the level
         this.state = "game";
         this.commands = []
 
         //player.reset();
-        hud.toggleLevelComplete(false);
+        //hud.toggleLevelComplete(false);
         hud.setHudDraggables();
     }
 
-    nextLevel() {
+    loadNextLevel() {
         // Change game states
-        this.state = "transition";
+        this.state = "game";
         this.loaded = false;
         //Remove old elements
         game.levelObj.delete();
         game.levelObj = null;
         // Update
         this.level++;
-        hud.toggleLevelComplete(false);
-        player.reset();
         // Create
-        console.log(game.levelObj)
         let deepClone = JSON.parse(JSON.stringify(this.levelsData[this.level]));
         game.levelObj = new Level(deepClone);
     }
@@ -625,7 +639,7 @@ class Player {
             if (this.action == "fall") {
                 playerGroup.position.y -= 0.005 * deltat;
                 //Avoid inifinite falling
-                if(playerGroup.position.y <= -7){
+                if (playerGroup.position.y <= -7) {
                     this.inAction = false;
                     this.action = "idle"
                 }
@@ -817,7 +831,7 @@ class Player {
         if (intersects.length <= 0) {
             this.inAction = true;
             this.action = "fall"
-        }else{
+        } else {
             this.inAction = false;
             this.action = "idle"
         }
@@ -919,6 +933,29 @@ class HUD {
     toggleLevelComplete(visible) {
         if (visible) this.levelComplete.style.display = "block";
         else this.levelComplete.style.display = "none";
+    }
+
+    //Open specific menu
+    openMenu(menu){
+        switch (menu) {
+            case "main":
+                console.log("UI main menu")
+                break;
+            case "win":
+                console.log("UI win menu")
+                this.levelComplete.style.display = "block";
+                break;
+            case "end":
+                console.log("UI end menu")
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Close all menus
+    closeMenu(){
+        this.levelComplete.style.display = "none";
     }
 
     togglePlayBtn(disable) {
