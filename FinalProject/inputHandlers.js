@@ -14,22 +14,22 @@ function gameEvents(game) {
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
     
     document.getElementById("infoBtn").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         console.log("info");
     });
 
     document.getElementById("shareBtn").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         console.log("share");
     });
 
     document.getElementById("startGame").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         game.playGame();
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         game.playTurn();
     });
 /*
@@ -38,17 +38,17 @@ function gameEvents(game) {
     });
 */
     document.getElementById("nextLevel").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         game.sceneIn();
     });
 
     document.getElementById("tryAgain").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         game.resetLevelParams();
     });
 
     document.getElementById("debug").addEventListener("click", () => {
-        game.playHudSound();
+        game.playBtnSound();
         game.toggleDebug();
     });
 }

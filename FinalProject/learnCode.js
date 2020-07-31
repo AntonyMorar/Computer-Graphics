@@ -168,6 +168,9 @@ class Game {
         this.hudAudio = document.createElement("audio");
         this.hudAudio.src = "src/click.mp3";
         this.hudAudio.volume = 0.35;
+        this.levelAudio = document.createElement("audio");
+        this.levelAudio.src = "src/winLevel.mp3";
+        this.levelAudio.volume = 0.4;
         return this;
 
     }
@@ -242,11 +245,13 @@ class Game {
                     this.state = "menu"
                     this.actualMenu = "win"
                     this.hudUpdated = false;
+                    game.playWinLevel();
                     hud.openMenu(this.actualMenu)
                     // Load next level
                     this.loadNextLevel()
                 } else {
                     //console.log("Perdio")
+                    player.reset();
                     this.sceneIn();
                     this.resetLevelParams();
                     this.state = "game"
@@ -303,8 +308,6 @@ class Game {
 
     }
 
-    resetLevel
-
     resetLevelParams() {
         this.playing = false; // If characer are executing commands
         this.levelWin = false; // If player wins the level
@@ -337,8 +340,12 @@ class Game {
         }
     }
 
-    playHudSound(){
+    playBtnSound(){
         this.hudAudio.play();
+    }
+
+    playWinLevel(){
+        this.levelAudio.play();
     }
 
     playSound(soundSrc){
@@ -709,11 +716,15 @@ class Player {
     reset() {
         this.inAction = false;
         this.action = 'idle'
+        this.resetTweens();
+        playerGroup.position.set(0, 0, 0)
+        playerGroup.rotation.set(0, 0, 0)
+    }
+
+    resetTweens(){
         if (this.frontTween) this.frontTween.stop()
         if (this.leftTween) this.leftTween.stop()
         if (this.rightTween) this.rightTween.stop()
-        playerGroup.position.set(0, 0, 0)
-        playerGroup.rotation.set(0, 0, 0)
     }
 
     updloadSuccess(robotObj) {
@@ -749,12 +760,24 @@ class Player {
         console.log(error)
     }
 
+    checkFloor() {
+        let intersects = this.raycaster.intersectObjects(root.children, true, []);
+        if (intersects.length <= 0) {
+            this.inAction = true;
+            this.action = "fall"
+        } else {
+            this.inAction = false;
+            this.action = "idle"
+        }
+    }
+
     playTweenAnimation() {
         if (this.inAction) return;
         // Front animation
         if (this.frontTween) this.frontTween.stop(); // override tween animation
         if (this.isFrontTween) {
             //Play sound
+            console.log("F")
             game.playSound("src/robotFront.mp3");
 
             let target = new THREE.Vector3(1, 0, 0).applyQuaternion(playerGroup.quaternion)
@@ -779,6 +802,7 @@ class Player {
         // Left animation
         if (this.leftTween) this.leftTween.stop(); // override tween animation
         if (this.isLeftTween) {
+            console.log("L")
             game.playSound("src/robotRot.mp3");
 
             this.inAction = true;
@@ -801,6 +825,7 @@ class Player {
         // Right animation
         if (this.rightTween) this.rightTween.stop(); // override tween animation
         if (this.isRightTween) {
+            console.log("R")
             game.playSound("src/robotRot.mp3");
 
             this.inAction = true;
@@ -866,17 +891,6 @@ class Player {
                     this.inAction = false;
                     this.action = 'idle';
                 })
-        }
-    }
-
-    checkFloor() {
-        let intersects = this.raycaster.intersectObjects(root.children, true, []);
-        if (intersects.length <= 0) {
-            this.inAction = true;
-            this.action = "fall"
-        } else {
-            this.inAction = false;
-            this.action = "idle"
         }
     }
 }
