@@ -125,7 +125,7 @@ class Game {
         this.level = 0;
         this.commands = []
         this.levelsData = [{
-                level: "sfffe",
+                level: "se",
                 buttons: {
                     DragFront: 2,
                     DragLeft: 0,
@@ -134,7 +134,7 @@ class Game {
                 }
             },
             {
-                level: "sfflfe",
+                level: "sflfrffre",
                 buttons: {
                     DragFront: 3,
                     DragLeft: 1,
@@ -155,11 +155,12 @@ class Game {
             hud.startButton();
         }
 
-        if (this.state == "game" && this.playing) {
-            if (!player.inAction) {
+        if (this.state == "game") {
+            if (!player.inAction && this.playing) {
                 if (this.commands.length <= 0) {
                     this.playing = false;
-                    hud.togglePlayBtn(false)
+                    hud.togglePlayBtn(false);
+                    player.checkFloor();
                     return;
                 }
                 let actualCommand = this.commands.shift()
@@ -252,7 +253,6 @@ class Level {
         for (let i = 0; i < this.level.length; i++) {
             let tileType = this.level[i];
 
-            console.log(tileType)
             if (tileType == 's') {
                 let tile = new Tile({
                     x: pos.x,
@@ -274,7 +274,6 @@ class Level {
 
                 pos.x += offset.x;
                 pos.z += offset.z;
-                console.log(pos)
                 let tile = new Tile({
                     x: pos.x,
                     y: pos.y,
@@ -305,7 +304,6 @@ class Level {
 
     // Set and reset the hud draggables relative to game gamelevel data
     setHudDraggables() {
-        console.log(game.levelsData)
         // this.buttons = game.levelsData[game.level].buttons;
         this.buttons = JSON.parse(JSON.stringify(game.levelsData[game.level].buttons));
         hud.resetDrag();
@@ -382,6 +380,7 @@ class Player {
             emissive: 0xffffff,
             emissiveMap: this.textureEm
         });
+        playerGroup = new THREE.Object3D;
         // Animation
         this.actionAnim = null;
         //Tween durations
@@ -395,6 +394,8 @@ class Player {
         // RightAnim
         this.rightTween = null;
         this.isRightTween = false;
+        // Raycaster( origin, direction, near, far )
+        this.raycaster = new THREE.Raycaster( playerGroup.position, new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
         // Loader
         this.loader = new THREE.FBXLoader();
         this.loader.load(
@@ -412,11 +413,15 @@ class Player {
     update(deltat) {
         if (this.loaded) {
             if (this.obj.mixer != null) this.obj.mixer.update((deltat) * 0.001);
+
+            if(this.action == "fall"){
+                this.obj.position.y -= 0.005 * deltat;
+                if(this.obj.position.y <= -15) this.action = "idle" //Avoid inifinite falling
+            }
         }
     }
 
     show() {
-        playerGroup = new THREE.Object3D;
         playerGroup.add(this.obj)
         root.add(playerGroup);
     }
@@ -524,6 +529,13 @@ class Player {
                 })
         }
     }
+
+    checkFloor(){
+        console.log("checking floor...")
+        let intersects = this.raycaster.intersectObjects( scene.children, true );
+        if(intersects.length <= 0) this.action = "fall"
+        console.log(intersects)
+    }
 }
 
 class HUD {
@@ -611,6 +623,5 @@ class HUD {
                 break;
             }
         }
-        console.log(draggable)
     }
 }
