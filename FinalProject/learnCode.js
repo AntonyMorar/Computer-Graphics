@@ -359,7 +359,20 @@ class Level {
     constructor(levelData) {
         this.loaded = false;
         this.inThreeScene = false;
-        // Level struct
+        //Resources ----------------
+        this.tileTextureUrl ='src/tileTexture.png'
+        this.tileTextureEndUrl = 'src/tileTextureEnd.png';
+        this.tileTexture = new THREE.TextureLoader().load(this.tileTextureUrl);
+        this.tileTextureEnd = new THREE.TextureLoader().load(this.tileTextureEndUrl);
+        this.materialTile = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            map: this.tileTexture,
+        });
+        this.materialTileEnd = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            map: this.tileTextureEnd,
+        });
+        // Level struct ----------------
         this.level = levelData.level; // s: start, f: front, e:end
         this.buttons = levelData.buttons;
         this.tiles = []
@@ -473,8 +486,10 @@ class Level {
             this.tiles.forEach(tile => {
                 root.remove(tile.obj)
                 if (tile.boxColiderH) scene.remove(tile.boxColiderH);
-                tile.material.dispose();
+                //tile.material.dispose();
             });
+            this.materialTile.dispose();
+            this.materialTileEnd.dispose()
             delete this.level;
             delete this.buttons;
             this.tiles = []
@@ -492,10 +507,6 @@ class Tile {
         this.type = type;
         //Resources ----------------
         this.resourceUrl = 'src/tileB.fbx';
-        let tempColor = (type == 'e') ? 0xb5127f : 0x00ff43
-        this.material = new THREE.MeshStandardMaterial({
-            color: tempColor
-        });
         this.obj = null;
         this.loader = new THREE.FBXLoader();
         this.loader.load(
@@ -529,7 +540,8 @@ class Tile {
     }
 
     updloadSuccess(tileObj, pos) {
-        tileObj.children[0].material = this.material;
+        console.log(game.levelObj)
+        tileObj.children[0].material = (this.type != "e") ? game.levelObj.materialTile : game.levelObj.materialTileEnd
         tileObj.scale.set(0.01, 0.01, 0.01);
         tileObj.position.set(pos.x, pos.y, pos.z)
         this.obj = tileObj;
@@ -777,7 +789,6 @@ class Player {
         // Front animation
         if (this.frontTween) this.frontTween.stop(); // override tween animation
         if (this.isFrontTween) {
-            console.log("F")
 
             let target = new THREE.Vector3(1, 0, 0).applyQuaternion(playerGroup.quaternion)
             this.inAction = true;
@@ -804,7 +815,6 @@ class Player {
         // Left animation
         if (this.leftTween) this.leftTween.stop(); // override tween animation
         if (this.isLeftTween) {
-            console.log("L")
             game.playSound("src/robotRot.mp3");
 
             this.inAction = true;
@@ -830,7 +840,6 @@ class Player {
         // Right animation
         if (this.rightTween) this.rightTween.stop(); // override tween animation
         if (this.isRightTween) {
-            console.log("R")
 
             this.inAction = true;
             this.action = 'right';
@@ -916,8 +925,8 @@ class HUD {
     }
 
     toggleDragAndDrop() {
-        if(dragAndDrop.style.opacity == 1) dragAndDrop.style.opacity = 0
-        else dragAndDrop.style.opacity = 1
+        if(dragAndDrop.style.display == "flex") dragAndDrop.style.display = "none";
+        else dragAndDrop.style.display = "flex";
     }
 
     clearDrag() {

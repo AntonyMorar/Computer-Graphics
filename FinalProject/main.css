@@ -26,7 +26,6 @@ canvas {
 	position: relative;
 	width: 100vw;
 	height: 100vh;
-	background-color: salmon;
 }
 
 #webglcanvas {
@@ -70,6 +69,7 @@ button:disabled{
 	flex-direction: column;
 	flex-flow: column nowrap;
 	position: absolute;
+	z-index: 99;
 }
 
 /* Drag and Drop
@@ -79,11 +79,10 @@ button:disabled{
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	display: flex;
 	align-items: center;
 	flex-direction: column;
 
-	opacity: 0;
+	display: none;
 }
 
 #dropzoneContainer{
@@ -165,23 +164,21 @@ button:disabled{
 	margin-right: 0;
 }
 
-/* Main Menu
+/* Menu
 ******************************************************/
-#mainMenu,
-#levelComplete{
+.menu{
 	padding: calc(12vw + 80px) 6vw 6vw calc(12vw + 130px);
 	position: absolute;
 	top: 0;
 }
 
-#mainMenu .title{
+.menu .title{
 	font-size: 3.5em;
     margin: 0;
 }
 
-/* Level Complete
-******************************************************/
-#levelComplete{
+#levelComplete,
+#endMenu{
 	display: none;
 }
 
