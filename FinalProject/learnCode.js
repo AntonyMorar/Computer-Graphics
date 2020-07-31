@@ -129,6 +129,7 @@ class Game {
         // Level -------------
         this.level = 0;
         this.levelObj = null;
+        this.levelObjTemp = null; // Secondary level object to load the next level
         this.commands = []
         this.levelsData = [{
                 level: "se",
@@ -474,7 +475,6 @@ class Level {
             return false
         }
     }
-
 }
 
 class Tile {
@@ -485,8 +485,9 @@ class Tile {
         this.type = type;
         //Resources ----------------
         this.resourceUrl = 'src/tileB.fbx';
+        let tempColor = (type == 'e') ? 0xb5127f : 0x00ff43
         this.material = new THREE.MeshStandardMaterial({
-            color: 0x00ff43
+            color: tempColor
         });
         this.obj = null;
         this.loader = new THREE.FBXLoader();
