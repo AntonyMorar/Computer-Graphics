@@ -763,6 +763,7 @@ class Player {
     checkFloor() {
         let intersects = this.raycaster.intersectObjects(root.children, true, []);
         if (intersects.length <= 0) {
+            game.commands = []
             this.inAction = true;
             this.action = "fall"
         } else {
@@ -776,9 +777,7 @@ class Player {
         // Front animation
         if (this.frontTween) this.frontTween.stop(); // override tween animation
         if (this.isFrontTween) {
-            //Play sound
             console.log("F")
-            game.playSound("src/robotFront.mp3");
 
             let target = new THREE.Vector3(1, 0, 0).applyQuaternion(playerGroup.quaternion)
             this.inAction = true;
@@ -794,6 +793,9 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
+                .onStart(() =>{
+                    game.playSound("src/robotFront.mp3");
+                })
                 .onComplete(() => {
                     this.isFrontTween = false;
                     this.checkFloor();
@@ -816,6 +818,9 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
+                .onStart(() =>{
+                    game.playSound("src/robotRot.mp3");
+                })
                 .onComplete(() => {
                     this.isLeftTween = false;
                     this.inAction = false;
@@ -826,7 +831,6 @@ class Player {
         if (this.rightTween) this.rightTween.stop(); // override tween animation
         if (this.isRightTween) {
             console.log("R")
-            game.playSound("src/robotRot.mp3");
 
             this.inAction = true;
             this.action = 'right';
@@ -839,6 +843,9 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
+                .onStart(() =>{
+                    game.playSound("src/robotRot.mp3");
+                })
                 .onComplete(() => {
                     this.isRightTween = false;
                     this.inAction = false;
