@@ -47,7 +47,7 @@ function main(canvas) {
      * Light
      */
     // Add a directional light to show off the objects
-    let light = new THREE.DirectionalLight(0xffffff, 1.5);
+    let light = new THREE.DirectionalLight(0xffffff, 1.3);
     // let light = new THREE.DirectionalLight( "rgb(255, 255, 100)", 1.5);
 
     // Position the light out from the scene, pointing at the origin
@@ -57,7 +57,7 @@ function main(canvas) {
 
     // This light globally illuminates all objects in the scene equally.
     // Cannot cast shadows
-    let ambientLight = new THREE.AmbientLight(0xffccaa, 0.45);
+    let ambientLight = new THREE.AmbientLight(0xe0faff, 0.5);
     scene.add(ambientLight);
 
     /****************************************************************************
@@ -162,6 +162,7 @@ class Game {
         // Audio -------------
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
+        this.ambienAudio.loop = true;
         this.ambienAudio.volume = 0.25;
         this.robotAudio = document.createElement("audio");
         this.robotAudio.volume = 0.3;
@@ -170,7 +171,7 @@ class Game {
         this.hudAudio.volume = 0.35;
         this.levelAudio = document.createElement("audio");
         this.levelAudio.src = "src/winLevel.mp3";
-        this.levelAudio.volume = 0.4;
+        this.levelAudio.volume = 0.25;
         return this;
 
     }
@@ -241,16 +242,23 @@ class Game {
         } else if (this.state == "gameOver") {
             //Check if scene out animation over
             if (!this.isSceneOut) {
+                // If player win
                 if (this.levelWin) {
-                    this.state = "menu"
-                    this.actualMenu = "win"
-                    this.hudUpdated = false;
-                    game.playWinLevel();
-                    hud.openMenu(this.actualMenu)
-                    // Load next level
-                    this.loadNextLevel()
-                } else {
-                    //console.log("Perdio")
+                    // If win last level
+                    if(this.level >= this.levelsData.length-1){
+                        this.actualMenu = "end"
+                        game.playWinLevel();
+                        hud.openMenu(this.actualMenu)
+                    }else{
+                        this.state = "menu"
+                        this.actualMenu = "win"
+                        this.hudUpdated = false;
+                        game.playWinLevel();
+                        hud.openMenu(this.actualMenu)
+                        // Load next level
+                        this.loadNextLevel()
+                    }
+                } else {  // If player lose
                     player.reset();
                     this.sceneIn();
                     this.resetLevelParams();
@@ -540,7 +548,6 @@ class Tile {
     }
 
     updloadSuccess(tileObj, pos) {
-        console.log(game.levelObj)
         tileObj.children[0].material = (this.type != "e") ? game.levelObj.materialTile : game.levelObj.materialTileEnd
         tileObj.scale.set(0.01, 0.01, 0.01);
         tileObj.position.set(pos.x, pos.y, pos.z)
@@ -775,6 +782,7 @@ class Player {
     checkFloor() {
         let intersects = this.raycaster.intersectObjects(root.children, true, []);
         if (intersects.length <= 0) {
+            game.playSound("src/fall.mp3");
             game.commands = []
             this.inAction = true;
             this.action = "fall"
@@ -922,6 +930,7 @@ class HUD {
         //Menus
         this.levelComplete = document.getElementById("levelComplete");
         this.mainMenu = document.getElementById("mainMenu");
+        this.endMenu = document.getElementById("endMenu");
     }
 
     toggleDragAndDrop() {
@@ -1016,7 +1025,7 @@ class HUD {
                 this.levelComplete.style.display = "block";
                 break;
             case "end":
-                console.log("UI end menu")
+                this.endMenu.style.display = "block"
                 break;
             default:
                 break;
@@ -1027,6 +1036,7 @@ class HUD {
     closeMenu(){
         this.levelComplete.style.display = "none";
         this.mainMenu.style.display = "none";
+        this.endMenu.style.display = "none";
     }
 
     togglePlayBtn(disable) {
