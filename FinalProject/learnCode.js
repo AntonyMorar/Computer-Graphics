@@ -38,9 +38,8 @@ function main(canvas) {
     //PerspectiveCamera( fov : Number, aspect : Number, near : Number, far : Number )
     camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.5, 4000);
     //camera = new THREE.OrthographicCamera( canvas.width / - 2, canvas.width / 2, canvas.height / 2, canvas.height / - 2, 0.5, 2000 );
-    camera.position.set(1.5, 4, 8);
-    camera.rotation.x = -0.5;
-    camera.rotation.y = 0.0;
+    camera.position.set(1.5, 4, 7.5);
+    camera.rotation.x = 11 * Math.PI / 6;
     scene.add(camera);
 
     /****************************************************************************
@@ -710,7 +709,7 @@ class Player {
             if (this.action == "fall") {
                 playerGroup.position.y -= 0.005 * deltat;
                 //Avoid inifinite falling
-                if (playerGroup.position.y <= -8) {
+                if (playerGroup.position.y <= -9) {
                     this.inAction = false;
                     this.action = "idle"
                 }
