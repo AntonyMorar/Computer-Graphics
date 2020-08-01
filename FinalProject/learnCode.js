@@ -172,6 +172,9 @@ class Game {
         this.levelAudio = document.createElement("audio");
         this.levelAudio.src = "src/winLevel.mp3";
         this.levelAudio.volume = 0.25;
+        this.happyAudio = document.createElement("audio");
+        this.happyAudio.src = 'src/robotHappy.wav'
+        this.happyAudio.volume = 0.5;
         return this;
 
     }
@@ -214,6 +217,7 @@ class Game {
                     game.levelObj.tiles.forEach(tile => {
                         if (tile.boxColider && player.boxColider) {
                             this.levelWin = tile.boxColider.intersectsBox(player.boxColider);
+                            if(this.levelWin) game.playHappySound()
                             // Game out animation
                             hud.toggleDragAndDrop();
                             this.sceneOut();
@@ -246,6 +250,7 @@ class Game {
                 if (this.levelWin) {
                     // If win last level
                     if(this.level >= this.levelsData.length-1){
+                        this.state = "menu"
                         this.actualMenu = "end"
                         game.playWinLevel();
                         hud.openMenu(this.actualMenu)
@@ -360,6 +365,10 @@ class Game {
         this.robotAudio.pause();
         this.robotAudio.src = soundSrc;
         this.robotAudio.play();
+    }
+
+    playHappySound(){
+        this.happyAudio.play()
     }
 }
 
