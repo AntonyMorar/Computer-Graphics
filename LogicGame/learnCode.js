@@ -193,7 +193,7 @@ class Game {
         if (this.state == "menu") {
             // Check if all the assets are loaded
             if (!this.hudUpdated) {
-                if(this.loaded){
+                if (this.loaded) {
                     hud.startButton();
                     this.hudUpdated = true;
                 }
@@ -217,7 +217,7 @@ class Game {
                     game.levelObj.tiles.forEach(tile => {
                         if (tile.boxColider && player.boxColider) {
                             this.levelWin = tile.boxColider.intersectsBox(player.boxColider);
-                            if(this.levelWin) game.playHappySound()
+                            if (this.levelWin) game.playHappySound()
                             // Game out animation
                             hud.toggleDragAndDrop();
                             this.sceneOut();
@@ -249,12 +249,12 @@ class Game {
                 // If player win
                 if (this.levelWin) {
                     // If win last level
-                    if(this.level >= this.levelsData.length-1){
+                    if (this.level >= this.levelsData.length - 1) {
                         this.state = "menu"
                         this.actualMenu = "end"
                         game.playWinLevel();
                         hud.openMenu(this.actualMenu)
-                    }else{
+                    } else {
                         this.state = "menu"
                         this.actualMenu = "win"
                         this.hudUpdated = false;
@@ -263,7 +263,7 @@ class Game {
                         // Load next level
                         this.loadNextLevel()
                     }
-                } else {  // If player lose
+                } else { // If player lose
                     player.reset();
                     this.sceneIn();
                     this.resetLevelParams();
@@ -334,11 +334,27 @@ class Game {
         game.levelObj = new Level(deepClone);
     }
 
-    toggleDebug(){
-        if(this.loaded){
-            if(player.boxColiderH) player.boxColiderH.visible = !player.boxColiderH.visible;
+    deleteDropItem(cln, id) {
+        let index = findRow3(cln);
+        let newArr = []
+
+        this.levelObj.addBtn(id)
+
+        delete this.commands[index - 1]
+        for (let i = 0; i < this.commands.length; i++) {
+            if (this.commands[i] != undefined || this.commands[i] != null) {
+                newArr.push(this.commands[i])
+            }
+        }
+        this.commands = newArr;
+        cln.remove();
+    }
+
+    toggleDebug() {
+        if (this.loaded) {
+            if (player.boxColiderH) player.boxColiderH.visible = !player.boxColiderH.visible;
             game.levelObj.tiles.forEach(tile => {
-                if(tile.boxColiderH) tile.boxColiderH.visible = !tile.boxColiderH.visible
+                if (tile.boxColiderH) tile.boxColiderH.visible = !tile.boxColiderH.visible
             });
         }
     }
@@ -355,36 +371,35 @@ class Game {
         }
     }
 
-    playBtnSound(){
+    playBtnSound() {
         this.hudAudio.play();
     }
 
-    playWinLevel(){
+    playWinLevel() {
         this.levelAudio.play();
     }
 
-    playSound(soundSrc){
+    playSound(soundSrc) {
         this.robotAudio.pause();
         this.robotAudio.src = soundSrc;
         this.robotAudio.play();
     }
 
-    playHappySound(){
+    playHappySound() {
         this.happyAudio.play();
-        
+
     }
 
-    toggleSound(){
-        console.log("toggle sound");
+    toggleSound() {
         this.toggleAmbienSound();
 
-        if(this.volume){ // Off volume
+        if (this.volume) { // Off volume
             this.robotAudio.volume = 0;
             this.hudAudio.volume = 0;
             this.levelAudio.volume = 0;
             this.happyAudio.volume = 0;
             this.volume = false;
-        }else{ // On volume
+        } else { // On volume
             this.robotAudio.volume = 0.3;
             this.hudAudio.volume = 0.35;
             this.levelAudio.volume = 0.25;
@@ -399,7 +414,7 @@ class Level {
         this.loaded = false;
         this.inThreeScene = false;
         //Resources ----------------
-        this.tileTextureUrl ='src/tileTexture.png'
+        this.tileTextureUrl = 'src/tileTexture.png'
         this.tileTextureEndUrl = 'src/tileTextureEnd.png';
         this.tileTexture = new THREE.TextureLoader().load(this.tileTextureUrl);
         this.tileTextureEnd = new THREE.TextureLoader().load(this.tileTextureEndUrl);
@@ -517,6 +532,12 @@ class Level {
     //with actual level values
     removeBtn(id) {
         this.buttons[id] -= 1;
+        hud.updateDraggable(id, this.buttons[id]);
+    }
+
+    addBtn(id) {
+        console.log(this.buttons);
+        this.buttons[id] += 1;
         hud.updateDraggable(id, this.buttons[id]);
     }
 
@@ -771,7 +792,7 @@ class Player {
         playerGroup.rotation.set(0, 0, 0)
     }
 
-    resetTweens(){
+    resetTweens() {
         if (this.frontTween) this.frontTween.stop()
         if (this.leftTween) this.leftTween.stop()
         if (this.rightTween) this.rightTween.stop()
@@ -843,7 +864,7 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
-                .onStart(() =>{
+                .onStart(() => {
                     game.playSound("src/robotFront.mp3");
                 })
                 .onComplete(() => {
@@ -867,7 +888,7 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
-                .onStart(() =>{
+                .onStart(() => {
                     game.playSound("src/robotRot.mp3");
                 })
                 .onComplete(() => {
@@ -891,7 +912,7 @@ class Player {
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .repeat(0)
                 .start()
-                .onStart(() =>{
+                .onStart(() => {
                     game.playSound("src/robotRot.mp3");
                 })
                 .onComplete(() => {
@@ -965,7 +986,7 @@ class HUD {
     }
 
     toggleDragAndDrop() {
-        if(dragAndDrop.style.display == "flex") dragAndDrop.style.display = "none";
+        if (dragAndDrop.style.display == "flex") dragAndDrop.style.display = "none";
         else dragAndDrop.style.display = "flex";
     }
 
@@ -1035,11 +1056,13 @@ class HUD {
         for (var i = 0; i < draggable.childNodes.length; i++) {
             if (draggable.childNodes[i].className == "number") {
                 if (num > 0) {
-                    draggable.childNodes[i].innerHTML = num
+                    draggable.childNodes[i].innerHTML = num;
+                    draggable.draggable = true;
+                    draggable.classList.remove("disabled");
                 } else {
                     draggable.draggable = false;
                     draggable.classList.add("disabled");
-                    draggable.removeChild(draggable.childNodes[i])
+                    draggable.childNodes[i].innerHTML = 0;
                 }
                 break;
             }
@@ -1047,7 +1070,7 @@ class HUD {
     }
 
     //Open specific menu
-    openMenu(menu){
+    openMenu(menu) {
         switch (menu) {
             case "main":
                 this.mainMenu.style.display = "block";
@@ -1064,7 +1087,7 @@ class HUD {
     }
 
     // Close all menus
-    closeMenu(){
+    closeMenu() {
         this.levelComplete.style.display = "none";
         this.mainMenu.style.display = "none";
         this.endMenu.style.display = "none";

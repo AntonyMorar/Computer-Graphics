@@ -3,7 +3,7 @@ Digital imaging processes as well as interactive graphic applications programmin
 
 [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/wasabeef/awesome-android-ui)
 
-## Table of contetnt
+## Table of content
 - [Sierpinsky Triangle](SierpinskiTriangle)
 ![Sierpinski](./Screenshots/sierpinski.png?raw=true "Sierpinski")
 - [Pong](Pong)
@@ -16,7 +16,7 @@ Digital imaging processes as well as interactive graphic applications programmin
 ![Tarea 1](./Screenshots/tarea1.png?raw=true "Tarea 1")
 - [Sierpinsky Pyramid](SierpinskyPyramid)
 ![Sierpinsky Pyramid](./Screenshots/siepinskyPyramid.png?raw=true "Sierpinsky Pyramid")
-- [Treejs Shaders](TreeJsScene)
+- [Threejs Shaders](ThreeJsScene)
 ![Three.js Shaders](./Screenshots/threejsShaders.png?raw=true "Three.js Shaders")
 - [Solar System](SolarSystem)
 ![Solar system](./Screenshots/solarSystem.png?raw=true "Solar system")

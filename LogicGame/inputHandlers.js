@@ -55,7 +55,6 @@ function gameEvents(game) {
 
 function onDragStart(event) {
     event.dataTransfer.setData('text/plain', event.target.id);
-    //event.currentTarget.style.backgroundColor = 'black';
 }
 
 function onDragOver(event) {
@@ -82,6 +81,14 @@ function onDrop(event, game) {
             break;
         }        
     }
+    // Add delete btn
+    let deleteBtn = document.createElement("span");
+    deleteBtn.innerHTML = "x";
+    deleteBtn.classList.add("delete");
+    deleteBtn.addEventListener("click", () => {
+        game.deleteDropItem(cln,id);
+    });
+    cln.appendChild(deleteBtn);
     document.getElementById("dropzone").appendChild(cln);
     event.dataTransfer.clearData();
 
@@ -93,4 +100,13 @@ function onDrop(event, game) {
 
 function toggleSound(game){
     game.toggleSound();
+}
+
+function findRow3(node)
+{
+    var i = 1;
+    while (node = node.previousSibling) {
+        if (node.nodeType === 1) { ++i }
+    }
+    return i;
 }

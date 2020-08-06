@@ -160,8 +160,30 @@ button:disabled{
     justify-content: center;
 }
 
+.draggable.disabled .number{
+	display: none;
+}
+
+.draggable .delete{
+	background-color: #e03838;
+	border-radius: 50%;
+    position: absolute;
+    top: -10;
+    right: -10;
+    width: 25px;
+    height: 25px;
+    align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	display: none;
+}
+
 .draggable:last-child{
 	margin-right: 0;
+}
+
+.draggable:hover .delete{
+	display: flex;
 }
 
 /* Menu
