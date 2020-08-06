@@ -159,6 +159,7 @@ class Game {
         this.isSceneOut = false;
         this.isSceneIn = false;
         // Audio -------------
+        this.volume = false; // Sound volume
         this.ambienAudio = document.createElement("audio");
         this.ambienAudio.src = "src/bg.mp3";
         this.ambienAudio.loop = true;
@@ -277,17 +278,8 @@ class Game {
         if (this.levelObj) this.levelObj.update();
     }
 
-    toggleAmbienSound() {
-        if (this.ambienAudio.paused) {
-            this.ambienAudio.play();
-            return true;
-        } else {
-            this.ambienAudio.pause();
-            return false;
-        }
-    }
-
     playGame() {
+        if (!game.volume) game.toggleSound();
         this.state = "game";
         hud.closeMenu();
         this.sceneIn();
@@ -300,7 +292,6 @@ class Game {
 
     sceneIn() {
         this.isSceneIn = true;
-        if (this.ambienAudio.paused) this.toggleAmbienSound();
         // Add to the scene if they are not
         if (!this.levelObj.inThreeScene) this.levelObj.add();
         if (!player.inThreeScene) player.add();
@@ -352,6 +343,18 @@ class Game {
         }
     }
 
+    toggleAmbienSound() {
+        if (this.ambienAudio.paused) {
+            this.ambienAudio.play();
+            document.getElementById("soundBtn").innerHTML = "Sound Off"
+            return true;
+        } else {
+            this.ambienAudio.pause();
+            document.getElementById("soundBtn").innerHTML = "Sound On"
+            return false;
+        }
+    }
+
     playBtnSound(){
         this.hudAudio.play();
     }
@@ -367,7 +370,27 @@ class Game {
     }
 
     playHappySound(){
-        this.happyAudio.play()
+        this.happyAudio.play();
+        
+    }
+
+    toggleSound(){
+        console.log("toggle sound");
+        this.toggleAmbienSound();
+
+        if(this.volume){ // Off volume
+            this.robotAudio.volume = 0;
+            this.hudAudio.volume = 0;
+            this.levelAudio.volume = 0;
+            this.happyAudio.volume = 0;
+            this.volume = false;
+        }else{ // On volume
+            this.robotAudio.volume = 0.3;
+            this.hudAudio.volume = 0.35;
+            this.levelAudio.volume = 0.25;
+            this.happyAudio.volume = 0.5;
+            this.volume = true;
+        }
     }
 }
 

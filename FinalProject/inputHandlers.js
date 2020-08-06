@@ -92,7 +92,5 @@ function onDrop(event, game) {
 }
 
 function toggleSound(game){
-    game.toggleAmbienSound();
-    if (game.ambienAudio.paused) document.getElementById("soundBtn").innerHTML = "Sound On"
-    else document.getElementById("soundBtn").innerHTML = "Sound Off"
+    game.toggleSound();
 }
