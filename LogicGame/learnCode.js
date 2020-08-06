@@ -122,6 +122,8 @@ class Game {
         this.playing = false; // If characer are executing commands
         this.levelWin = false; // If player wins the level
         this.state = "menu";
+        this.debug = false;
+        this.info = false; // Show a the level tutorial
         // Menu -------------
         this.actualMenu = "main"; // "main" "win" "end" 
         this.hudUpdated = false;
@@ -246,6 +248,7 @@ class Game {
         } else if (this.state == "gameOver") {
             //Check if scene out animation over
             if (!this.isSceneOut) {
+                if(this.debug) this.toggleDebug(); //
                 // If player win
                 if (this.levelWin) {
                     // If win last level
@@ -352,6 +355,7 @@ class Game {
 
     toggleDebug() {
         if (this.loaded) {
+            this.debug = !this.debug;
             if (player.boxColiderH) player.boxColiderH.visible = !player.boxColiderH.visible;
             game.levelObj.tiles.forEach(tile => {
                 if (tile.boxColiderH) tile.boxColiderH.visible = !tile.boxColiderH.visible
@@ -708,7 +712,7 @@ class Player {
         // Animation ------------
         this.actionAnim = null;
         //Tween durations
-        this.durationTween = 1.5; // sec
+        this.durationTween = 1.3; // sec
         //Front anim
         this.frontTween = null;
         this.isFrontTween = false;
