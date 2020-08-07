@@ -78,7 +78,7 @@ function main(canvas) {
      * Events
      */
     // add mouse handling so we can rotate the scene
-    gameEvents(game, game.levelObj, player, hud);
+    gameEvents(game);
     /****************************************************************************
      * Run the loop
      */
@@ -130,7 +130,6 @@ class Game {
         // Level -------------
         this.level = 0;
         this.levelObj = null;
-        this.levelObjTemp = null; // Secondary level object to load the next level
         this.commands = []
         this.levelsData = [{
                 level: "se",
@@ -184,13 +183,15 @@ class Game {
     update() {
         //console.log("=========", this.state);
         // If player and level exist and
-        if (game.levelObj && player && game.levelObj.loaded && player.loaded) {
+        if (this.levelObj && player && this.levelObj.loaded && player.loaded) {
             if (!this.loaded) this.loaded = true;
 
             if (!player.isSceneOutTween) {
                 this.isSceneOut = false;
             }
         }
+
+        console.log("loaded", this.loaded)
 
         if (this.state == "menu") {
             // Check if all the assets are loaded
@@ -248,7 +249,7 @@ class Game {
         } else if (this.state == "gameOver") {
             //Check if scene out animation over
             if (!this.isSceneOut) {
-                if(this.debug) this.toggleDebug(); //
+                if (this.debug) this.toggleDebug(); //
                 // If player win
                 if (this.levelWin) {
                     // If win last level
@@ -257,14 +258,13 @@ class Game {
                         this.actualMenu = "end"
                         game.playWinLevel();
                         hud.openMenu(this.actualMenu)
-                    } else {
+                    } else { // Next Level menu
                         this.state = "menu"
                         this.actualMenu = "win"
                         this.hudUpdated = false;
                         game.playWinLevel();
                         hud.openMenu(this.actualMenu)
-                        // Load next level
-                        this.loadNextLevel()
+                        this.loadNextLevel();
                     }
                 } else { // If player lose
                     player.reset();
@@ -295,11 +295,11 @@ class Game {
 
     sceneIn() {
         this.isSceneIn = true;
-        // Add to the scene if they are not
+        // Add level to the scene if they are not
         if (!this.levelObj.inThreeScene) this.levelObj.add();
-        if (!player.inThreeScene) player.add();
-        // Add to the scene (only animation)
         this.levelObj.sceneIn();
+        // Add player to the scene
+        if (!player.inThreeScene) player.add();
         player.sceneIn();
         // Add Drag and drop Hud
         hud.toggleDragAndDrop();
@@ -314,6 +314,26 @@ class Game {
 
     }
 
+    loadNextLevel() {
+        // Change game states
+        this.loaded = false;
+        //Remove old elements
+        this.levelObj.delete();
+        this.levelObj = null;
+        // Update
+        this.level++;
+        // Create new level
+        let deepClone = JSON.parse(JSON.stringify(this.levelsData[this.level]));
+        this.levelObj = new Level(deepClone);
+    }
+
+    playNextLevel() {
+        this.state = "game"
+        player.reset();
+        this.sceneIn();
+        this.resetLevelParams();
+    }
+
     resetLevelParams() {
         this.playing = false; // If characer are executing commands
         this.levelWin = false; // If player wins the level
@@ -321,20 +341,6 @@ class Game {
         this.commands = []
 
         hud.setHudDraggables();
-    }
-
-    loadNextLevel() {
-        // Change game states
-        this.state = "game";
-        this.loaded = false;
-        //Remove old elements
-        game.levelObj.delete();
-        game.levelObj = null;
-        // Update
-        this.level++;
-        // Create
-        let deepClone = JSON.parse(JSON.stringify(this.levelsData[this.level]));
-        game.levelObj = new Level(deepClone);
     }
 
     deleteDropItem(cln, id) {
@@ -515,6 +521,7 @@ class Level {
             });
             this.inThreeScene = true;
         }
+        console.warn("Tiles not loaded. Imposible to add to scene")
     }
 
     sceneIn() {

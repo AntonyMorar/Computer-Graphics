@@ -12,7 +12,7 @@ function gameEvents(game) {
     document.getElementById("dropzone").addEventListener("drop", event => onDrop(event, game));
 
     document.getElementById("soundBtn").addEventListener("click", () => toggleSound(game));
-    
+
     document.getElementById("infoBtn").addEventListener("click", () => {
         game.playBtnSound();
         console.log("info");
@@ -32,19 +32,19 @@ function gameEvents(game) {
         game.playBtnSound();
         game.playTurn();
     });
-/*
-    document.getElementById("resetLvl").addEventListener("click", () => {
-        game.resetLevel();
-    });
-*/
+    /*
+        document.getElementById("resetLvl").addEventListener("click", () => {
+            game.resetLevel();
+        });
+
+            document.getElementById("tryAgain").addEventListener("click", () => {
+            game.playBtnSound();
+            game.tryLevelAgain();
+        });
+    */
     document.getElementById("nextLevel").addEventListener("click", () => {
         game.playBtnSound();
-        game.sceneIn();
-    });
-
-    document.getElementById("tryAgain").addEventListener("click", () => {
-        game.playBtnSound();
-        game.resetLevelParams();
+        game.playNextLevel();
     });
 
     document.getElementById("debug").addEventListener("click", () => {
@@ -67,11 +67,11 @@ function onDrop(event, game) {
     const id = event.dataTransfer.getData('text');
     // HTML
     const draggableElement = document.getElementById(id);
-    if(draggableElement==null) return;
+    if (draggableElement == null) return;
     game.commands.push(id)
     // Clone and modify the element
     let cln = draggableElement.cloneNode(true);
-    cln.removeEventListener('dragstart', ()=>{})
+    cln.removeEventListener('dragstart', () => {})
     cln.draggable = false;
     cln.classList.add("inStack");
     cln.removeAttribute('id');
@@ -79,14 +79,14 @@ function onDrop(event, game) {
         if (cln.childNodes[i].className == "number") {
             cln.removeChild(cln.childNodes[i])
             break;
-        }        
+        }
     }
     // Add delete btn
     let deleteBtn = document.createElement("span");
     deleteBtn.innerHTML = "x";
     deleteBtn.classList.add("delete");
     deleteBtn.addEventListener("click", () => {
-        game.deleteDropItem(cln,id);
+        game.deleteDropItem(cln, id);
     });
     cln.appendChild(deleteBtn);
     document.getElementById("dropzone").appendChild(cln);
@@ -95,18 +95,19 @@ function onDrop(event, game) {
     // Update draggable elements
     game.levelObj.removeBtn(id)
 
-    if(game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
+    if (game.commands.length > 0 && document.getElementById("playTurn").disabled) document.getElementById("playTurn").disabled = false
 }
 
-function toggleSound(game){
+function toggleSound(game) {
     game.toggleSound();
 }
 
-function findRow3(node)
-{
+function findRow3(node) {
     var i = 1;
     while (node = node.previousSibling) {
-        if (node.nodeType === 1) { ++i }
+        if (node.nodeType === 1) {
+            ++i
+        }
     }
     return i;
 }
