@@ -181,7 +181,6 @@ class Game {
     }
 
     update() {
-        //console.log("=========", this.state);
         // If player and level exist and
         if (this.levelObj && player && this.levelObj.loaded && player.loaded) {
             if (!this.loaded) this.loaded = true;
@@ -190,8 +189,6 @@ class Game {
                 this.isSceneOut = false;
             }
         }
-
-        console.log("loaded", this.loaded)
 
         if (this.state == "menu") {
             // Check if all the assets are loaded
@@ -1026,17 +1023,23 @@ class HUD {
     // Add html visual draggable
     appendDragable(id, num = 1) {
         let draggable = document.createElement('div');
+        let imgArrow = document.createElement("img");
+        imgArrow.draggable = false;
         draggable.id = id;
-        draggable.innerHTML = "Null";
         switch (id) {
             case 'DragFront':
-                draggable.innerHTML = "Front";
+                imgArrow.src = "src/frontArrow.png";
+                draggable.appendChild(imgArrow)
+                //draggable.innerHTML = "Front";
                 break;
             case 'DragLeft':
-                draggable.innerHTML = "Left";
+                imgArrow.src = "src/leftArrow.png";
+                draggable.appendChild(imgArrow)
+                //draggable.innerHTML = "Left";
                 break;
             case 'DragRight':
-                draggable.innerHTML = "Right";
+                imgArrow.src = "src/rightArrow.png";
+                draggable.appendChild(imgArrow)
                 break;
             default:
                 break;

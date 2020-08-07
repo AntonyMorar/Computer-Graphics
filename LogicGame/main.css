@@ -138,6 +138,10 @@ button:disabled{
 	border-radius: 5px;
 }
 
+.draggable img{
+	width: 100%;
+}
+
 .draggable.disabled{
 	background-color: rgb(175, 175, 175);
 	cursor: not-allowed;
