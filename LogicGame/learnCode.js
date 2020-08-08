@@ -123,7 +123,7 @@ class Game {
         this.levelWin = false; // If player wins the level
         this.state = "menu";
         this.debug = false;
-        this.info = false; // Show a the level tutorial
+        this.instructions = false; // Show a the level tutorial
         // Menu -------------
         this.actualMenu = "main"; // "main" "win" "end" 
         this.hudUpdated = false;
@@ -413,6 +413,15 @@ class Game {
             this.happyAudio.volume = 0.5;
             this.volume = true;
         }
+    }
+
+    toggleInstructions(){
+        if(this.instructions){
+            document.getElementById("instructionsModal").style.display = "none";
+        }else{
+            document.getElementById("instructionsModal").style.display = "flex";
+        }
+        this.instructions = !this.instructions;
     }
 }
 

@@ -45,7 +45,9 @@
 				<div id="dragAndDrop">
 					<div id="dropzoneContainer">
 						<div id="dropzone"><span class="floatText">Dropzone</span></div>
-						<button id="playTurn" disabled>Play</button>
+						<button id="playTurn" disabled>
+							<img src="src/play.png" alt="Play">
+						</button>
 						<!--<button id="resetLvl">Reset</button>-->
 					</div>
 					<div id="draggables">
@@ -70,9 +72,22 @@
 					<h2>Thanks for playing!</h2>
 					<p>Created by Antony Morales</p>
 				</div>
+
 			</div>
 	
 			<canvas id="webglcanvas" width="1000" height="600"></canvas>
+		</div>
+
+		<div id="instructionsModal">
+			<div class="modal" id="modal">
+				<span class="close" id="closeModal">x</span>
+				<div class="content">
+					<video src="src/tutorial.mov" autoplay loop muted></video>
+					<h4 class="title">Instruct kip to reach his goal!</h4>
+					<p>- Drag and drop the instructions.</p>
+					<p>- Click the play button to make Kip start moving.</p>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>

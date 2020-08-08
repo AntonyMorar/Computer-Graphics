@@ -15,7 +15,7 @@ function gameEvents(game) {
 
     document.getElementById("infoBtn").addEventListener("click", () => {
         game.playBtnSound();
-        console.log("info");
+        game.toggleInstructions();
     });
 
     document.getElementById("shareBtn").addEventListener("click", () => {
@@ -26,6 +26,7 @@ function gameEvents(game) {
     document.getElementById("startGame").addEventListener("click", () => {
         game.playBtnSound();
         game.playGame();
+        game.toggleInstructions();
     });
 
     document.getElementById("playTurn").addEventListener("click", () => {
@@ -51,6 +52,16 @@ function gameEvents(game) {
         game.playBtnSound();
         game.toggleDebug();
     });
+
+
+    document.getElementById("instructionsModal").addEventListener("click", () => {
+        game.toggleInstructions();
+    });
+    document.getElementById("closeModal").addEventListener("click", () => {
+        game.playBtnSound();
+        game.toggleInstructions();
+    });
+    document.getElementById('modal').addEventListener('click', e => e.stopPropagation());
 }
 
 function onDragStart(event) {
